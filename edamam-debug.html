@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edamam API Debug - Praneya Healthcare</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #0891B2; text-align: center; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 15px; margin: 5px; background: #0891B2; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .response { background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; white-space: pre-wrap; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Edamam API Debug Tool</h1>
+        
+        <div class="test-section">
+            <h3>API Credentials Test</h3>
+            <p><strong>App ID:</strong> 447ed46b</p>
+            <p><strong>App Key:</strong> 83eafeb2f1b60d033978b983ba208a6b</p>
+            <button onclick="testRecipeAPI()">Test Recipe API v2</button>
+            <button onclick="testRecipeAPIv1()">Test Recipe API v1</button>
+            <button onclick="testNutritionAPI()">Test Nutrition API</button>
+            <button onclick="testFoodDatabase()">Test Food Database</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const APP_ID = '447ed46b';
+        const APP_KEY = '83eafeb2f1b60d033978b983ba208a6b';
+
+        function logResult(title, url, response, error = null) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            let html = `
+                <div class="test-section ${error ? 'error' : 'success'}">
+                    <h4>${title} - ${timestamp}</h4>
+                    <p><strong>URL:</strong> <small>${url}</small></p>
+                    ${error ? `<p><strong>Error:</strong> ${error}</p>` : ''}
+                    <div class="response">${JSON.stringify(response, null, 2)}</div>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = html + resultsDiv.innerHTML;
+        }
+
+        async function testRecipeAPI() {
+            const url = `https://api.edamam.com/api/recipes/v2?type=public&q=chicken&app_id=${APP_ID}&app_key=${APP_KEY}&from=0&to=1`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    logResult('✅ Recipe API v2', url, data);
+                } else {
+                    logResult('❌ Recipe API v2', url, data, `Status: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                logResult('❌ Recipe API v2', url, {}, error.message);
+            }
+        }
+
+        async function testRecipeAPIv1() {
+            const url = `https://api.edamam.com/search?q=chicken&app_id=${APP_ID}&app_key=${APP_KEY}&from=0&to=1`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    logResult('✅ Recipe API v1', url, data);
+                } else {
+                    logResult('❌ Recipe API v1', url, data, `Status: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                logResult('❌ Recipe API v1', url, {}, error.message);
+            }
+        }
+
+        async function testNutritionAPI() {
+            const url = `https://api.edamam.com/api/nutrition-data?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=1%20large%20apple`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    logResult('✅ Nutrition API', url, data);
+                } else {
+                    logResult('❌ Nutrition API', url, data, `Status: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                logResult('❌ Nutrition API', url, {}, error.message);
+            }
+        }
+
+        async function testFoodDatabase() {
+            const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=apple`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    logResult('✅ Food Database', url, data);
+                } else {
+                    logResult('❌ Food Database', url, data, `Status: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                logResult('❌ Food Database', url, {}, error.message);
+            }
+        }
+
+        // Auto-test on load
+        window.onload = function() {
+            setTimeout(() => {
+                testRecipeAPIv1(); // Try v1 first (more common)
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

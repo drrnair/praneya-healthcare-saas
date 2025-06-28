@@ -1,0 +1,187 @@
+// Simple Healthcare Schema for Development
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Core User Management
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Health profile
+  healthProfile HealthProfile?
+  
+  // Family relationships
+  familyMemberships FamilyMember[]
+  
+  // Meal plans
+  mealPlans MealPlan[]
+  
+  @@map("users")
+}
+
+// Basic Health Profile
+model HealthProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Basic health info (encrypted in production)
+  age           Int?
+  gender        String?
+  height        Float? // cm
+  weight        Float? // kg
+  activityLevel String? // sedentary, lightly_active, moderately_active, very_active
+  
+  // Health goals
+  weightGoal    Float?
+  calorieGoal   Int?
+  
+  // Medical info
+  allergies     String? // JSON string of allergies
+  medications   String? // JSON string of medications
+  conditions    String? // JSON string of health conditions
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("health_profiles")
+}
+
+// Family Management
+model FamilyAccount {
+  id          String @id @default(cuid())
+  name        String
+  description String?
+  
+  members FamilyMember[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("family_accounts")
+}
+
+model FamilyMember {
+  id              String @id @default(cuid())
+  familyAccountId String
+  userId          String
+  role            FamilyRole @default(MEMBER)
+  
+  familyAccount FamilyAccount @relation(fields: [familyAccountId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([familyAccountId, userId])
+  @@map("family_members")
+}
+
+enum FamilyRole {
+  ADMIN
+  PARENT
+  MEMBER
+  CHILD
+}
+
+// Meal Planning
+model MealPlan {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  date        DateTime
+  mealType    MealType
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Meal details
+  recipes     Recipe[]
+  calories    Int?
+  protein     Float?
+  carbs       Float?
+  fat         Float?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("meal_plans")
+}
+
+model Recipe {
+  id          String @id @default(cuid())
+  name        String
+  description String?
+  
+  // Nutrition per serving
+  servings    Int      @default(1)
+  calories    Int?
+  protein     Float?
+  carbs       Float?
+  fat         Float?
+  
+  // Recipe data
+  ingredients String   // JSON string
+  instructions String  // JSON string
+  prepTime    Int?     // minutes
+  cookTime    Int?     // minutes
+  
+  // Associations
+  mealPlans   MealPlan[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("recipes")
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+// Basic Audit Logging
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  resource  String
+  details   String?  // JSON string
+  ipAddress String?
+  userAgent String?
+  
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+// User Preferences
+model UserPreference {
+  id     String @id @default(cuid())
+  userId String @unique
+  
+  // Diet preferences
+  dietaryRestrictions String? // JSON array
+  cuisinePreferences  String? // JSON array
+  
+  // App preferences  
+  units            String @default("metric") // metric or imperial
+  language         String @default("en")
+  notifications    Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_preferences")
+} 

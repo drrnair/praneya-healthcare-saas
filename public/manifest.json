@@ -1,0 +1,167 @@
+{
+  "name": "Praneya Healthcare",
+  "short_name": "Praneya",
+  "description": "Your comprehensive healthcare companion for family wellness management",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0891B2",
+  "background_color": "#F8FAFC",
+  "categories": ["health", "medical", "lifestyle"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Log Medication",
+      "short_name": "Medication",
+      "description": "Quickly log your medication intake",
+      "url": "/medications/log",
+      "icons": [
+        {
+          "src": "/icons/medication-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Health Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your health overview",
+      "url": "/dashboard",
+      "icons": [
+        {
+          "src": "/icons/dashboard-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Family Hub",
+      "short_name": "Family",
+      "description": "Check family health status",
+      "url": "/family",
+      "icons": [
+        {
+          "src": "/icons/family-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Emergency",
+      "short_name": "Emergency",
+      "description": "Quick access to emergency features",
+      "url": "/emergency",
+      "icons": [
+        {
+          "src": "/icons/emergency-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-dashboard.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile Dashboard View"
+    },
+    {
+      "src": "/screenshots/tablet-dashboard.png",
+      "sizes": "820x1180",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tablet Dashboard View"
+    }
+  ],
+  
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+praneya",
+      "url": "/?action=%s"
+    }
+  ],
+  
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", ".pdf"]
+        }
+      ]
+    }
+  }
+} 

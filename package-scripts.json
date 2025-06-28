@@ -1,0 +1,4 @@
+{
+  "dev:frontend-only": "next dev -p 3007",
+  "dev:check": "next build --debug"
+}

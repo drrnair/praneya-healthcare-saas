@@ -1,0 +1,8 @@
+[0;34m[2025-06-28 19:16:06] [INFO] Testing database connection...[0m
+[0;32m[2025-06-28 19:16:07] [SUCCESS] Database connection successful[0m
+[0;34m[2025-06-28 19:16:07] [INFO] Setting up required PostgreSQL extensions...[0m
+[0;34m[2025-06-28 19:16:09] [INFO] Database extensions setup completed[0m
+[0;34m[2025-06-28 19:16:09] [INFO] Creating database schemas...[0m
+[0;34m[2025-06-28 19:16:11] [INFO] Database schemas created successfully[0m
+[0;34m[2025-06-28 19:16:11] [INFO] Generating and applying Prisma schema...[0m
+[0;34m[2025-06-28 19:16:11] [INFO] Prisma client generated successfully[0m

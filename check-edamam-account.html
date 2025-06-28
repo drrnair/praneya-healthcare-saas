@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Your Edamam Account Setup</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #0891B2; text-align: center; }
+        .step { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
+        .step h3 { color: #333; margin-top: 0; }
+        .important { background: #fff3cd; border-color: #ffeaa7; padding: 15px; border-radius: 5px; margin: 15px 0; }
+        .api-products { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .api-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; }
+        .api-card.recipe { background: #e8f5e8; }
+        .api-card.nutrition { background: #fff3e0; }
+        .api-card.food { background: #e3f2fd; }
+        a { color: #0891B2; text-decoration: none; font-weight: bold; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Your Edamam API Setup</h1>
+        
+        <div class="important">
+            <strong>Problem Identified:</strong> Your credentials are valid but for the wrong API product!
+        </div>
+
+        <div class="step">
+            <h3>Step 1: Check Your Edamam Dashboard</h3>
+            <p>Go to your <a href="https://developer.edamam.com/" target="_blank">Edamam Developer Dashboard</a> and check:</p>
+            <ul>
+                <li>What API product did you sign up for?</li>
+                <li>Do you see "Recipe Search API" in your applications?</li>
+                <li>Or did you sign up for a different API?</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Edamam API Products Available</h3>
+            <div class="api-products">
+                <div class="api-card recipe">
+                    <h4>🍽️ Recipe Search API</h4>
+                    <p>Search for recipes<br><strong>This is what we need!</strong></p>
+                </div>
+                <div class="api-card nutrition">
+                    <h4>🥗 Nutrition Analysis API</h4>
+                    <p>Analyze nutrition content<br>Different from Recipe Search</p>
+                </div>
+                <div class="api-card food">
+                    <h4>🍎 Food Database API</h4>
+                    <p>Search food items<br>Different from Recipe Search</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Solutions</h3>
+            
+            <h4>Option A: Get Recipe Search API Credentials (Recommended)</h4>
+            <ol>
+                <li>Go to <a href="https://developer.edamam.com/" target="_blank">developer.edamam.com</a></li>
+                <li>Click "Get started for free"</li>
+                <li>Select <strong>"Recipe Search API"</strong> specifically</li>
+                <li>Get new App ID and App Key for Recipe Search</li>
+            </ol>
+
+            <h4>Option B: Use Your Current API (If Different)</h4>
+            <p>Tell me which API product you actually have, and I'll create a demo for that instead.</p>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Common Edamam Account Issues</h3>
+            <ul>
+                <li><strong>Multiple API Products:</strong> You might need separate credentials for each API</li>
+                <li><strong>Free Tier Limits:</strong> Some APIs have different free tier access</li>
+                <li><strong>API Versioning:</strong> v1 vs v2 endpoints require different setups</li>
+            </ul>
+        </div>
+
+        <div class="important">
+            <strong>Quick Check:</strong> In your Edamam dashboard, look for the exact name of your API application. 
+            It should say "Recipe Search API" if that's what you signed up for.
+        </div>
+    </div>
+</body>
+</html>

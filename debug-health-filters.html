@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Health Filters - Find Valid Parameters</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #0891B2; text-align: center; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 8px 12px; margin: 5px; background: #0891B2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .response { background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; white-space: pre-wrap; font-family: monospace; font-size: 11px; max-height: 300px; overflow-y: auto; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Health Filters</h1>
+        
+        <div class="info test-section">
+            <h3>Finding Valid Health Filter Names</h3>
+            <p>Testing different health filter combinations to find what works with your API.</p>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Basic Searches (No Filters)</h3>
+            <div class="filter-grid">
+                <button onclick="testBasicSearch('chicken')">Basic: chicken</button>
+                <button onclick="testBasicSearch('healthy')">Basic: healthy</button>
+                <button onclick="testBasicSearch('low sodium')">Basic: low sodium</button>
+                <button onclick="testBasicSearch('diabetes')">Basic: diabetes</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Common Health Filters</h3>
+            <div class="filter-grid">
+                <button onclick="testHealthFilter('chicken', 'low-sodium')">low-sodium</button>
+                <button onclick="testHealthFilter('chicken', 'low-fat')">low-fat</button>
+                <button onclick="testHealthFilter('chicken', 'low-carb')">low-carb</button>
+                <button onclick="testHealthFilter('chicken', 'high-protein')">high-protein</button>
+                <button onclick="testHealthFilter('chicken', 'gluten-free')">gluten-free</button>
+                <button onclick="testHealthFilter('chicken', 'vegetarian')">vegetarian</button>
+                <button onclick="testHealthFilter('chicken', 'vegan')">vegan</button>
+                <button onclick="testHealthFilter('chicken', 'paleo')">paleo</button>
+                <button onclick="testHealthFilter('chicken', 'keto-friendly')">keto-friendly</button>
+                <button onclick="testHealthFilter('chicken', 'heart-healthy')">heart-healthy</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Diabetes-Related Filters</h3>
+            <div class="filter-grid">
+                <button onclick="testHealthFilter('chicken', 'diabetic-friendly')">diabetic-friendly</button>
+                <button onclick="testHealthFilter('chicken', 'diabetic')">diabetic</button>
+                <button onclick="testHealthFilter('chicken', 'diabetes-friendly')">diabetes-friendly</button>
+                <button onclick="testHealthFilter('chicken', 'low-sugar')">low-sugar</button>
+                <button onclick="testHealthFilter('chicken', 'sugar-conscious')">sugar-conscious</button>
+                <button onclick="testHealthFilter('chicken', 'no-sugar-added')">no-sugar-added</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Diet Parameters (Alternative)</h3>
+            <div class="filter-grid">
+                <button onclick="testDietFilter('chicken', 'low-carb')">diet=low-carb</button>
+                <button onclick="testDietFilter('chicken', 'low-fat')">diet=low-fat</button>
+                <button onclick="testDietFilter('chicken', 'balanced')">diet=balanced</button>
+                <button onclick="testDietFilter('chicken', 'high-protein')">diet=high-protein</button>
+            </div>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const APP_ID = '447ed46b';
+        const APP_KEY = '83eafeb2f1b60d033978b983ba208a6b';
+        const USER_ID = 'praneya-test-user';
+        const API_BASE = 'https://api.edamam.com/api/recipes/v2';
+
+        function logResult(title, url, response, error = null) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            let html = `
+                <div class="test-section ${error ? 'error' : 'success'}">
+                    <h4>${title} - ${timestamp}</h4>
+                    <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-family: monospace; font-size: 10px; word-break: break-all; margin: 5px 0;">${url}</div>
+                    ${error ? `<p><strong>Error:</strong> ${error}</p>` : `<p><strong>✅ SUCCESS!</strong> Found ${response.hits ? response.hits.length : 0} recipes</p>`}
+                    <div class="response">${JSON.stringify(response, null, 2)}</div>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = html + resultsDiv.innerHTML;
+        }
+
+        async function testBasicSearch(query) {
+            const url = `${API_BASE}?type=public&q=${encodeURIComponent(query)}&app_id=${APP_ID}&app_key=${APP_KEY}&from=0&to=3`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Edamam-Account-User': USER_ID,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    logResult(`✅ Basic Search: ${query}`, url, data);
+                } else {
+                    logResult(`❌ Basic Search: ${query}`, url, data, `Status: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                logResult(`❌ Basic Search: ${query}`, url, {}, error.message);
+            }
+        }
+
+        async function testHealthFilter(query, healthFilter) {
+            const url = `${API_BASE}?type=public&q=${encodeURIComponent(query)}&health=${encodeURIComponent(healthFilter)}&app_id=${APP_ID}&app_key=${APP_KEY}&from=0&to=3`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Edamam-Account-User': USER_ID,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    logResult(`✅ Health Filter: ${healthFilter}`, url, data);
+                } else {
+                    logResult(`❌ Health Filter: ${healthFilter}`, url, data, `Status: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                logResult(`❌ Health Filter: ${healthFilter}`, url, {}, error.message);
+            }
+        }
+
+        async function testDietFilter(query, diet) {
+            const url = `${API_BASE}?type=public&q=${encodeURIComponent(query)}&diet=${encodeURIComponent(diet)}&app_id=${APP_ID}&app_key=${APP_KEY}&from=0&to=3`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Edamam-Account-User': USER_ID,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    logResult(`✅ Diet Filter: ${diet}`, url, data);
+                } else {
+                    logResult(`❌ Diet Filter: ${diet}`, url, data, `Status: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                logResult(`❌ Diet Filter: ${diet}`, url, {}, error.message);
+            }
+        }
+
+        // Auto-test basic search on load
+        window.onload = function() {
+            setTimeout(() => {
+                testBasicSearch('chicken');
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

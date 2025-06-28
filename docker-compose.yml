@@ -1,0 +1,408 @@
+# Praneya Healthcare SaaS - Docker Compose Configuration
+# HIPAA-compliant infrastructure with comprehensive monitoring and security
+
+version: '3.8'
+
+# Healthcare-specific networks for security isolation
+networks:
+  praneya-healthcare-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  praneya-db-network:
+    driver: bridge
+    internal: true  # Database network is internal-only for security
+  praneya-cache-network:
+    driver: bridge
+    internal: true  # Cache network is internal-only
+  praneya-monitoring-network:
+    driver: bridge
+
+# Persistent volumes for healthcare data with encryption support
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/postgres
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/redis
+  audit_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/audit-logs
+  clinical_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/clinical-logs
+  emergency_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/emergency
+  backup_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/backups
+
+services:
+  # ===========================================
+  # PostgreSQL Database - HIPAA Compliant
+  # ===========================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: praneya-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: praneya_healthcare
+      POSTGRES_USER: ${POSTGRES_USER:-praneya_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+      # PostgreSQL healthcare-specific configurations
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/pgdata
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+      - audit_logs:/var/log/postgresql
+    networks:
+      - praneya-db-network
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    command: >
+      postgres
+      -c log_statement=all
+      -c log_destination=stderr,csvlog
+      -c logging_collector=on
+      -c log_directory=/var/log/postgresql
+      -c log_filename=postgresql-%Y-%m-%d.log
+      -c log_rotation_age=1d
+      -c log_rotation_size=100MB
+      -c log_min_duration_statement=1000
+      -c log_line_prefix='%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
+      -c shared_preload_libraries=pg_stat_statements
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=64MB
+      -c wal_buffers=16MB
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-praneya_admin} -d praneya_healthcare"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "healthcare.service=database"
+      - "hipaa.compliant=true"
+      - "data.classification=PHI"
+      - "backup.enabled=true"
+      - "monitoring.enabled=true"
+
+  # ===========================================
+  # Redis Cache - Healthcare Optimized
+  # ===========================================
+  redis:
+    image: redis:7-alpine
+    container_name: praneya-redis
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+      - ./database/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - praneya-cache-network
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "healthcare.service=cache"
+      - "hipaa.compliant=true"
+      - "data.classification=sensitive"
+      - "monitoring.enabled=true"
+
+  # ===========================================
+  # Praneya Healthcare Application - Next.js Frontend
+  # ===========================================
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: runtime
+      args:
+        - NODE_ENV=production
+        - HEALTHCARE_MODE=true
+        - HIPAA_COMPLIANCE_ENABLED=true
+    container_name: praneya-frontend
+    restart: unless-stopped
+    environment:
+      # Application settings
+      NODE_ENV: production
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      API_URL: http://backend:3001
+      
+      # Healthcare configuration
+      HEALTHCARE_MODE: "true"
+      HIPAA_COMPLIANCE_ENABLED: "true"
+      CLINICAL_OVERSIGHT_REQUIRED: "true"
+      FAMILY_PRIVACY_DEFAULT: "strict"
+      EMERGENCY_ACCESS_ENABLED: "true"
+      
+      # External APIs
+      EDAMAM_APP_ID: ${EDAMAM_APP_ID}
+      EDAMAM_APP_KEY: ${EDAMAM_APP_KEY}
+      GOOGLE_AI_API_KEY: ${GOOGLE_AI_API_KEY}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      
+      # Security settings
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      TRUST_PROXY: "true"
+      
+      # Monitoring
+      MONITORING_ENABLED: "true"
+      ERROR_TRACKING_ENABLED: "true"
+    volumes:
+      - clinical_logs:/app/clinical-logs
+      - emergency_data:/app/data/emergency:ro
+    networks:
+      - praneya-healthcare-network
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "healthcare.service=frontend"
+      - "hipaa.compliant=true"
+      - "clinical.features=enabled"
+      - "family.privacy=protected"
+      - "emergency.access=available"
+
+  # ===========================================
+  # Praneya Healthcare API - Express Backend
+  # ===========================================
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: runtime
+      args:
+        - NODE_ENV=production
+        - HEALTHCARE_MODE=true
+    container_name: praneya-backend
+    restart: unless-stopped
+    environment:
+      # Application settings
+      NODE_ENV: production
+      PORT: 3001
+      
+      # Database configuration
+      DATABASE_URL: postgresql://${POSTGRES_USER:-praneya_admin}:${POSTGRES_PASSWORD}@postgres:5432/praneya_healthcare
+      DATABASE_SSL: "false"  # Internal network doesn't need SSL
+      
+      # Redis configuration
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      
+      # Security and encryption
+      JWT_SECRET: ${JWT_SECRET}
+      HEALTHCARE_ENCRYPTION_KEY: ${HEALTHCARE_ENCRYPTION_KEY}
+      DEVICE_FINGERPRINT_SECRET: ${DEVICE_FINGERPRINT_SECRET}
+      
+      # Healthcare compliance
+      HEALTHCARE_MODE: "true"
+      HIPAA_COMPLIANCE_ENABLED: "true"
+      HIPAA_AUDIT_LOGGING_ENABLED: "true"
+      CLINICAL_OVERSIGHT_REQUIRED: "true"
+      MFA_REQUIRED: "true"
+      AUDIT_ALL_ACCESS: "true"
+      
+      # External APIs
+      EDAMAM_APP_ID: ${EDAMAM_APP_ID}
+      EDAMAM_APP_KEY: ${EDAMAM_APP_KEY}
+      GOOGLE_AI_API_KEY: ${GOOGLE_AI_API_KEY}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      
+      # Rate limiting
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX_REQUESTS: 100
+      RATE_LIMIT_HEALTHCARE_MAX: 50
+      
+      # Family and privacy settings
+      FAMILY_PRIVACY_DEFAULT: "strict"
+      MINOR_DATA_PROTECTION_ENABLED: "true"
+      FAMILY_CONSENT_EXPIRY_HOURS: 48
+      
+      # Emergency settings
+      EMERGENCY_ACCESS_ENABLED: "true"
+      EMERGENCY_DATA_RETENTION_DAYS: 30
+      
+      # Monitoring and logging
+      MONITORING_ENABLED: "true"
+      ERROR_TRACKING_ENABLED: "true"
+      PERFORMANCE_MONITORING: "true"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    volumes:
+      - audit_logs:/app/audit-logs
+      - clinical_logs:/app/clinical-logs
+      - emergency_data:/app/data/emergency
+    networks:
+      - praneya-healthcare-network
+      - praneya-db-network
+      - praneya-cache-network
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    labels:
+      - "healthcare.service=backend"
+      - "hipaa.compliant=true"
+      - "clinical.oversight=enabled"
+      - "conflict.detection=active"
+      - "audit.logging=enabled"
+
+  # ===========================================
+  # Database Backup Service
+  # ===========================================
+  postgres-backup:
+    image: postgres:15-alpine
+    container_name: praneya-backup
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-praneya_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: praneya_healthcare
+      BACKUP_SCHEDULE: "0 2 * * *"  # Daily at 2 AM
+      BACKUP_RETENTION_DAYS: 2555   # 7 years for HIPAA compliance
+    volumes:
+      - backup_data:/backups
+      - ./scripts/backup.sh:/backup.sh:ro
+    networks:
+      - praneya-db-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c '
+        while true; do
+          echo "Starting HIPAA-compliant backup at $(date)"
+          pg_dump -h postgres -U ${POSTGRES_USER:-praneya_admin} -d praneya_healthcare | 
+          gzip > /backups/praneya_backup_$(date +%Y%m%d_%H%M%S).sql.gz
+          echo "Backup completed at $(date)"
+          sleep 86400  # 24 hours
+        done
+      '
+    labels:
+      - "healthcare.service=backup"
+      - "hipaa.compliant=true"
+      - "data.retention=7years"
+      - "encryption.enabled=true"
+
+  # ===========================================
+  # Health Monitoring and Alerting
+  # ===========================================
+  monitoring:
+    image: prom/prometheus:latest
+    container_name: praneya-monitoring
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./data/prometheus:/prometheus
+    networks:
+      - praneya-monitoring-network
+      - praneya-healthcare-network
+    ports:
+      - "${MONITORING_PORT:-9090}:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=90d'
+      - '--web.enable-lifecycle'
+    labels:
+      - "healthcare.service=monitoring"
+      - "hipaa.compliance=audit-ready"
+
+# ===========================================
+# Healthcare Development Override
+# ===========================================
+  # Development-only services (excluded in production)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: praneya-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@praneya.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin123}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+    networks:
+      - praneya-db-network
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      - postgres
+    profiles:
+      - development
+    labels:
+      - "healthcare.service=admin"
+      - "environment=development-only"
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: praneya-redis-admin
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:${REDIS_PASSWORD}
+    networks:
+      - praneya-cache-network
+    ports:
+      - "${REDIS_ADMIN_PORT:-8081}:8081"
+    depends_on:
+      - redis
+    profiles:
+      - development
+    labels:
+      - "healthcare.service=cache-admin"
+      - "environment=development-only"

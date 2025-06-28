@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged for code quality
+npx lint-staged
+
+# Healthcare compliance check - ensure no sensitive data in commits
+echo "🔒 Running healthcare compliance checks..."
+if git diff --cached --name-only | grep -E "\.(env|key|pem|crt)$"; then
+  echo "❌ Error: Potential sensitive files detected in commit"
+  echo "Please remove sensitive files before committing"
+  exit 1
+fi
+
+# Check for potential PHI/PII in staged files
+if git diff --cached | grep -iE "(ssn|social.security|medical.record|patient.id|health.record)"; then
+  echo "❌ Error: Potential PHI/PII detected in staged changes"
+  echo "Please remove sensitive health information before committing"
+  exit 1
+fi
+
+echo "✅ Healthcare compliance checks passed"

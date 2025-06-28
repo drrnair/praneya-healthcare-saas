@@ -1,0 +1,1165 @@
+// Praneya Healthcare SaaS - Prisma Database Schema
+// HIPAA-compliant multi-tenant PostgreSQL schema with healthcare-specific features
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "postgresqlExtensions", "fullTextSearch", "fieldReference"]
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto, postgis, pg_stat_statements]
+  schemas    = ["public", "healthcare", "audit", "clinical"]
+}
+
+// ===========================================
+// TENANT MANAGEMENT FOR MULTI-TENANCY
+// ===========================================
+
+model Tenant {
+  id                String   @id @default(cuid())
+  name              String
+  subdomain         String   @unique
+  planType          PlanType @default(BASIC)
+  isActive          Boolean  @default(true)
+  hipaaCompliant    Boolean  @default(true)
+  encryptionKeyId   String   // Reference to encryption key for this tenant
+  dataRegion        String   @default("us-east-1")
+  complianceLevel   String   @default("HIPAA_READY")
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  users             User[]
+  familyAccounts    FamilyAccount[]
+  auditLogs         AuditLog[]
+  clinicalRules     ClinicalRule[]
+  apiUsageLogs      ApiUsageLog[]
+  
+  @@map("tenants")
+  @@schema("public")
+}
+
+// ===========================================
+// USER MANAGEMENT WITH HEALTHCARE FEATURES
+// ===========================================
+
+model User {
+  id                    String              @id @default(cuid())
+  tenantId              String
+  email                 String              @unique
+  firebaseUid           String              @unique
+  
+  // Encrypted PII (field-level encryption)
+  encryptedFirstName    String?             // Encrypted with tenant key
+  encryptedLastName     String?             // Encrypted with tenant key
+  encryptedPhone        String?             // Encrypted with tenant key
+  encryptedDateOfBirth  String?             // Encrypted with tenant key
+  
+  // Healthcare-specific fields
+  healthcareRole        HealthcareRole      @default(END_USER)
+  subscriptionTier      SubscriptionTier    @default(BASIC)
+  
+  // Security and compliance
+  deviceFingerprints    DeviceFingerprint[]
+  mfaEnabled            Boolean             @default(false)
+  mfaSecret             String?
+  lastHipaaTraining     DateTime?
+  
+  // Consent management
+  consentRecords        ConsentRecord[]
+  
+  // Privacy settings
+  privacySettings       Json                @default("{}")
+  
+  // Account status
+  isActive              Boolean             @default(true)
+  isVerified            Boolean             @default(false)
+  lastLoginAt           DateTime?
+  passwordChangedAt     DateTime?
+  
+  // Timestamps
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  // Relations
+  tenant                Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  healthProfile         HealthProfile?
+  familyMemberships     FamilyMember[]
+  auditLogs             AuditLog[]
+  clinicalReviews       ClinicalReview[]
+  recipes               Recipe[]
+  mealPlans             MealPlan[]
+  biometricReadings     BiometricReading[]
+  
+  @@map("users")
+  @@schema("public")
+}
+
+// ===========================================
+// DEVICE FINGERPRINTING FOR SECURITY
+// ===========================================
+
+model DeviceFingerprint {
+  id                String   @id @default(cuid())
+  userId            String
+  fingerprint       String
+  deviceInfo        Json     // Browser, OS, screen resolution, etc.
+  ipAddress         String?
+  userAgent         String?
+  trusted           Boolean  @default(false)
+  riskScore         Float    @default(0.0)
+  lastSeen          DateTime @default(now())
+  
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, fingerprint])
+  @@map("device_fingerprints")
+  @@schema("public")
+}
+
+// ===========================================
+// CONSENT MANAGEMENT FOR HIPAA COMPLIANCE
+// ===========================================
+
+model ConsentRecord {
+  id                String      @id @default(cuid())
+  userId            String
+  consentType       ConsentType
+  status            ConsentStatus @default(PENDING)
+  version           String      // Version of consent form
+  
+  // Consent details
+  ipAddress         String?
+  userAgent         String?
+  geolocation       Json?
+  
+  // Legal tracking
+  consentedAt       DateTime?
+  revokedAt         DateTime?
+  expiresAt         DateTime?
+  
+  // Timestamps
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  
+  // Relations
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("consent_records")
+  @@schema("public")
+}
+
+// ===========================================
+// HEALTH PROFILES WITH TIERED DATA
+// ===========================================
+
+model HealthProfile {
+  id                    String              @id @default(cuid())
+  userId                String              @unique
+  subscriptionTier      SubscriptionTier
+  
+  // Basic tier data (always available)
+  allergies             Allergy[]
+  dietaryRestrictions   DietaryRestriction[]
+  
+  // Enhanced tier data
+  nutritionGoals        NutritionGoal[]     // Enhanced+
+  
+  // Premium tier data (encrypted)
+  medications           Medication[]        // Premium only
+  chronicConditions     ChronicCondition[]  // Premium only
+  labValues             LabValue[]          // Premium only
+  
+  // Compliance and integrity
+  dataIntegrityHash     String              // For tamper detection
+  lastVerified          DateTime?
+  version               Int                 @default(1)
+  
+  // Timestamps
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  // Relations
+  user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  biometricReadings     BiometricReading[]
+  
+  @@map("health_profiles")
+  @@schema("healthcare")
+}
+
+// ===========================================
+// MEDICATIONS WITH DRUG INTERACTIONS
+// ===========================================
+
+model Medication {
+  id                String              @id @default(cuid())
+  healthProfileId   String
+  
+  // Medication details
+  genericName       String
+  brandName         String?
+  dosage            String
+  frequency         String
+  route             String              // oral, injection, topical, etc.
+  
+  // Clinical information
+  indication        String?             // What it's prescribed for
+  prescribedBy      String?             // Healthcare provider
+  prescriptionDate  DateTime?
+  
+  // Safety tracking
+  isActive          Boolean             @default(true)
+  discontinuedDate  DateTime?
+  discontinuedBy    String?
+  
+  // Drug interaction references
+  drugInteractions  DrugInteraction[]   @relation("MedicationInteractions")
+  interactsWith     DrugInteraction[]   @relation("InteractingMedications")
+  
+  // Timestamps
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  healthProfile     HealthProfile       @relation(fields: [healthProfileId], references: [id], onDelete: Cascade)
+  
+  @@map("medications")
+  @@schema("healthcare")
+}
+
+// ===========================================
+// DRUG INTERACTIONS MATRIX
+// ===========================================
+
+model DrugInteraction {
+  id                    String              @id @default(cuid())
+  medicationId          String
+  interactingMedicationId String?
+  interactingSubstance  String?             // For food/supplement interactions
+  
+  // Interaction details
+  severity              InteractionSeverity
+  interactionType       InteractionType
+  description           String
+  mechanism             String?
+  clinicalEffect        String?
+  
+  // Recommendations
+  recommendation        String
+  avoidCombination      Boolean             @default(false)
+  requiresMonitoring    Boolean             @default(false)
+  timingSeparation      String?             // e.g., "Take 2 hours apart"
+  
+  // Evidence and sourcing
+  evidenceLevel         EvidenceLevel
+  clinicalReferences    String[]
+  lastReviewed          DateTime?
+  
+  // Relations
+  medication            Medication          @relation("MedicationInteractions", fields: [medicationId], references: [id], onDelete: Cascade)
+  interactingMedication Medication?         @relation("InteractingMedications", fields: [interactingMedicationId], references: [id])
+  
+  @@map("drug_interactions")
+  @@schema("clinical")
+}
+
+// ===========================================
+// ALLERGIES WITH SEVERITY TRACKING
+// ===========================================
+
+model Allergy {
+  id                String              @id @default(cuid())
+  healthProfileId   String
+  
+  // Allergy details
+  allergen          String
+  allergenCategory  AllergenCategory    // food, drug, environmental, etc.
+  severity          AllergySeverity
+  
+  // Reaction details
+  reactions         String[]            // hives, swelling, anaphylaxis, etc.
+  firstOccurrence   DateTime?
+  lastOccurrence    DateTime?
+  
+  // Verification
+  verifiedBy        String?             // Healthcare provider
+  testDate          DateTime?
+  testType          String?
+  
+  // Safety information
+  emergencyMedication String?           // EpiPen, etc.
+  notes             String?
+  isActive          Boolean             @default(true)
+  
+  // Timestamps
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  healthProfile     HealthProfile       @relation(fields: [healthProfileId], references: [id], onDelete: Cascade)
+  
+  @@map("allergies")
+  @@schema("healthcare")
+}
+
+// ===========================================
+// CLINICAL RULES FOR SAFETY VALIDATION
+// ===========================================
+
+model ClinicalRule {
+  id                    String              @id @default(cuid())
+  tenantId              String?             // Null for global rules
+  
+  // Rule identification
+  ruleType              ClinicalRuleType
+  name                  String
+  description           String
+  
+  // Rule logic (stored as JSON for flexibility)
+  conditions            Json                // Complex conditions
+  actions               Json                // Actions to take when rule fires
+  
+  // Clinical information
+  severity              RuleSeverity
+  evidenceLevel         EvidenceLevel
+  clinicalReferences    String[]
+  
+  // Rule management
+  isActive              Boolean             @default(true)
+  version               String              @default("1.0")
+  
+  // Review tracking
+  createdBy             String
+  approvedBy            String?
+  lastReviewed          DateTime?
+  nextReview            DateTime?
+  
+  // Timestamps
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  // Relations
+  tenant                Tenant?             @relation(fields: [tenantId], references: [id])
+  ruleExecutions        RuleExecution[]
+  
+  @@map("clinical_rules")
+  @@schema("clinical")
+}
+
+// ===========================================
+// RULE EXECUTION TRACKING
+// ===========================================
+
+model RuleExecution {
+  id                String          @id @default(cuid())
+  clinicalRuleId    String
+  userId            String
+  
+  // Execution details
+  triggered         Boolean
+  conditions        Json            // Conditions that were evaluated
+  result            Json            // Result of rule execution
+  actions           Json            // Actions that were taken
+  
+  // Performance tracking
+  executionTime     Int             // Milliseconds
+  
+  // Timestamps
+  executedAt        DateTime        @default(now())
+  
+  // Relations
+  clinicalRule      ClinicalRule    @relation(fields: [clinicalRuleId], references: [id], onDelete: Cascade)
+  
+  @@map("rule_executions")
+  @@schema("clinical")
+}
+
+// ===========================================
+// FAMILY ACCOUNTS WITH HIERARCHICAL PRIVACY
+// ===========================================
+
+model FamilyAccount {
+  id                String          @id @default(cuid())
+  tenantId          String
+  primaryUserId     String
+  familyName        String
+  subscriptionTier  SubscriptionTier
+  maxMembers        Int             @default(6)
+  
+  // Privacy settings
+  privacySettings   Json            @default("{}")
+  
+  // Timestamps
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  
+  // Relations
+  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  members           FamilyMember[]
+  subscriptions     Subscription[]
+  
+  @@map("family_accounts")
+  @@schema("public")
+}
+
+model FamilyMember {
+  id                String              @id @default(cuid())
+  familyAccountId   String
+  userId            String
+  relationship      FamilyRelationship
+  permissionLevel   PermissionLevel
+  
+  // Privacy controls
+  canViewHealthData Boolean             @default(false)
+  isMinor           Boolean             @default(false)
+  guardianConsent   Boolean             @default(false)
+  privacyOverrides  Json                @default("{}")
+  
+  // Timestamps
+  addedAt           DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  familyAccount     FamilyAccount       @relation(fields: [familyAccountId], references: [id], onDelete: Cascade)
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([familyAccountId, userId])
+  @@map("family_members")
+  @@schema("public")
+}
+
+// ===========================================
+// RECIPES WITH CACHING AND VALIDATION
+// ===========================================
+
+model Recipe {
+  id                String              @id @default(cuid())
+  createdBy         String
+  
+  // Recipe content
+  title             String
+  description       String?
+  instructions      String[]
+  ingredients       Json                // Structured ingredient data
+  
+  // Nutritional information
+  nutrition         Json                // Comprehensive nutritional data
+  servings          Int                 @default(1)
+  prepTime          Int?                // Minutes
+  cookTime          Int?                // Minutes
+  
+  // Categorization
+  cuisineType       String?
+  mealType          MealType[]
+  dietaryFlags      DietaryFlag[]
+  
+  // Caching and performance
+  queryHash         String              @unique // For caching identical queries
+  complexity        RecipeComplexity    @default(MEDIUM)
+  
+  // Healthcare validation
+  allergenWarnings  String[]
+  healthBenefits    String[]
+  contraindications String[]
+  
+  // Content moderation
+  isVerified        Boolean             @default(false)
+  verifiedBy        String?
+  verifiedAt        DateTime?
+  
+  // Popularity metrics
+  rating            Float?              @default(0)
+  ratingCount       Int                 @default(0)
+  bookmarkCount     Int                 @default(0)
+  
+  // Timestamps
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  user              User                @relation(fields: [createdBy], references: [id])
+  mealPlanRecipes   MealPlanRecipe[]
+  recipeReviews     RecipeReview[]
+  
+  @@index([queryHash])
+  @@index([mealType])
+  @@index([dietaryFlags])
+  @@map("recipes")
+  @@schema("public")
+}
+
+// ===========================================
+// MEAL PLANS WITH HEALTH OPTIMIZATION
+// ===========================================
+
+model MealPlan {
+  id                String              @id @default(cuid())
+  userId            String
+  
+  // Plan details
+  name              String
+  description       String?
+  startDate         DateTime
+  endDate           DateTime
+  
+  // Health optimization
+  nutritionTargets  Json                // Daily nutrition goals
+  healthGoals       HealthGoal[]
+  restrictions      Json                // Allergies, diet restrictions
+  
+  // Plan status
+  isActive          Boolean             @default(true)
+  adherenceScore    Float?              @default(0)
+  
+  // Timestamps
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealPlanRecipes   MealPlanRecipe[]
+  mealPlanDays      MealPlanDay[]
+  
+  @@map("meal_plans")
+  @@schema("public")
+}
+
+model MealPlanDay {
+  id                String              @id @default(cuid())
+  mealPlanId        String
+  date              DateTime            @db.Date
+  
+  // Daily nutrition
+  targetCalories    Int?
+  actualCalories    Int?
+  nutritionSummary  Json?
+  
+  // Compliance tracking
+  adherenceScore    Float?              @default(0)
+  notes             String?
+  
+  // Relations
+  mealPlan          MealPlan            @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  meals             MealPlanRecipe[]
+  
+  @@unique([mealPlanId, date])
+  @@map("meal_plan_days")
+  @@schema("public")
+}
+
+model MealPlanRecipe {
+  id                String              @id @default(cuid())
+  mealPlanId        String
+  mealPlanDayId     String?
+  recipeId          String
+  
+  // Meal details
+  mealType          MealType
+  servings          Float               @default(1)
+  scheduledTime     DateTime?
+  
+  // Customizations
+  modifications     Json?               // Recipe modifications
+  substitutions     Json?               // Ingredient substitutions
+  
+  // Tracking
+  completed         Boolean             @default(false)
+  completedAt       DateTime?
+  rating            Int?                // 1-5 stars
+  notes             String?
+  
+  // Relations
+  mealPlan          MealPlan            @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  mealPlanDay       MealPlanDay?        @relation(fields: [mealPlanDayId], references: [id], onDelete: Cascade)
+  recipe            Recipe              @relation(fields: [recipeId], references: [id])
+  
+  @@map("meal_plan_recipes")
+  @@schema("public")
+}
+
+// ===========================================
+// BIOMETRIC READINGS FOR CLINICAL DATA
+// ===========================================
+
+model BiometricReading {
+  id                String              @id @default(cuid())
+  userId            String
+  healthProfileId   String
+  
+  // Reading details
+  readingType       BiometricType
+  value             Float
+  unit              String
+  deviceId          String?
+  
+  // Context
+  takenAt           DateTime
+  conditions        Json?               // Fasting, post-meal, etc.
+  notes             String?
+  
+  // Data quality
+  confidence        Float?              @default(1.0)
+  isVerified        Boolean             @default(false)
+  verifiedBy        String?
+  
+  // Trend analysis
+  trendDirection    TrendDirection?
+  previousValue     Float?
+  percentageChange  Float?
+  
+  // Timestamps
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  healthProfile     HealthProfile       @relation(fields: [healthProfileId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, readingType, takenAt])
+  @@map("biometric_readings")
+  @@schema("healthcare")
+}
+
+// ===========================================
+// COMPREHENSIVE AUDIT LOGS FOR HIPAA
+// ===========================================
+
+model AuditLog {
+  id                String              @id @default(cuid())
+  tenantId          String
+  userId            String?
+  
+  // Action details
+  action            String
+  resourceType      String
+  resourceId        String?
+  
+  // Data changes (encrypted for PHI)
+  oldValues         Json?
+  newValues         Json?
+  
+  // Request context
+  ipAddress         String?
+  userAgent         String?
+  sessionId         String?
+  requestId         String?
+  
+  // Security context
+  riskScore         Float?              @default(0.0)
+  complianceFlags   String[]            @default([])
+  phiAccessed       Boolean             @default(false)
+  
+  // Geographic context
+  geolocation       Json?
+  timezone          String?
+  
+  // Performance tracking
+  executionTime     Int?                // Milliseconds
+  
+  // Timestamps
+  timestamp         DateTime            @default(now())
+  
+  // Relations
+  tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User?               @relation(fields: [userId], references: [id])
+  
+  @@index([tenantId, timestamp])
+  @@index([userId, timestamp])
+  @@index([action, timestamp])
+  @@index([phiAccessed, timestamp])
+  @@map("audit_logs")
+  @@schema("audit")
+}
+
+// ===========================================
+// API USAGE TRACKING FOR COST OPTIMIZATION
+// ===========================================
+
+model ApiUsageLog {
+  id                String              @id @default(cuid())
+  tenantId          String
+  userId            String?
+  
+  // API details
+  provider          ApiProvider
+  endpoint          String
+  method            String              @default("GET")
+  
+  // Cost tracking
+  requestCost       Float?
+  responseSize      Int?
+  cacheHit          Boolean             @default(false)
+  
+  // Performance
+  responseTime      Int?                // Milliseconds
+  statusCode        Int?
+  
+  // Error tracking
+  errorMessage      String?
+  errorCode         String?
+  
+  // Timestamps
+  timestamp         DateTime            @default(now())
+  
+  // Relations
+  tenant            Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId, provider, timestamp])
+  @@index([cacheHit, timestamp])
+  @@map("api_usage_logs")
+  @@schema("audit")
+}
+
+// ===========================================
+// ENUMS FOR TYPE SAFETY
+// ===========================================
+
+enum PlanType {
+  BASIC
+  ENHANCED
+  PREMIUM
+
+  @@schema("public")
+}
+
+enum HealthcareRole {
+  END_USER
+  CLINICAL_ADVISOR
+  SUPER_ADMIN
+
+  @@schema("healthcare")
+}
+
+enum SubscriptionTier {
+  BASIC
+  ENHANCED
+  PREMIUM
+
+  @@schema("public")
+}
+
+enum ConsentType {
+  MEDICAL_DISCLAIMER
+  DATA_PROCESSING
+  FAMILY_SHARING
+  CLINICAL_ADVICE
+  MARKETING_COMMUNICATIONS
+  DATA_RETENTION
+
+  @@schema("healthcare")
+}
+
+enum ConsentStatus {
+  PENDING
+  GRANTED
+  REVOKED
+  EXPIRED
+
+  @@schema("healthcare")
+}
+
+enum InteractionSeverity {
+  MINOR
+  MODERATE
+  MAJOR
+  CONTRAINDICATED
+
+  @@schema("clinical")
+}
+
+enum InteractionType {
+  DRUG_DRUG
+  DRUG_FOOD
+  DRUG_SUPPLEMENT
+  DRUG_CONDITION
+
+  @@schema("clinical")
+}
+
+enum EvidenceLevel {
+  HIGH
+  MEDIUM
+  LOW
+  EXPERT_CONSENSUS
+
+  @@schema("clinical")
+}
+
+enum AllergenCategory {
+  FOOD
+  DRUG
+  ENVIRONMENTAL
+  CONTACT
+  INSECT
+
+  @@schema("healthcare")
+}
+
+enum AllergySeverity {
+  MILD
+  MODERATE
+  SEVERE
+  ANAPHYLACTIC
+
+  @@schema("healthcare")
+}
+
+enum ClinicalRuleType {
+  DRUG_INTERACTION
+  ALLERGY_WARNING
+  CONDITION_RESTRICTION
+  DOSAGE_VALIDATION
+  THERAPEUTIC_GUIDELINE
+
+  @@schema("clinical")
+}
+
+enum RuleSeverity {
+  INFO
+  WARNING
+  CRITICAL
+  BLOCKING
+
+  @@schema("clinical")
+}
+
+enum FamilyRelationship {
+  PARENT
+  CHILD
+  SPOUSE
+  GUARDIAN
+  SIBLING
+  OTHER
+
+  @@schema("healthcare")
+}
+
+enum PermissionLevel {
+  FULL
+  LIMITED
+  VIEW_ONLY
+  EMERGENCY_ONLY
+
+  @@schema("healthcare")
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+  BEVERAGE
+
+  @@schema("public")
+}
+
+enum DietaryFlag {
+  VEGETARIAN
+  VEGAN
+  GLUTEN_FREE
+  DAIRY_FREE
+  NUT_FREE
+  LOW_SODIUM
+  LOW_CARB
+  KETO
+  PALEO
+  DIABETIC_FRIENDLY
+
+  @@schema("public")
+}
+
+enum RecipeComplexity {
+  SIMPLE
+  MEDIUM
+  COMPLEX
+
+  @@schema("public")
+}
+
+enum HealthGoal {
+  WEIGHT_LOSS
+  WEIGHT_GAIN
+  MUSCLE_BUILDING
+  HEART_HEALTH
+  DIABETES_MANAGEMENT
+  BLOOD_PRESSURE_CONTROL
+  CHOLESTEROL_MANAGEMENT
+
+  @@schema("healthcare")
+}
+
+enum BiometricType {
+  WEIGHT
+  HEIGHT
+  BLOOD_PRESSURE_SYSTOLIC
+  BLOOD_PRESSURE_DIASTOLIC
+  HEART_RATE
+  BLOOD_GLUCOSE
+  CHOLESTEROL_TOTAL
+  CHOLESTEROL_HDL
+  CHOLESTEROL_LDL
+  TRIGLYCERIDES
+  HBA1C
+  BMI
+  BODY_FAT_PERCENTAGE
+
+  @@schema("healthcare")
+}
+
+enum TrendDirection {
+  IMPROVING
+  STABLE
+  DECLINING
+  CRITICAL
+
+  @@schema("healthcare")
+}
+
+enum ApiProvider {
+  EDAMAM
+  GEMINI
+  MED_GEMINI
+  STRIPE
+  FIREBASE
+
+  @@schema("public")
+}
+
+// ===========================================
+// ADDITIONAL HEALTHCARE MODELS
+// ===========================================
+
+model DietaryRestriction {
+  id                String              @id @default(cuid())
+  healthProfileId   String
+  restriction       String
+  reason            RestrictionReason
+  strictness        StrictnessLevel
+  notes             String?
+  isActive          Boolean             @default(true)
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  healthProfile     HealthProfile       @relation(fields: [healthProfileId], references: [id], onDelete: Cascade)
+  
+  @@map("dietary_restrictions")
+  @@schema("healthcare")
+}
+
+model NutritionGoal {
+  id                String              @id @default(cuid())
+  healthProfileId   String
+  goalType          NutritionGoalType
+  targetValue       Float
+  unit              String
+  timeframe         GoalTimeframe
+  reason            String?
+  isActive          Boolean             @default(true)
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  healthProfile     HealthProfile       @relation(fields: [healthProfileId], references: [id], onDelete: Cascade)
+  
+  @@map("nutrition_goals")
+  @@schema("healthcare")
+}
+
+model ChronicCondition {
+  id                String              @id @default(cuid())
+  healthProfileId   String
+  condition         String
+  icd10Code         String?
+  diagnosedDate     DateTime?
+  severity          ConditionSeverity
+  managementNotes   String?
+  isActive          Boolean             @default(true)
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  healthProfile     HealthProfile       @relation(fields: [healthProfileId], references: [id], onDelete: Cascade)
+  
+  @@map("chronic_conditions")
+  @@schema("healthcare")
+}
+
+model LabValue {
+  id                String              @id @default(cuid())
+  healthProfileId   String
+  testName          String
+  value             Float
+  unit              String
+  referenceRange    String
+  status            LabStatus
+  dateCollected     DateTime
+  issuingLab        String?
+  notes             String?
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  healthProfile     HealthProfile       @relation(fields: [healthProfileId], references: [id], onDelete: Cascade)
+  
+  @@map("lab_values")
+  @@schema("healthcare")
+}
+
+model ClinicalReview {
+  id                    String              @id @default(cuid())
+  content               String
+  analysisResult        Json
+  submittedBy           String
+  priority              ReviewPriority
+  status                ReviewStatus        @default(PENDING)
+  
+  assignedAdvisor       String?
+  advisorDecision       String?
+  advisorNotes          String?
+  clinicalRecommendations String?
+  reviewedBy            String?
+  safetyRating          Int?
+  
+  submittedAt           DateTime            @default(now())
+  dueDate               DateTime
+  reviewedAt            DateTime?
+  updatedAt             DateTime            @updatedAt
+  
+  user                  User                @relation(fields: [submittedBy], references: [id])
+  
+  @@map("clinical_reviews")
+  @@schema("clinical")
+}
+
+model Subscription {
+  id                    String              @id @default(cuid())
+  familyAccountId       String
+  stripeSubscriptionId  String              @unique
+  tier                  SubscriptionTier
+  status                SubscriptionStatus
+  memberCount           Int
+  currentPeriodStart    DateTime
+  currentPeriodEnd      DateTime
+  gracePeriodActive     Boolean             @default(false)
+  criticalAccessEnabled Boolean             @default(true)
+  
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  familyAccount         FamilyAccount       @relation(fields: [familyAccountId], references: [id], onDelete: Cascade)
+  
+  @@map("subscriptions")
+  @@schema("public")
+}
+
+model RecipeReview {
+  id                String              @id @default(cuid())
+  recipeId          String
+  userId            String
+  rating            Int                 // 1-5 stars
+  comment           String?
+  helpful           Int                 @default(0)
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  recipe            Recipe              @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  
+  @@unique([recipeId, userId])
+  @@map("recipe_reviews")
+  @@schema("public")
+}
+
+// Additional enums
+enum RestrictionReason {
+  ALLERGY
+  MEDICAL
+  RELIGIOUS
+  PREFERENCE
+  INTOLERANCE
+
+  @@schema("healthcare")
+}
+
+enum StrictnessLevel {
+  STRICT
+  MODERATE
+  FLEXIBLE
+
+  @@schema("healthcare")
+}
+
+enum NutritionGoalType {
+  CALORIES
+  PROTEIN
+  CARBS
+  FAT
+  FIBER
+  SODIUM
+  SUGAR
+  CHOLESTEROL
+
+  @@schema("healthcare")
+}
+
+enum GoalTimeframe {
+  DAILY
+  WEEKLY
+  MONTHLY
+
+  @@schema("healthcare")
+}
+
+enum ConditionSeverity {
+  MILD
+  MODERATE
+  SEVERE
+  CRITICAL
+
+  @@schema("healthcare")
+}
+
+enum LabStatus {
+  NORMAL
+  ABNORMAL
+  CRITICAL
+  PENDING
+
+  @@schema("healthcare")
+}
+
+enum ReviewPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@schema("clinical")
+}
+
+enum ReviewStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  ESCALATED
+
+  @@schema("clinical")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+  TRIALING
+
+  @@schema("public")
+} 
