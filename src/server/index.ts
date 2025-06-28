@@ -45,7 +45,6 @@ const requiredEnvVars = [
   'REDIS_URL',
   'JWT_SECRET',
   'HEALTHCARE_ENCRYPTION_KEY',
-  'FIREBASE_PROJECT_ID'
 ];
 
 for (const envVar of requiredEnvVars) {

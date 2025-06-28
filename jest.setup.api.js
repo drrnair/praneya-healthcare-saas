@@ -56,51 +56,6 @@ jest.mock('@/lib/database/connection', () => ({
   getDBConnection: jest.fn(),
 }));
 
-// Mock Firebase Admin
-jest.mock('firebase-admin', () => ({
-  initializeApp: jest.fn(),
-  credential: {
-    cert: jest.fn(),
-  },
-  auth: jest.fn(() => ({
-    verifyIdToken: jest.fn(),
-    createCustomToken: jest.fn(),
-    setCustomUserClaims: jest.fn(),
-    getUser: jest.fn(),
-    createUser: jest.fn(),
-    updateUser: jest.fn(),
-    deleteUser: jest.fn(),
-  })),
-}));
-
-// Mock Stripe
-jest.mock('stripe', () => {
-  return jest.fn().mockImplementation(() => ({
-    customers: {
-      create: jest.fn(),
-      retrieve: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    },
-    subscriptions: {
-      create: jest.fn(),
-      retrieve: jest.fn(),
-      update: jest.fn(),
-      cancel: jest.fn(),
-    },
-    paymentMethods: {
-      attach: jest.fn(),
-      detach: jest.fn(),
-    },
-    webhooks: {
-      constructEvent: jest.fn(),
-    },
-    invoices: {
-      retrieve: jest.fn(),
-      pay: jest.fn(),
-    },
-  }));
-});
 
 // Mock external APIs
 jest.mock('@/lib/external-apis/edamam', () => ({

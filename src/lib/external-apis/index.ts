@@ -4,7 +4,7 @@
 // Centralized management for all external API integrations
 // Includes Firebase Auth, Stripe, Edamam Nutrition, Google AI
 
-export * from './clients/firebase-client';
+export * from './clients/supabase-client';
 export * from './clients/stripe-client';
 export * from './clients/edamam-client';
 export * from './clients/google-ai-client';
@@ -23,7 +23,7 @@ export const apiManager = new APIManager();
 
 // Health check endpoint data
 export interface ExternalAPIHealth {
-  firebase: 'healthy' | 'degraded' | 'unhealthy';
+  supabase: 'healthy' | 'degraded' | 'unhealthy';
   stripe: 'healthy' | 'degraded' | 'unhealthy';
   edamam: 'healthy' | 'degraded' | 'unhealthy';
   googleAI: 'healthy' | 'degraded' | 'unhealthy';
@@ -39,7 +39,7 @@ export async function checkExternalAPIHealth(): Promise<ExternalAPIHealth> {
   } catch (error) {
     console.error('External API health check failed:', error);
     return {
-      firebase: 'unhealthy',
+      supabase: 'unhealthy',
       stripe: 'unhealthy', 
       edamam: 'unhealthy',
       googleAI: 'unhealthy',

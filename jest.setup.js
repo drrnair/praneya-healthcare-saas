@@ -65,41 +65,6 @@ Object.defineProperty(global, 'crypto', {
   },
 });
 
-// Mock Firebase
-jest.mock('firebase-admin', () => ({
-  initializeApp: jest.fn(),
-  credential: {
-    cert: jest.fn(),
-  },
-  auth: () => ({
-    verifyIdToken: jest.fn(),
-    createCustomToken: jest.fn(),
-    setCustomUserClaims: jest.fn(),
-  }),
-}));
-
-// Mock environment variables
-process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
-process.env.JWT_SECRET = 'test-jwt-secret-32-characters-long';
-process.env.ENCRYPTION_KEY = 'test-encryption-key-32-chars-long';
-
-// Healthcare-specific test setup
-global.console = {
-  ...console,
-  // Suppress console.warn for HIPAA compliance warnings in tests
-  warn: jest.fn(),
-  log: jest.fn(),
-  error: jest.fn(),
-};
-
-// Mock external APIs
-global.fetch = jest.fn();
-
-// Setup and cleanup for each test
-beforeEach(() => {
-  jest.clearAllMocks();
-});
 
 afterEach(() => {
   jest.restoreAllMocks();

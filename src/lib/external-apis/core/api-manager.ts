@@ -1,4 +1,4 @@
-import { FirebaseClient } from '../clients/firebase-client';
+import { SupabaseClient } from '../clients/supabase-client';
 import { StripeClient } from '../clients/stripe-client';
 import { EdamamClient } from '../clients/edamam-client';
 import { GoogleAIClient } from '../clients/google-ai-client';
@@ -7,7 +7,7 @@ import { RateLimiter } from './rate-limiter';
 import { CostTracker } from './cost-tracker';
 
 export class APIManager {
-  private firebaseClient: FirebaseClient;
+  private supabaseClient: SupabaseClient;
   private stripeClient: StripeClient;
   private edamamClient: EdamamClient;
   private googleAIClient: GoogleAIClient;
@@ -28,11 +28,11 @@ export class APIManager {
       this.costTracker = new CostTracker();
 
       // Initialize API clients
-      this.firebaseClient = new FirebaseClient({
-        projectId: process.env.FIREBASE_PROJECT_ID!,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY!,
-      });
+          this.supabaseClient = new SupabaseClient({
+      url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      serviceKey: process.env.SUPABASE_SERVICE_KEY,
+    });
 
       this.stripeClient = new StripeClient({
         secretKey: process.env.STRIPE_SECRET_KEY!,
@@ -71,9 +71,9 @@ export class APIManager {
   }
 
   // Getters for individual clients
-  get firebase() {
+  get supabase() {
     if (!this.initialized) throw new Error('APIManager not initialized');
-    return this.firebaseClient;
+    return this.supabaseClient;
   }
 
   get stripe() {
@@ -106,7 +106,7 @@ export class APIManager {
   // Health check for all external APIs
   async performHealthCheck() {
     const results = {
-      firebase: 'unhealthy' as 'healthy' | 'degraded' | 'unhealthy',
+      supabase: 'unhealthy' as 'healthy' | 'degraded' | 'unhealthy',
       stripe: 'unhealthy' as 'healthy' | 'degraded' | 'unhealthy',
       edamam: 'unhealthy' as 'healthy' | 'degraded' | 'unhealthy',
       googleAI: 'unhealthy' as 'healthy' | 'degraded' | 'unhealthy',
@@ -115,12 +115,12 @@ export class APIManager {
     };
 
     try {
-      // Check Firebase
-      const firebaseHealth = await this.firebaseClient.healthCheck();
-      results.firebase = firebaseHealth ? 'healthy' : 'unhealthy';
+      // Check Supabase
+      const supabaseHealth = await this.supabaseClient.healthCheck();
+      results.supabase = supabaseHealth ? 'healthy' : 'unhealthy';
     } catch (error) {
-      console.error('Firebase health check failed:', error);
-      results.firebase = 'unhealthy';
+      console.error('Supabase health check failed:', error);
+      results.supabase = 'unhealthy';
     }
 
     try {
