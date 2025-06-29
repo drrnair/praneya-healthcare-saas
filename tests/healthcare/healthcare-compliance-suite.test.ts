@@ -8,32 +8,12 @@
  * @version 1.0.0
  */
 
-import { describe, test, expect, beforeEach, afterEach, beforeAll, afterAll } from '@jest/globals';
+import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import { Page, Browser, chromium } from 'playwright';
 import { PrismaClient } from '@prisma/client';
 import { createHash } from 'crypto';
 
-interface ConsentRecord {
-  userId: string;
-  disclaimerVersion: string;
-  timestamp: Date;
-  ipAddress: string;
-  deviceFingerprint: string;
-  consentType: 'basic' | 'enhanced' | 'premium';
-  additionalConsents: string[];
-}
 
-interface AuditLogEntry {
-  userId: string;
-  action: string;
-  resourceType: string;
-  resourceId: string;
-  timestamp: Date;
-  ipAddress: string;
-  userAgent: string;
-  success: boolean;
-  metadata?: any;
-}
 
 class HealthcareComplianceTestSuite {
   private browser: Browser;

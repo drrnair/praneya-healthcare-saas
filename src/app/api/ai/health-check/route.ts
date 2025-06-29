@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { GoogleAIClient } from "@/lib/external-apis/clients/google-ai-client";
 
 // Initialize Google AI client

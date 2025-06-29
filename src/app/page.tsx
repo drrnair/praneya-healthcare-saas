@@ -25,7 +25,7 @@ import { PricingSection } from '@/components/landing/PricingSection';
 export default function HomePage() {
   const [currentPersona, setCurrentPersona] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [userType, setUserType] = useState<'family' | 'fitness' | 'wellness'>('family');
+  const [_userType, _setUserType] = useState<'individual' | 'family' | 'provider'>('individual');
 
   // AI-Driven Personalization Content
   const personas = [

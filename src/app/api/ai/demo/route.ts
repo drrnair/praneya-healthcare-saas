@@ -208,9 +208,27 @@ export async function POST(request: NextRequest) {
           result: chatResponse
         });
 
+      case 'analyze-nutrition': {
+        const nutritionAnalysis = await googleAI.analyzeNutritionData(
+          params.nutritionData,
+          params.healthContext
+        );
+        return NextResponse.json(nutritionAnalysis);
+      }
+
+      case 'generate-recipe': {
+        const recipe = await googleAI.generateRecipeRecommendation(params);
+        return NextResponse.json(recipe);
+      }
+
+      case 'health-advice': {
+        const advice = await googleAI.generateHealthcareContent(params);
+        return NextResponse.json(advice);
+      }
+
       default:
         return NextResponse.json(
-          { error: "Invalid demo_type. Use 'recipe', 'nutrition', or 'chat'" },
+          { error: "Invalid demo_type. Use 'recipe', 'nutrition', 'chat', 'analyze-nutrition', 'generate-recipe', or 'health-advice'" },
           { status: 400 }
         );
     }

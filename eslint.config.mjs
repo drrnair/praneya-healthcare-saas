@@ -46,6 +46,9 @@ export default [
         HTMLImageElement: 'readonly',
         HTMLLinkElement: 'readonly',
         HTMLSpanElement: 'readonly',
+        HTMLHeadingElement: 'readonly',
+        HTMLParagraphElement: 'readonly',
+        SVGSVGElement: 'readonly',
         Event: 'readonly',
         KeyboardEvent: 'readonly',
         CustomEvent: 'readonly',
@@ -94,6 +97,28 @@ export default [
         beforeAll: 'readonly',
         afterAll: 'readonly',
         jest: 'readonly',
+        
+        // Path module for Node.js
+        path: 'readonly',
+        
+        // Additional missing globals
+        MouseEvent: 'readonly',
+        TouchEvent: 'readonly',
+        alert: 'readonly',
+        
+        // Type definitions that are referenced
+        HealthMetric: 'readonly',
+        NutritionData: 'readonly',
+        FamilyMember: 'readonly',
+        AccessibilityManager: 'readonly',
+        
+        // Database functions
+        initializeDatabase: 'readonly',
+        initializeRedis: 'readonly',
+        healthCheck: 'readonly',
+        healthCheckRedis: 'readonly',
+        closeDatabase: 'readonly',
+        closeRedis: 'readonly',
       },
     },
     plugins: {

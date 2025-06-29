@@ -48,6 +48,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true'
 });
 
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Performance optimizations
@@ -83,7 +85,7 @@ const nextConfig = {
   },
 
   // Webpack optimization for healthcare dependencies
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config, { _buildId, _dev, _isServer, _defaultLoaders, _webpack }) => {
     // Healthcare-specific optimizations
     config.optimization = {
       ...config.optimization,

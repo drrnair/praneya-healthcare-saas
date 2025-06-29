@@ -92,7 +92,7 @@ const nextConfig = {
   },
   
   // Webpack configuration optimized for Netlify
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config, { _buildId, dev, isServer, _defaultLoaders, _webpack }) => {
     // Add custom webpack rules
     config.module.rules.push({
       test: /\.svg$/,

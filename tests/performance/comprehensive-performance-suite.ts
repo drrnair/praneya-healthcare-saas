@@ -578,26 +578,6 @@ describe('⚡ Comprehensive Performance Testing Suite', () => {
       }
     }, 300000); // 5 minute timeout for load testing
 
-    async simulateUserSession(userId: number): Promise<void> {
-      // Simulate typical user session: login, dashboard, recipe search, logout
-      const userActions = [
-        `${testSuite.API_BASE_URL}/api/auth/login`,
-        `${testSuite.API_BASE_URL}/api/dashboard/summary`,
-        `${testSuite.API_BASE_URL}/api/recipes/search`,
-        `${testSuite.API_BASE_URL}/api/auth/logout`
-      ];
-
-      for (const action of userActions) {
-        await axios.get(action, {
-          headers: { 'X-Test-User-Id': userId.toString() },
-          timeout: 10000
-        });
-        
-        // Small delay between actions
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-    }
-
     test('💪 Stress Testing Scenarios', async () => {
       const stressScenarios = [
         { name: 'Peak Usage Simulation', type: 'traffic-spike' },
