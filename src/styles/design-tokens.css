@@ -11,30 +11,30 @@
    * ========================================== */
   
   /* Primary Colors - Trust & Clinical Accuracy */
-  --color-primary-50: #f0fdff;
-  --color-primary-100: #ccfbf1;
-  --color-primary-200: #99f6e4;
-  --color-primary-300: #5eead4;
-  --color-primary-400: #2dd4bf;
-  --color-primary-500: #0891b2; /* Trustworthy Teal - Primary */
-  --color-primary-600: #0e7490;
-  --color-primary-700: #155e75;
-  --color-primary-800: #164e63;
-  --color-primary-900: #134e4a;
-  --color-primary-950: #042f2e;
+  --color-primary-50: #E3F2FD;
+  --color-primary-100: #BBDEFB;
+  --color-primary-200: #90CAF9;
+  --color-primary-300: #64B5F6;
+  --color-primary-400: #42A5F5;
+  --color-primary-500: #007BFF; /* Deep Medical Blue - Primary */
+  --color-primary-600: #1976D2;
+  --color-primary-700: #1565C0;
+  --color-primary-800: #0D47A1;
+  --color-primary-900: #0A369D;
+  --color-primary-950: #052859;
 
   /* Secondary Colors - Wellness & Growth */
-  --color-secondary-50: #f0fdf4;
-  --color-secondary-100: #dcfce7;
-  --color-secondary-200: #bbf7d0;
-  --color-secondary-300: #86efac;
-  --color-secondary-400: #4ade80;
-  --color-secondary-500: #10b981; /* Healing Green - Secondary */
-  --color-secondary-600: #059669;
-  --color-secondary-700: #047857;
-  --color-secondary-800: #065f46;
-  --color-secondary-900: #064e3b;
-  --color-secondary-950: #022c22;
+  --color-secondary-50: #E8F6EC;
+  --color-secondary-100: #C5E9D0;
+  --color-secondary-200: #9FDAB1;
+  --color-secondary-300: #79CB92;
+  --color-secondary-400: #5DC07A;
+  --color-secondary-500: #52B265; /* Fresh Mint - Secondary */
+  --color-secondary-600: #4BAB5E;
+  --color-secondary-700: #42A254;
+  --color-secondary-800: #39994A;
+  --color-secondary-900: #2A8939;
+  --color-secondary-950: #1A5A26;
 
   /* Accent Colors - Energy & Motivation */
   --color-accent-50: #fffbeb;
@@ -50,54 +50,103 @@
   --color-accent-950: #451a03;
 
   /* Semantic Colors - Clinical Communication */
-  --color-success-50: #f0fdf4;
-  --color-success-100: #dcfce7;
-  --color-success-200: #bbf7d0;
-  --color-success-300: #86efac;
-  --color-success-400: #4ade80;
-  --color-success-500: #22c55e; /* Nurturing Green */
-  --color-success-600: #16a34a;
-  --color-success-700: #15803d;
-  --color-success-800: #166534;
-  --color-success-900: #14532d;
-  --color-success-950: #052e16;
+  --color-success-50: #E8F5E8;
+  --color-success-100: #C8E6C9;
+  --color-success-200: #A5D6A7;
+  --color-success-300: #81C784;
+  --color-success-400: #66BB6A;
+  --color-success-500: #28A745; /* Nurturing Green */
+  --color-success-600: #43A047;
+  --color-success-700: #388E3C;
+  --color-success-800: #2E7D32;
+  --color-success-900: #1B5E20;
+  --color-success-950: #0D3E10;
 
-  --color-warning-50: #fffbeb;
-  --color-warning-100: #fef3c7;
-  --color-warning-200: #fde68a;
-  --color-warning-300: #fcd34d;
-  --color-warning-400: #fbbf24;
-  --color-warning-500: #f59e0b; /* Mindful Amber */
-  --color-warning-600: #d97706;
-  --color-warning-700: #b45309;
-  --color-warning-800: #92400e;
-  --color-warning-900: #78350f;
-  --color-warning-950: #451a03;
+  --color-warning-50: #FFF8E1;
+  --color-warning-100: #FFECB3;
+  --color-warning-200: #FFE082;
+  --color-warning-300: #FFD54F;
+  --color-warning-400: #FFCA28;
+  --color-warning-500: #FFC107; /* Mindful Amber */
+  --color-warning-600: #FFB300;
+  --color-warning-700: #FFA000;
+  --color-warning-800: #FF8F00;
+  --color-warning-900: #FF6F00;
+  --color-warning-950: #CC5500;
 
-  --color-error-50: #fef2f2;
-  --color-error-100: #fee2e2;
-  --color-error-200: #fecaca;
-  --color-error-300: #fca5a5;
-  --color-error-400: #f87171;
-  --color-error-500: #ef4444; /* Compassionate Red */
-  --color-error-600: #dc2626;
-  --color-error-700: #b91c1c;
-  --color-error-800: #991b1b;
-  --color-error-900: #7f1d1d;
-  --color-error-950: #450a0a;
+  --color-error-50: #FFEBEE;
+  --color-error-100: #FFCDD2;
+  --color-error-200: #EF9A9A;
+  --color-error-300: #E57373;
+  --color-error-400: #EF5350;
+  --color-error-500: #F44336; /* Compassionate Red */
+  --color-error-600: #E53935;
+  --color-error-700: #D32F2F;
+  --color-error-800: #C62828;
+  --color-error-900: #B71C1C;
+  --color-error-950: #8B0000;
 
   /* Neutral Colors - Calming & Sophisticated */
-  --color-neutral-50: #f8fafc;   /* Calming Light */
-  --color-neutral-100: #f1f5f9;
-  --color-neutral-200: #e2e8f0;
-  --color-neutral-300: #cbd5e1;
-  --color-neutral-400: #94a3b8;
-  --color-neutral-500: #64748b;  /* Professional Gray */
-  --color-neutral-600: #475569;
-  --color-neutral-700: #334155;
-  --color-neutral-800: #1e293b;  /* Sophisticated Dark */
-  --color-neutral-900: #0f172a;
-  --color-neutral-950: #020617;
+  --color-neutral-0: #FFFFFF;    /* Pure White */
+  --color-neutral-50: #FAFAFA;   /* Calming Light */
+  --color-neutral-100: #F5F5F5;
+  --color-neutral-200: #EEEEEE;
+  --color-neutral-300: #E0E0E0;
+  --color-neutral-400: #BDBDBD;
+  --color-neutral-500: #9E9E9E;
+  --color-neutral-600: #6C757D;  /* Warm Professional Gray */
+  --color-neutral-700: #616161;
+  --color-neutral-800: #424242;  /* Sophisticated Dark */
+  --color-neutral-900: #212121;
+  --color-neutral-950: #121212;
+
+  /* Accent Colors - Additional Healthcare Palette */
+  --color-accent-sage-50: #F0F7ED;
+  --color-accent-sage-100: #DAEBD2;
+  --color-accent-sage-200: #C2DEB4;
+  --color-accent-sage-300: #AAD197; /* Soft Sage */
+  --color-accent-sage-400: #A1D297;
+  --color-accent-sage-500: #92C67F;
+  --color-accent-sage-600: #84BA71;
+  --color-accent-sage-700: #73AC61;
+  --color-accent-sage-800: #639E51;
+  --color-accent-sage-900: #4A8A3A;
+
+  /* Copper Colors - Warmth & Authenticity */
+  --color-copper-50: #FDF4F0;
+  --color-copper-100: #FAE3DA;
+  --color-copper-200: #F6D1C2;
+  --color-copper-300: #F2BEAA;
+  --color-copper-400: #EFAC98;
+  --color-copper-500: #C27133; /* Earthy Copper */
+  --color-copper-600: #B8682F;
+  --color-copper-700: #AD5E2A;
+  --color-copper-800: #A35426;
+  --color-copper-900: #924621;
+
+  /* Forest Colors - Stability & Trust */
+  --color-forest-50: #E8F2EF;
+  --color-forest-100: #C5DFD7;
+  --color-forest-200: #9FCABC;
+  --color-forest-300: #79B5A1;
+  --color-forest-400: #5DA68D;
+  --color-forest-500: #346152; /* Deep Forest */
+  --color-forest-600: #2F594B;
+  --color-forest-700: #285043;
+  --color-forest-800: #21483C;
+  --color-forest-900: #153D2F;
+
+  /* Info Colors - Medical Info Blue */
+  --color-info-50: #E1F5FE;
+  --color-info-100: #B3E5FC;
+  --color-info-200: #81D4FA;
+  --color-info-300: #4FC3F7;
+  --color-info-400: #29B6F6;
+  --color-info-500: #03A9F4;
+  --color-info-600: #039BE5;
+  --color-info-700: #0288D1;
+  --color-info-800: #0277BD;
+  --color-info-900: #01579B;
 
   /* ==========================================
    * SHADOW SYSTEM - DEPTH & HIERARCHY
@@ -114,6 +163,32 @@
   --shadow-dialog: var(--shadow-modal);
   --shadow-tooltip: var(--shadow-floating);
   --shadow-dropdown: var(--shadow-floating);
+  
+  /* Enhanced Healthcare Shadows */
+  --shadow-healthcare-card: 0 8px 32px rgba(0, 123, 255, 0.12);
+  --shadow-healthcare-hover: 0 12px 40px rgba(0, 123, 255, 0.18);
+  --shadow-wellness-glow: 0 8px 32px rgba(40, 167, 69, 0.15);
+  --shadow-energy-glow: 0 8px 32px rgba(255, 193, 7, 0.15);
+  
+  /* ==========================================
+   * GRADIENT SYSTEM - MODERN HEALTHCARE AESTHETICS
+   * ========================================== */
+  
+  /* Primary Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
+  --gradient-primary-soft: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-primary-100) 100%);
+  
+  /* Wellness Gradients */
+  --gradient-wellness: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-secondary-500) 100%);
+  --gradient-wellness-soft: linear-gradient(135deg, var(--color-success-50) 0%, var(--color-secondary-50) 100%);
+  
+  /* Energy Gradients */
+  --gradient-energy: linear-gradient(135deg, var(--color-warning-500) 0%, var(--color-copper-500) 100%);
+  --gradient-energy-soft: linear-gradient(135deg, var(--color-warning-50) 0%, var(--color-copper-50) 100%);
+  
+  /* Hero Section Gradients */
+  --gradient-hero-overlay: linear-gradient(135deg, rgba(0, 123, 255, 0.08) 0%, rgba(40, 167, 69, 0.05) 100%);
+  --gradient-hero-text: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
 
   /* ==========================================
    * TYPOGRAPHY SYSTEM
@@ -336,5 +411,409 @@
     --shadow-raised: none;
     --shadow-floating: none;
     --shadow-modal: none;
+  }
+}
+
+/* 
+=======================================================================
+PRANEYA HEALTHCARE DESIGN SYSTEM 2025
+=======================================================================
+A comprehensive design system for healthcare applications featuring:
+- AI-driven personalization support
+- Micro-interaction foundations  
+- Neuroscience-based cognitive load reduction
+- Accessibility-first WCAG 2.1 AA compliance
+- Sustainable and ethical design principles
+=======================================================================
+*/
+
+:root {
+  /* ======================
+     PRIMARY COLOR PALETTE
+     ====================== */
+  
+  /* Deep Medical Blue - Trust & Professionalism */
+  --color-primary-50: #E3F2FD;
+  --color-primary-100: #BBDEFB;
+  --color-primary-200: #90CAF9;
+  --color-primary-300: #64B5F6;
+  --color-primary-400: #42A5F5;
+  --color-primary-500: #007BFF; /* Main Brand */
+  --color-primary-600: #1976D2;
+  --color-primary-700: #1565C0;
+  --color-primary-800: #0D47A1;
+  --color-primary-900: #0A369D;
+
+  /* Healing Green - Wellness & Growth */
+  --color-success-50: #E8F5E8;
+  --color-success-100: #C8E6C9;
+  --color-success-200: #A5D6A7;
+  --color-success-300: #81C784;
+  --color-success-400: #66BB6A;
+  --color-success-500: #28A745; /* Main Success */
+  --color-success-600: #43A047;
+  --color-success-700: #388E3C;
+  --color-success-800: #2E7D32;
+  --color-success-900: #1B5E20;
+
+  /* Warm Amber - Energy & Optimism */
+  --color-warning-50: #FFF8E1;
+  --color-warning-100: #FFECB3;
+  --color-warning-200: #FFE082;
+  --color-warning-300: #FFD54F;
+  --color-warning-400: #FFCA28;
+  --color-warning-500: #FFC107; /* Main Warning */
+  --color-warning-600: #FFB300;
+  --color-warning-700: #FFA000;
+  --color-warning-800: #FF8F00;
+  --color-warning-900: #FF6F00;
+
+  /* ======================
+     SECONDARY COLOR PALETTE
+     ====================== */
+
+  /* Fresh Mint - Calm & Natural */
+  --color-secondary-50: #E8F6EC;
+  --color-secondary-100: #C5E9D0;
+  --color-secondary-200: #9FDAB1;
+  --color-secondary-300: #79CB92;
+  --color-secondary-400: #5DC07A;
+  --color-secondary-500: #52B265; /* Main Secondary */
+  --color-secondary-600: #4BAB5E;
+  --color-secondary-700: #42A254;
+  --color-secondary-800: #39994A;
+  --color-secondary-900: #2A8939;
+
+  /* Soft Sage - Balance & Harmony */
+  --color-accent-50: #F0F7ED;
+  --color-accent-100: #DAEBD2;
+  --color-accent-200: #C2DEB4;
+  --color-accent-300: #AAD197; /* Soft Sage */
+  --color-accent-400: #A1D297;
+  --color-accent-500: #92C67F;
+  --color-accent-600: #84BA71;
+  --color-accent-700: #73AC61;
+  --color-accent-800: #639E51;
+  --color-accent-900: #4A8A3A;
+
+  /* Earthy Copper - Warmth & Authenticity */
+  --color-copper-50: #FDF4F0;
+  --color-copper-100: #FAE3DA;
+  --color-copper-200: #F6D1C2;
+  --color-copper-300: #F2BEAA;
+  --color-copper-400: #EFAC98;
+  --color-copper-500: #C27133; /* Main Copper */
+  --color-copper-600: #B8682F;
+  --color-copper-700: #AD5E2A;
+  --color-copper-800: #A35426;
+  --color-copper-900: #924621;
+
+  /* ======================
+     NEUTRAL PALETTE
+     ====================== */
+
+  /* Clean White & Grays */
+  --color-neutral-0: #FFFFFF; /* Pure White */
+  --color-neutral-50: #FAFAFA;
+  --color-neutral-100: #F5F5F5;
+  --color-neutral-200: #EEEEEE;
+  --color-neutral-300: #E0E0E0;
+  --color-neutral-400: #BDBDBD;
+  --color-neutral-500: #9E9E9E;
+  --color-neutral-600: #6C757D; /* Warm Gray */
+  --color-neutral-700: #616161;
+  --color-neutral-800: #424242;
+  --color-neutral-900: #212121;
+
+  /* Deep Forest - Stability & Trust */
+  --color-forest-50: #E8F2EF;
+  --color-forest-100: #C5DFD7;
+  --color-forest-200: #9FCABC;
+  --color-forest-300: #79B5A1;
+  --color-forest-400: #5DA68D;
+  --color-forest-500: #346152; /* Main Forest */
+  --color-forest-600: #2F594B;
+  --color-forest-700: #285043;
+  --color-forest-800: #21483C;
+  --color-forest-900: #153D2F;
+
+  /* ======================
+     HEALTHCARE SEMANTIC COLORS
+     ====================== */
+
+  /* Error States - Medical Alert Red */
+  --color-error-50: #FFEBEE;
+  --color-error-100: #FFCDD2;
+  --color-error-200: #EF9A9A;
+  --color-error-300: #E57373;
+  --color-error-400: #EF5350;
+  --color-error-500: #F44336;
+  --color-error-600: #E53935;
+  --color-error-700: #D32F2F;
+  --color-error-800: #C62828;
+  --color-error-900: #B71C1C;
+
+  /* Information States - Medical Info Blue */
+  --color-info-50: #E1F5FE;
+  --color-info-100: #B3E5FC;
+  --color-info-200: #81D4FA;
+  --color-info-300: #4FC3F7;
+  --color-info-400: #29B6F6;
+  --color-info-500: #03A9F4;
+  --color-info-600: #039BE5;
+  --color-info-700: #0288D1;
+  --color-info-800: #0277BD;
+  --color-info-900: #01579B;
+
+  /* ======================
+     TYPOGRAPHY SCALE
+     ====================== */
+
+  /* Font Families */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-secondary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Font Sizes - Healthcare Optimized Scale */
+  --text-xs: 0.625rem;    /* 10px */
+  --text-sm: 0.75rem;     /* 12px */
+  --text-base: 0.875rem;  /* 14px - Base reading size */
+  --text-lg: 1rem;        /* 16px - Comfortable reading */
+  --text-xl: 1.125rem;    /* 18px */
+  --text-2xl: 1.25rem;    /* 20px */
+  --text-3xl: 1.5rem;     /* 24px */
+  --text-4xl: 1.875rem;   /* 30px */
+  --text-5xl: 2.25rem;    /* 36px */
+  --text-6xl: 3rem;       /* 48px */
+  --text-7xl: 3.75rem;    /* 60px */
+  --text-8xl: 4.5rem;     /* 72px */
+
+  /* Line Heights - Cognitive Load Optimized */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  /* ======================
+     SPACING SYSTEM
+     ====================== */
+
+  /* Neuroscience-based spacing for cognitive load reduction */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;  /* 2px */
+  --space-1: 0.25rem;     /* 4px */
+  --space-1-5: 0.375rem;  /* 6px */
+  --space-2: 0.5rem;      /* 8px */
+  --space-2-5: 0.625rem;  /* 10px */
+  --space-3: 0.75rem;     /* 12px */
+  --space-3-5: 0.875rem;  /* 14px */
+  --space-4: 1rem;        /* 16px */
+  --space-5: 1.25rem;     /* 20px */
+  --space-6: 1.5rem;      /* 24px */
+  --space-7: 1.75rem;     /* 28px */
+  --space-8: 2rem;        /* 32px */
+  --space-9: 2.25rem;     /* 36px */
+  --space-10: 2.5rem;     /* 40px */
+  --space-11: 2.75rem;    /* 44px */
+  --space-12: 3rem;       /* 48px */
+  --space-14: 3.5rem;     /* 56px */
+  --space-16: 4rem;       /* 64px */
+  --space-20: 5rem;       /* 80px */
+  --space-24: 6rem;       /* 96px */
+  --space-28: 7rem;       /* 112px */
+  --space-32: 8rem;       /* 128px */
+  --space-36: 9rem;       /* 144px */
+  --space-40: 10rem;      /* 160px */
+  --space-44: 11rem;      /* 176px */
+  --space-48: 12rem;      /* 192px */
+  --space-52: 13rem;      /* 208px */
+  --space-56: 14rem;      /* 224px */
+  --space-60: 15rem;      /* 240px */
+  --space-64: 16rem;      /* 256px */
+  --space-72: 18rem;      /* 288px */
+  --space-80: 20rem;      /* 320px */
+  --space-96: 24rem;      /* 384px */
+
+  /* ======================
+     SHADOW SYSTEM
+     ====================== */
+
+  /* Elevation shadows for depth perception */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-2xl: 0 50px 100px -20px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  /* Healthcare-specific shadows */
+  --shadow-healthcare-card: 0 4px 12px rgba(0, 123, 255, 0.08), 0 2px 4px rgba(0, 123, 255, 0.04);
+  --shadow-healthcare-hover: 0 8px 24px rgba(0, 123, 255, 0.12), 0 4px 8px rgba(0, 123, 255, 0.06);
+  --shadow-healthcare-focus: 0 0 0 3px rgba(0, 123, 255, 0.1);
+
+  /* ======================
+     BORDER RADIUS SYSTEM
+     ====================== */
+
+  --radius-none: 0;
+  --radius-sm: 0.125rem;   /* 2px */
+  --radius-base: 0.25rem;  /* 4px */
+  --radius-md: 0.375rem;   /* 6px */
+  --radius-lg: 0.5rem;     /* 8px */
+  --radius-xl: 0.75rem;    /* 12px */
+  --radius-2xl: 1rem;      /* 16px */
+  --radius-3xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+
+  /* Healthcare-specific radius */
+  --radius-healthcare-card: 0.75rem;
+  --radius-healthcare-button: 0.5rem;
+  --radius-healthcare-input: 0.375rem;
+
+  /* ======================
+     ANIMATION & TRANSITIONS
+     ====================== */
+
+  /* Duration */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+
+  /* Easing Functions - Neuroscience-optimized */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-healthcare: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-micro-interaction: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* ======================
+     ACCESSIBILITY FEATURES
+     ====================== */
+
+  /* Focus indicators */
+  --focus-ring: 0 0 0 3px var(--color-primary-100);
+  --focus-ring-error: 0 0 0 3px var(--color-error-100);
+  --focus-ring-success: 0 0 0 3px var(--color-success-100);
+
+  /* High contrast mode support */
+  --border-contrast: var(--color-neutral-300);
+  --text-contrast: var(--color-neutral-900);
+  --bg-contrast: var(--color-neutral-0);
+
+  /* ======================
+     BREAKPOINT VARIABLES
+     ====================== */
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* ======================
+     Z-INDEX SCALE
+     ====================== */
+
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-auto: auto;
+
+  /* Application-specific z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+}
+
+/* ======================
+   DARK MODE SUPPORT
+   ====================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode color adjustments */
+    --color-neutral-0: #1a1a1a;
+    --color-neutral-50: #262626;
+    --color-neutral-100: #404040;
+    --color-neutral-200: #525252;
+    --color-neutral-300: #737373;
+    --color-neutral-400: #a3a3a3;
+    --color-neutral-500: #d4d4d4;
+    --color-neutral-600: #e5e5e5;
+    --color-neutral-700: #f5f5f5;
+    --color-neutral-800: #fafafa;
+    --color-neutral-900: #ffffff;
+
+    /* Adjust shadows for dark mode */
+    --shadow-healthcare-card: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+    --shadow-healthcare-hover: 0 8px 24px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ======================
+   REDUCED MOTION SUPPORT
+   ====================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-75: 0ms;
+    --duration-100: 0ms;
+    --duration-150: 0ms;
+    --duration-200: 0ms;
+    --duration-300: 0ms;
+    --duration-500: 0ms;
+    --duration-700: 0ms;
+    --duration-1000: 0ms;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ======================
+   HIGH CONTRAST MODE
+   ====================== */
+
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary-500: #0056CC;
+    --color-success-500: #006400;
+    --color-warning-500: #B8860B;
+    --color-error-500: #CC0000;
+    --border-contrast: #000000;
+    --text-contrast: #000000;
   }
 } 

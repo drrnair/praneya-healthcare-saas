@@ -8,12 +8,12 @@ import { ProgressCardProps, AnimationConfig, ProgressAnimationConfig } from '../
 // Default animation configurations
 const progressAnimations: ProgressAnimationConfig = {
   duration: 1.5,
-  ease: [0.25, 0.46, 0.45, 0.94],
+  ease: [0.25, 0.46, 0.45, 0.94] as any,
   strokeWidth: 8,
   trailWidth: 4,
   circleTransition: {
     duration: 2,
-    ease: [0.4, 0, 0.2, 1],
+    ease: [0.4, 0, 0.2, 1] as any,
   },
   celebrationConfig: {
     scale: [1, 1.2, 1],
@@ -27,11 +27,11 @@ const celebrationVariants = {
   visible: { 
     scale: 1, 
     opacity: 1,
-    transition: { duration: 0.5, ease: "backOut" }
+    transition: { duration: 0.5, ease: "backOut" as any }
   },
   celebration: {
     scale: [1, 1.3, 1.1, 1],
-    transition: { duration: 0.8, ease: "easeInOut" }
+    transition: { duration: 0.8, ease: "easeInOut" as any }
   }
 };
 
@@ -45,7 +45,7 @@ const particleVariants = {
     transition: {
       duration: 1.5,
       delay: i * 0.1,
-      ease: "easeOut"
+      ease: "easeOut" as any
     }
   })
 };
@@ -133,7 +133,7 @@ export function ProgressCard({
     if (showAnimation && prevProgressRef.current !== currentProgress) {
       progressControls.start({
         strokeDashoffset,
-        transition: progressAnimations.circleTransition
+        transition: progressAnimations.circleTransition as any
       });
       prevProgressRef.current = currentProgress;
     }
@@ -343,14 +343,14 @@ export function ProgressCard({
       </div>
 
       {/* Recent readings indicator */}
-      {recentReadings.length > 0 && (
+      {recentReadings && recentReadings.length > 0 && (
         <div className="mt-4 pt-4 border-t border-neutral-200">
           <div className="flex items-center justify-between">
             <span className="text-xs text-neutral-500">
-              Recent: {recentReadings[0].value} {recentReadings[0].unit}
+              Recent: {recentReadings[0]?.value} {recentReadings[0]?.unit}
             </span>
             <span className="text-xs text-neutral-400">
-              {new Date(recentReadings[0].recordedAt).toLocaleDateString()}
+              {recentReadings[0]?.recordedAt && new Date(recentReadings[0].recordedAt).toLocaleDateString()}
             </span>
           </div>
         </div>
