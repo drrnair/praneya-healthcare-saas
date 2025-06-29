@@ -29,22 +29,12 @@ const nextConfig = {
     ],
   },
 
-  // Disable TypeScript checking for faster build
+  // Temporarily disable TypeScript and ESLint errors for deployment
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
-  },
-  experimental: {
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
   },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,

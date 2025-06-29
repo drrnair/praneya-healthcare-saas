@@ -1,18 +1,19 @@
 /**
  * PRANEYA HEALTHCARE SAAS - HIPAA COMPLIANCE TEST SUITE
- * 
+ *
  * Comprehensive HIPAA compliance testing including PHI protection, audit trails,
  * breach notification, access controls, and healthcare data handling.
- * 
+ *
  * @version 2.0.0
  * @author Praneya Healthcare Team
  * @compliance HIPAA, HITECH Act, 45 CFR Parts 160 and 164
  */
 
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+// import { describe, it, expect, beforeEach, afterEach } from '@jest/globals'; // Commented out unused imports
 import { performance } from 'perf_hooks';
 import * as crypto from 'crypto';
-import MockDataGenerator, { MockUser, SubscriptionTier, HealthCondition } from './mock-data-generators';
+import MockDataGenerator from './mock-data-generators';
+// Commented out unused types: MockUser, SubscriptionTier, HealthCondition
 
 // HIPAA Compliance Interfaces
 export interface HIPAAComplianceTestResult {
@@ -32,14 +33,19 @@ export interface HIPAAViolation {
   violationType: ViolationType;
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
-  cfr_reference: string;  // 45 CFR reference
+  cfr_reference: string; // 45 CFR reference
   remediation: string;
   potentialFine: number;
   breachRisk: boolean;
 }
 
 export interface Evidence {
-  type: 'screenshot' | 'log' | 'configuration' | 'audit_trail' | 'documentation';
+  type:
+    | 'screenshot'
+    | 'log'
+    | 'configuration'
+    | 'audit_trail'
+    | 'documentation';
   filename: string;
   description: string;
   timestamp: Date;
@@ -51,7 +57,7 @@ export enum HIPAACategory {
   TECHNICAL_SAFEGUARDS = 'technical_safeguards',
   BREACH_NOTIFICATION = 'breach_notification',
   PATIENT_RIGHTS = 'patient_rights',
-  MINIMUM_NECESSARY = 'minimum_necessary'
+  MINIMUM_NECESSARY = 'minimum_necessary',
 }
 
 export enum ViolationType {
@@ -60,7 +66,7 @@ export enum ViolationType {
   MISSING_AUDIT_TRAIL = 'missing_audit_trail',
   INADEQUATE_ACCESS_CONTROLS = 'inadequate_access_controls',
   BREACH_NOTIFICATION_FAILURE = 'breach_notification_failure',
-  PATIENT_RIGHTS_VIOLATION = 'patient_rights_violation'
+  PATIENT_RIGHTS_VIOLATION = 'patient_rights_violation',
 }
 
 export class HIPAAComplianceTestSuite {
@@ -78,7 +84,7 @@ export class HIPAAComplianceTestSuite {
       database: process.env.TEST_DATABASE_URL,
       api_base_url: process.env.TEST_API_BASE_URL || 'http://localhost:3000',
       audit_log_enabled: true,
-      phi_encryption_enabled: true
+      phi_encryption_enabled: true,
     };
   }
 
@@ -87,8 +93,8 @@ export class HIPAAComplianceTestSuite {
    */
   async runComprehensiveHIPAATests(): Promise<HIPAAComplianceTestResult[]> {
     console.log('\n🏥 HIPAA COMPLIANCE TEST SUITE - STARTING');
-    console.log('=' .repeat(60));
-    
+    console.log('='.repeat(60));
+
     await this.testAdministrativeSafeguards();
     await this.testTechnicalSafeguards();
     await this.testBreachNotification();
@@ -97,7 +103,7 @@ export class HIPAAComplianceTestSuite {
 
     console.log('\n🏥 HIPAA COMPLIANCE TEST SUITE - COMPLETED');
     this.generateComplianceReport();
-    
+
     return this.testResults;
   }
 
@@ -106,17 +112,17 @@ export class HIPAAComplianceTestSuite {
    */
   private async testAdministrativeSafeguards(): Promise<void> {
     console.log('\n📋 Testing Administrative Safeguards (45 CFR 164.308)');
-    
+
     await this.executeHIPAATest({
       testName: 'Security Officer Assignment',
       category: HIPAACategory.ADMINISTRATIVE_SAFEGUARDS,
-      testFunction: this.testSecurityOfficerAssignment.bind(this)
+      testFunction: this.testSecurityOfficerAssignment.bind(this),
     });
 
     await this.executeHIPAATest({
       testName: 'Workforce Training Documentation',
       category: HIPAACategory.ADMINISTRATIVE_SAFEGUARDS,
-      testFunction: this.testWorkforceTraining.bind(this)
+      testFunction: this.testWorkforceTraining.bind(this),
     });
   }
 
@@ -129,13 +135,13 @@ export class HIPAAComplianceTestSuite {
     await this.executeHIPAATest({
       testName: 'PHI Encryption Validation',
       category: HIPAACategory.TECHNICAL_SAFEGUARDS,
-      testFunction: this.testPHIEncryption.bind(this)
+      testFunction: this.testPHIEncryption.bind(this),
     });
 
     await this.executeHIPAATest({
       testName: 'Access Control Implementation',
       category: HIPAACategory.TECHNICAL_SAFEGUARDS,
-      testFunction: this.testAccessControl.bind(this)
+      testFunction: this.testAccessControl.bind(this),
     });
   }
 
@@ -148,7 +154,7 @@ export class HIPAAComplianceTestSuite {
     await this.executeHIPAATest({
       testName: 'Breach Detection Mechanisms',
       category: HIPAACategory.BREACH_NOTIFICATION,
-      testFunction: this.testBreachDetection.bind(this)
+      testFunction: this.testBreachDetection.bind(this),
     });
   }
 
@@ -161,7 +167,7 @@ export class HIPAAComplianceTestSuite {
     await this.executeHIPAATest({
       testName: 'Patient Right to Access PHI',
       category: HIPAACategory.PATIENT_RIGHTS,
-      testFunction: this.testPatientAccessRight.bind(this)
+      testFunction: this.testPatientAccessRight.bind(this),
     });
   }
 
@@ -174,7 +180,7 @@ export class HIPAAComplianceTestSuite {
     await this.executeHIPAATest({
       testName: 'Internal Minimum Necessary Controls',
       category: HIPAACategory.MINIMUM_NECESSARY,
-      testFunction: this.testInternalMinimumNecessary.bind(this)
+      testFunction: this.testInternalMinimumNecessary.bind(this),
     });
   }
 
@@ -188,13 +194,13 @@ export class HIPAAComplianceTestSuite {
   }): Promise<void> {
     const testId = `hipaa-${testConfig.category}-${Date.now()}`;
     const startTime = performance.now();
-    
+
     console.log(`  🧪 ${testConfig.testName}`);
-    
+
     try {
       const testResult = await testConfig.testFunction();
       const duration = performance.now() - startTime;
-      
+
       const hipaaResult: HIPAAComplianceTestResult = {
         testId,
         testName: testConfig.testName,
@@ -205,21 +211,22 @@ export class HIPAAComplianceTestSuite {
         recommendations: testResult.recommendations || [],
         evidenceCollected: testResult.evidence || [],
         duration: Math.round(duration),
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       this.testResults.push(hipaaResult);
-      
+
       const status = testResult.passed ? '✅ COMPLIANT' : '❌ NON-COMPLIANT';
       const score = `(${testResult.complianceScore}%)`;
       console.log(`     ${status} ${score}`);
-      
+
       if (testResult.violations && testResult.violations.length > 0) {
         testResult.violations.forEach((violation: HIPAAViolation) => {
-          console.log(`     ⚠️  ${violation.severity.toUpperCase()}: ${violation.description}`);
+          console.log(
+            `     ⚠️  ${violation.severity.toUpperCase()}: ${violation.description}`
+          );
         });
       }
-
     } catch (error) {
       console.log(`     ❌ TEST ERROR: ${error.message}`);
     }
@@ -231,7 +238,7 @@ export class HIPAAComplianceTestSuite {
     let complianceScore = 100;
 
     const securityOfficerExists = await this.checkSecurityOfficerRole();
-    
+
     if (!securityOfficerExists) {
       violations.push({
         violationType: ViolationType.INADEQUATE_ACCESS_CONTROLS,
@@ -240,7 +247,7 @@ export class HIPAAComplianceTestSuite {
         cfr_reference: '45 CFR 164.308(a)(2)',
         remediation: 'Designate and document a security officer role',
         potentialFine: 25000,
-        breachRisk: false
+        breachRisk: false,
       });
       complianceScore -= 50;
     }
@@ -249,14 +256,19 @@ export class HIPAAComplianceTestSuite {
       passed: violations.length === 0,
       complianceScore,
       violations,
-      evidence: [{
-        type: 'documentation',
-        filename: 'security-officer-assignment.pdf',
-        description: 'Security officer assignment documentation',
-        timestamp: new Date(),
-        hash: this.generateEvidenceHash('security-officer-assignment')
-      }],
-      recommendations: violations.length > 0 ? ['Implement security officer role and training'] : []
+      evidence: [
+        {
+          type: 'documentation',
+          filename: 'security-officer-assignment.pdf',
+          description: 'Security officer assignment documentation',
+          timestamp: new Date(),
+          hash: this.generateEvidenceHash('security-officer-assignment'),
+        },
+      ],
+      recommendations:
+        violations.length > 0
+          ? ['Implement security officer role and training']
+          : [],
     };
   }
 
@@ -266,7 +278,10 @@ export class HIPAAComplianceTestSuite {
   }
 
   private generateEvidenceHash(content: string): string {
-    return crypto.createHash('sha256').update(content + Date.now()).digest('hex');
+    return crypto
+      .createHash('sha256')
+      .update(content + Date.now())
+      .digest('hex');
   }
 
   // Placeholder implementations
@@ -300,21 +315,32 @@ export class HIPAAComplianceTestSuite {
   private generateComplianceReport(): void {
     const totalTests = this.testResults.length;
     const passedTests = this.testResults.filter(r => r.passed).length;
-    const averageComplianceScore = this.testResults.reduce((sum, r) => sum + r.complianceScore, 0) / totalTests;
-    const totalViolations = this.testResults.reduce((sum, r) => sum + r.violations.length, 0);
-    const criticalViolations = this.testResults.reduce((sum, r) => 
-      sum + r.violations.filter(v => v.severity === 'critical').length, 0
+    const averageComplianceScore =
+      this.testResults.reduce((sum, r) => sum + r.complianceScore, 0) /
+      totalTests;
+    const totalViolations = this.testResults.reduce(
+      (sum, r) => sum + r.violations.length,
+      0
+    );
+    const criticalViolations = this.testResults.reduce(
+      (sum, r) =>
+        sum + r.violations.filter(v => v.severity === 'critical').length,
+      0
     );
 
     console.log('\n📊 HIPAA COMPLIANCE REPORT');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
     console.log(`Total Tests: ${totalTests}`);
     console.log(`Passed Tests: ${passedTests}`);
     console.log(`Failed Tests: ${totalTests - passedTests}`);
-    console.log(`Average Compliance Score: ${averageComplianceScore.toFixed(1)}%`);
+    console.log(
+      `Average Compliance Score: ${averageComplianceScore.toFixed(1)}%`
+    );
     console.log(`Total Violations: ${totalViolations}`);
     console.log(`Critical Violations: ${criticalViolations}`);
-    console.log(`Overall Status: ${criticalViolations === 0 && averageComplianceScore >= 95 ? '✅ COMPLIANT' : '❌ NON-COMPLIANT'}`);
+    console.log(
+      `Overall Status: ${criticalViolations === 0 && averageComplianceScore >= 95 ? '✅ COMPLIANT' : '❌ NON-COMPLIANT'}`
+    );
   }
 }
 

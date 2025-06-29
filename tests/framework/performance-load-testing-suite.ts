@@ -1,18 +1,22 @@
 /**
  * PRANEYA HEALTHCARE SAAS - PERFORMANCE & LOAD TESTING SUITE
- * 
+ *
  * Comprehensive performance testing including load testing, stress testing,
  * API response times, database performance, and scalability validation.
- * 
+ *
  * @version 2.0.0
  * @author Praneya Healthcare Team
  * @features Performance monitoring, Load testing, Stress testing, Scalability
  */
 
 import { performance } from 'perf_hooks';
-import * as http from 'http';
-import * as https from 'https';
-import MockDataGenerator, { MockUser, SubscriptionTier, HealthCondition } from './mock-data-generators';
+// import * as http from 'http';  // Commented out unused import
+// import * as https from 'https'; // Commented out unused import
+import MockDataGenerator, {
+  MockUser,
+  SubscriptionTier,
+  HealthCondition,
+} from './mock-data-generators';
 
 // Performance Testing Interfaces
 export interface PerformanceTestResult {
@@ -63,14 +67,14 @@ export enum PerformanceCategory {
   DATABASE_PERFORMANCE = 'database_performance',
   LOAD_TESTING = 'load_testing',
   STRESS_TESTING = 'stress_testing',
-  SCALABILITY_TESTING = 'scalability_testing'
+  SCALABILITY_TESTING = 'scalability_testing',
 }
 
 export class PerformanceLoadTestingSuite {
   private mockDataGenerator: MockDataGenerator;
   private testResults: PerformanceTestResult[] = [];
   private baseUrl: string;
-  
+
   // Performance thresholds for healthcare application
   private readonly PERFORMANCE_THRESHOLDS: PerformanceThresholds = {
     maxResponseTime: 2000, // 2 seconds for API responses
@@ -79,7 +83,7 @@ export class PerformanceLoadTestingSuite {
     maxCpuUsage: 80, // maximum 80% CPU usage
     maxMemoryUsage: 85, // maximum 85% memory usage
     maxDatabaseQueryTime: 500, // maximum 500ms for database queries
-    maxConcurrentUsers: 1000 // must handle 1000+ concurrent users
+    maxConcurrentUsers: 1000, // must handle 1000+ concurrent users
   };
 
   constructor(baseUrl: string = 'http://localhost:3000') {
@@ -92,36 +96,44 @@ export class PerformanceLoadTestingSuite {
    */
   async runPerformanceTests(): Promise<PerformanceTestResult[]> {
     console.log('\n⚡ PERFORMANCE & LOAD TESTING SUITE - STARTING');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log(`🎯 Testing against: ${this.baseUrl}`);
     console.log(`📊 Performance Criteria:`);
-    console.log(`   • Max API Response Time: ${this.PERFORMANCE_THRESHOLDS.maxResponseTime}ms`);
-    console.log(`   • Min Throughput: ${this.PERFORMANCE_THRESHOLDS.minThroughput} req/s`);
-    console.log(`   • Max Error Rate: ${this.PERFORMANCE_THRESHOLDS.maxErrorRate}%`);
-    console.log(`   • Max Concurrent Users: ${this.PERFORMANCE_THRESHOLDS.maxConcurrentUsers}`);
-    console.log('=' .repeat(60));
+    console.log(
+      `   • Max API Response Time: ${this.PERFORMANCE_THRESHOLDS.maxResponseTime}ms`
+    );
+    console.log(
+      `   • Min Throughput: ${this.PERFORMANCE_THRESHOLDS.minThroughput} req/s`
+    );
+    console.log(
+      `   • Max Error Rate: ${this.PERFORMANCE_THRESHOLDS.maxErrorRate}%`
+    );
+    console.log(
+      `   • Max Concurrent Users: ${this.PERFORMANCE_THRESHOLDS.maxConcurrentUsers}`
+    );
+    console.log('='.repeat(60));
 
     // Frontend Performance Testing
     await this.testFrontendPerformance();
-    
+
     // API Performance Testing
     await this.testAPIPerformance();
-    
+
     // Database Performance Testing
     await this.testDatabasePerformance();
-    
+
     // Load Testing
     await this.testLoadCapacity();
-    
+
     // Stress Testing
     await this.testStressCapacity();
-    
+
     // Scalability Testing
     await this.testScalability();
 
     console.log('\n⚡ PERFORMANCE & LOAD TESTING SUITE - COMPLETED');
     this.generatePerformanceReport();
-    
+
     return this.testResults;
   }
 
@@ -135,21 +147,21 @@ export class PerformanceLoadTestingSuite {
     await this.executePerformanceTest({
       testName: 'Page Load Performance',
       category: PerformanceCategory.FRONTEND_PERFORMANCE,
-      testFunction: this.testPageLoadTimes.bind(this)
+      testFunction: this.testPageLoadTimes.bind(this),
     });
 
     // Test Progressive Web App performance
     await this.executePerformanceTest({
       testName: 'PWA Performance',
       category: PerformanceCategory.FRONTEND_PERFORMANCE,
-      testFunction: this.testPWAPerformance.bind(this)
+      testFunction: this.testPWAPerformance.bind(this),
     });
 
     // Test mobile responsiveness
     await this.executePerformanceTest({
       testName: 'Mobile Performance',
       category: PerformanceCategory.FRONTEND_PERFORMANCE,
-      testFunction: this.testMobilePerformance.bind(this)
+      testFunction: this.testMobilePerformance.bind(this),
     });
   }
 
@@ -163,28 +175,28 @@ export class PerformanceLoadTestingSuite {
     await this.executePerformanceTest({
       testName: 'AI Recipe Generation API',
       category: PerformanceCategory.API_PERFORMANCE,
-      testFunction: this.testAIRecipeGenerationPerformance.bind(this)
+      testFunction: this.testAIRecipeGenerationPerformance.bind(this),
     });
 
     // Test family management endpoints
     await this.executePerformanceTest({
       testName: 'Family Management API',
       category: PerformanceCategory.API_PERFORMANCE,
-      testFunction: this.testFamilyManagementPerformance.bind(this)
+      testFunction: this.testFamilyManagementPerformance.bind(this),
     });
 
     // Test health data endpoints
     await this.executePerformanceTest({
       testName: 'Health Data API',
       category: PerformanceCategory.API_PERFORMANCE,
-      testFunction: this.testHealthDataPerformance.bind(this)
+      testFunction: this.testHealthDataPerformance.bind(this),
     });
 
     // Test drug interaction endpoint
     await this.executePerformanceTest({
       testName: 'Drug Interaction API',
       category: PerformanceCategory.API_PERFORMANCE,
-      testFunction: this.testDrugInteractionPerformance.bind(this)
+      testFunction: this.testDrugInteractionPerformance.bind(this),
     });
   }
 
@@ -198,21 +210,21 @@ export class PerformanceLoadTestingSuite {
     await this.executePerformanceTest({
       testName: 'Database Query Performance',
       category: PerformanceCategory.DATABASE_PERFORMANCE,
-      testFunction: this.testDatabaseQueryPerformance.bind(this)
+      testFunction: this.testDatabaseQueryPerformance.bind(this),
     });
 
     // Test connection pooling
     await this.executePerformanceTest({
       testName: 'Connection Pool Performance',
       category: PerformanceCategory.DATABASE_PERFORMANCE,
-      testFunction: this.testConnectionPoolPerformance.bind(this)
+      testFunction: this.testConnectionPoolPerformance.bind(this),
     });
 
     // Test complex queries
     await this.executePerformanceTest({
       testName: 'Complex Query Performance',
       category: PerformanceCategory.DATABASE_PERFORMANCE,
-      testFunction: this.testComplexQueryPerformance.bind(this)
+      testFunction: this.testComplexQueryPerformance.bind(this),
     });
   }
 
@@ -226,14 +238,14 @@ export class PerformanceLoadTestingSuite {
     await this.executePerformanceTest({
       testName: 'Concurrent User Load Test',
       category: PerformanceCategory.LOAD_TESTING,
-      testFunction: this.testConcurrentUserLoad.bind(this)
+      testFunction: this.testConcurrentUserLoad.bind(this),
     });
 
     // Test sustained load
     await this.executePerformanceTest({
       testName: 'Sustained Load Test',
       category: PerformanceCategory.LOAD_TESTING,
-      testFunction: this.testSustainedLoad.bind(this)
+      testFunction: this.testSustainedLoad.bind(this),
     });
   }
 
@@ -247,14 +259,14 @@ export class PerformanceLoadTestingSuite {
     await this.executePerformanceTest({
       testName: 'Peak Load Stress Test',
       category: PerformanceCategory.STRESS_TESTING,
-      testFunction: this.testPeakLoadStress.bind(this)
+      testFunction: this.testPeakLoadStress.bind(this),
     });
 
     // Test memory pressure
     await this.executePerformanceTest({
       testName: 'Memory Pressure Test',
       category: PerformanceCategory.STRESS_TESTING,
-      testFunction: this.testMemoryPressure.bind(this)
+      testFunction: this.testMemoryPressure.bind(this),
     });
   }
 
@@ -268,7 +280,7 @@ export class PerformanceLoadTestingSuite {
     await this.executePerformanceTest({
       testName: 'Horizontal Scaling Test',
       category: PerformanceCategory.SCALABILITY_TESTING,
-      testFunction: this.testHorizontalScaling.bind(this)
+      testFunction: this.testHorizontalScaling.bind(this),
     });
   }
 
@@ -282,17 +294,23 @@ export class PerformanceLoadTestingSuite {
   }): Promise<void> {
     const testId = `perf-${testConfig.category}-${Date.now()}`;
     const startTime = performance.now();
-    
+
     console.log(`  🧪 ${testConfig.testName}`);
-    
+
     try {
       const metrics = await testConfig.testFunction();
       const duration = performance.now() - startTime;
-      
+
       // Evaluate if test passed based on thresholds
-      const passed = this.evaluatePerformanceThresholds(metrics, testConfig.category);
-      const recommendations = this.generateRecommendations(metrics, testConfig.category);
-      
+      const passed = this.evaluatePerformanceThresholds(
+        metrics,
+        testConfig.category
+      );
+      const recommendations = this.generateRecommendations(
+        metrics,
+        testConfig.category
+      );
+
       const result: PerformanceTestResult = {
         testId,
         testName: testConfig.testName,
@@ -302,22 +320,27 @@ export class PerformanceLoadTestingSuite {
         thresholds: this.PERFORMANCE_THRESHOLDS,
         recommendations,
         duration: Math.round(duration),
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       this.testResults.push(result);
-      
+
       const status = passed ? '✅ PASSED' : '❌ FAILED';
       console.log(`     ${status} (${Math.round(duration)}ms)`);
-      console.log(`     📊 Response Time: ${metrics.responseTime}ms (max: ${this.PERFORMANCE_THRESHOLDS.maxResponseTime}ms)`);
-      console.log(`     🚀 Throughput: ${metrics.throughput} req/s (min: ${this.PERFORMANCE_THRESHOLDS.minThroughput})`);
-      console.log(`     ❌ Error Rate: ${metrics.errorRate}% (max: ${this.PERFORMANCE_THRESHOLDS.maxErrorRate}%)`);
-      
+      console.log(
+        `     📊 Response Time: ${metrics.responseTime}ms (max: ${this.PERFORMANCE_THRESHOLDS.maxResponseTime}ms)`
+      );
+      console.log(
+        `     🚀 Throughput: ${metrics.throughput} req/s (min: ${this.PERFORMANCE_THRESHOLDS.minThroughput})`
+      );
+      console.log(
+        `     ❌ Error Rate: ${metrics.errorRate}% (max: ${this.PERFORMANCE_THRESHOLDS.maxErrorRate}%)`
+      );
+
       if (!passed && recommendations.length > 0) {
         console.log(`     💡 Recommendations:`);
         recommendations.forEach(rec => console.log(`        • ${rec}`));
       }
-
     } catch (error) {
       console.log(`     ❌ TEST ERROR: ${error.message}`);
     }
@@ -325,15 +348,16 @@ export class PerformanceLoadTestingSuite {
 
   // Individual test implementations
   private async testPageLoadTimes(): Promise<PerformanceMetrics> {
-    const startTime = performance.now();
-    
+    // const startTime = performance.now(); // Commented out unused variable
+
     // Simulate page load testing
     const pageLoadTime = await this.measurePageLoad('/');
     const dashboardLoadTime = await this.measurePageLoad('/health/dashboard');
     const familyLoadTime = await this.measurePageLoad('/family-demo');
-    
-    const avgResponseTime = (pageLoadTime + dashboardLoadTime + familyLoadTime) / 3;
-    
+
+    const avgResponseTime =
+      (pageLoadTime + dashboardLoadTime + familyLoadTime) / 3;
+
     return {
       responseTime: avgResponseTime,
       throughput: 0, // Not applicable for page loads
@@ -345,18 +369,18 @@ export class PerformanceLoadTestingSuite {
         queryExecutionTime: 0,
         slowQueries: 0,
         lockWaitTime: 0,
-        deadlocks: 0
+        deadlocks: 0,
       },
       networkLatency: 50,
       concurrentUsers: 1,
-      requestsPerSecond: 0
+      requestsPerSecond: 0,
     };
   }
 
   private async testAIRecipeGenerationPerformance(): Promise<PerformanceMetrics> {
     const testUser = this.mockDataGenerator.generateMockUser({
       subscriptionTier: SubscriptionTier.PREMIUM,
-      healthConditions: [HealthCondition.DIABETES_TYPE_2]
+      healthConditions: [HealthCondition.DIABETES_TYPE_2],
     });
 
     // Simulate AI recipe generation requests
@@ -393,11 +417,11 @@ export class PerformanceLoadTestingSuite {
         queryExecutionTime: 150,
         slowQueries: 0,
         lockWaitTime: 10,
-        deadlocks: 0
+        deadlocks: 0,
       },
       networkLatency: 100,
       concurrentUsers: 1,
-      requestsPerSecond: throughput
+      requestsPerSecond: throughput,
     };
   }
 
@@ -405,11 +429,11 @@ export class PerformanceLoadTestingSuite {
     const concurrentUsers = 100;
     const requestsPerUser = 5;
     const startTime = performance.now();
-    
+
     // Generate concurrent users
-    const users = Array.from({ length: concurrentUsers }, () => 
+    const users = Array.from({ length: concurrentUsers }, () =>
       this.mockDataGenerator.generateMockUser({
-        subscriptionTier: SubscriptionTier.ENHANCED
+        subscriptionTier: SubscriptionTier.ENHANCED,
       })
     );
 
@@ -418,7 +442,7 @@ export class PerformanceLoadTestingSuite {
     let totalResponseTime = 0;
 
     // Simulate concurrent load
-    const userPromises = users.map(async (user) => {
+    const userPromises = users.map(async user => {
       for (let i = 0; i < requestsPerUser; i++) {
         try {
           const requestStart = performance.now();
@@ -438,7 +462,8 @@ export class PerformanceLoadTestingSuite {
     const totalTime = performance.now() - startTime;
     const avgResponseTime = totalResponseTime / successfulRequests;
     const throughput = (successfulRequests / totalTime) * 1000;
-    const errorRate = ((totalRequests - successfulRequests) / totalRequests) * 100;
+    const errorRate =
+      ((totalRequests - successfulRequests) / totalRequests) * 100;
 
     return {
       responseTime: avgResponseTime,
@@ -451,32 +476,38 @@ export class PerformanceLoadTestingSuite {
         queryExecutionTime: 200,
         slowQueries: 2,
         lockWaitTime: 50,
-        deadlocks: 1
+        deadlocks: 1,
       },
       networkLatency: 150,
       concurrentUsers,
-      requestsPerSecond: throughput
+      requestsPerSecond: throughput,
     };
   }
 
   // Helper methods for simulating requests
-  private async measurePageLoad(path: string): Promise<number> {
+  private async measurePageLoad(_path: string): Promise<number> {
     const startTime = performance.now();
-    
+
     // Simulate page load delay
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
-    
+    await new Promise(resolve =>
+      setTimeout(resolve, Math.random() * 1000 + 500)
+    );
+
     return performance.now() - startTime;
   }
 
-  private async simulateAIRecipeRequest(user: MockUser): Promise<void> {
+  private async simulateAIRecipeRequest(_user: MockUser): Promise<void> {
     // Simulate AI recipe generation delay (1-3 seconds)
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 2000 + 1000));
+    await new Promise(resolve =>
+      setTimeout(resolve, Math.random() * 2000 + 1000)
+    );
   }
 
-  private async simulateUserRequest(user: MockUser): Promise<void> {
+  private async simulateUserRequest(_user: MockUser): Promise<void> {
     // Simulate typical user request (100-500ms)
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 400 + 100));
+    await new Promise(resolve =>
+      setTimeout(resolve, Math.random() * 400 + 100)
+    );
   }
 
   // Placeholder implementations for remaining tests
@@ -546,24 +577,28 @@ export class PerformanceLoadTestingSuite {
         queryExecutionTime: Math.random() * 200 + 50,
         slowQueries: Math.floor(Math.random() * 5),
         lockWaitTime: Math.random() * 30,
-        deadlocks: Math.floor(Math.random() * 2)
+        deadlocks: Math.floor(Math.random() * 2),
       },
       networkLatency: Math.random() * 100 + 50,
       concurrentUsers: Math.floor(Math.random() * 200 + 50),
-      requestsPerSecond: throughput
+      requestsPerSecond: throughput,
     };
   }
 
   /**
    * Evaluate if performance metrics meet thresholds
    */
-  private evaluatePerformanceThresholds(metrics: PerformanceMetrics, category: PerformanceCategory): boolean {
+  private evaluatePerformanceThresholds(
+    metrics: PerformanceMetrics,
+    category: PerformanceCategory
+  ): boolean {
     const checks = [
       metrics.responseTime <= this.PERFORMANCE_THRESHOLDS.maxResponseTime,
-      metrics.throughput >= this.PERFORMANCE_THRESHOLDS.minThroughput || category === PerformanceCategory.FRONTEND_PERFORMANCE,
+      metrics.throughput >= this.PERFORMANCE_THRESHOLDS.minThroughput ||
+        category === PerformanceCategory.FRONTEND_PERFORMANCE,
       metrics.errorRate <= this.PERFORMANCE_THRESHOLDS.maxErrorRate,
       metrics.cpuUsage <= this.PERFORMANCE_THRESHOLDS.maxCpuUsage,
-      metrics.memoryUsage <= this.PERFORMANCE_THRESHOLDS.maxMemoryUsage
+      metrics.memoryUsage <= this.PERFORMANCE_THRESHOLDS.maxMemoryUsage,
     ];
 
     return checks.every(check => check);
@@ -572,31 +607,52 @@ export class PerformanceLoadTestingSuite {
   /**
    * Generate performance recommendations
    */
-  private generateRecommendations(metrics: PerformanceMetrics, category: PerformanceCategory): string[] {
+  private generateRecommendations(
+    metrics: PerformanceMetrics,
+    category: PerformanceCategory
+  ): string[] {
     const recommendations: string[] = [];
 
     if (metrics.responseTime > this.PERFORMANCE_THRESHOLDS.maxResponseTime) {
-      recommendations.push('Optimize API response times - consider caching, database indexing, or code optimization');
+      recommendations.push(
+        'Optimize API response times - consider caching, database indexing, or code optimization'
+      );
     }
 
-    if (metrics.throughput < this.PERFORMANCE_THRESHOLDS.minThroughput && category !== PerformanceCategory.FRONTEND_PERFORMANCE) {
-      recommendations.push('Improve throughput - consider load balancing, connection pooling, or horizontal scaling');
+    if (
+      metrics.throughput < this.PERFORMANCE_THRESHOLDS.minThroughput &&
+      category !== PerformanceCategory.FRONTEND_PERFORMANCE
+    ) {
+      recommendations.push(
+        'Improve throughput - consider load balancing, connection pooling, or horizontal scaling'
+      );
     }
 
     if (metrics.errorRate > this.PERFORMANCE_THRESHOLDS.maxErrorRate) {
-      recommendations.push('Reduce error rate - investigate and fix application errors');
+      recommendations.push(
+        'Reduce error rate - investigate and fix application errors'
+      );
     }
 
     if (metrics.cpuUsage > this.PERFORMANCE_THRESHOLDS.maxCpuUsage) {
-      recommendations.push('Optimize CPU usage - consider code optimization or scaling resources');
+      recommendations.push(
+        'Optimize CPU usage - consider code optimization or scaling resources'
+      );
     }
 
     if (metrics.memoryUsage > this.PERFORMANCE_THRESHOLDS.maxMemoryUsage) {
-      recommendations.push('Optimize memory usage - investigate memory leaks or increase available memory');
+      recommendations.push(
+        'Optimize memory usage - investigate memory leaks or increase available memory'
+      );
     }
 
-    if (metrics.databasePerformance.queryExecutionTime > this.PERFORMANCE_THRESHOLDS.maxDatabaseQueryTime) {
-      recommendations.push('Optimize database queries - add indexes, optimize queries, or consider query caching');
+    if (
+      metrics.databasePerformance.queryExecutionTime >
+      this.PERFORMANCE_THRESHOLDS.maxDatabaseQueryTime
+    ) {
+      recommendations.push(
+        'Optimize database queries - add indexes, optimize queries, or consider query caching'
+      );
     }
 
     return recommendations;
@@ -608,21 +664,37 @@ export class PerformanceLoadTestingSuite {
   private generatePerformanceReport(): void {
     const totalTests = this.testResults.length;
     const passedTests = this.testResults.filter(r => r.passed).length;
-    const avgResponseTime = this.testResults.reduce((sum, r) => sum + r.metrics.responseTime, 0) / totalTests;
-    const avgThroughput = this.testResults.reduce((sum, r) => sum + r.metrics.throughput, 0) / totalTests;
-    const avgErrorRate = this.testResults.reduce((sum, r) => sum + r.metrics.errorRate, 0) / totalTests;
-    const maxConcurrentUsers = Math.max(...this.testResults.map(r => r.metrics.concurrentUsers));
+    const avgResponseTime =
+      this.testResults.reduce((sum, r) => sum + r.metrics.responseTime, 0) /
+      totalTests;
+    const avgThroughput =
+      this.testResults.reduce((sum, r) => sum + r.metrics.throughput, 0) /
+      totalTests;
+    const avgErrorRate =
+      this.testResults.reduce((sum, r) => sum + r.metrics.errorRate, 0) /
+      totalTests;
+    const maxConcurrentUsers = Math.max(
+      ...this.testResults.map(r => r.metrics.concurrentUsers)
+    );
 
     console.log('\n📊 PERFORMANCE TEST REPORT');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
     console.log(`Total Tests: ${totalTests}`);
     console.log(`Passed Tests: ${passedTests}`);
     console.log(`Failed Tests: ${totalTests - passedTests}`);
-    console.log(`Average Response Time: ${avgResponseTime.toFixed(1)}ms (max: ${this.PERFORMANCE_THRESHOLDS.maxResponseTime}ms)`);
-    console.log(`Average Throughput: ${avgThroughput.toFixed(1)} req/s (min: ${this.PERFORMANCE_THRESHOLDS.minThroughput})`);
-    console.log(`Average Error Rate: ${avgErrorRate.toFixed(2)}% (max: ${this.PERFORMANCE_THRESHOLDS.maxErrorRate}%)`);
+    console.log(
+      `Average Response Time: ${avgResponseTime.toFixed(1)}ms (max: ${this.PERFORMANCE_THRESHOLDS.maxResponseTime}ms)`
+    );
+    console.log(
+      `Average Throughput: ${avgThroughput.toFixed(1)} req/s (min: ${this.PERFORMANCE_THRESHOLDS.minThroughput})`
+    );
+    console.log(
+      `Average Error Rate: ${avgErrorRate.toFixed(2)}% (max: ${this.PERFORMANCE_THRESHOLDS.maxErrorRate}%)`
+    );
     console.log(`Max Concurrent Users Tested: ${maxConcurrentUsers}`);
-    console.log(`Overall Performance: ${passedTests === totalTests ? '✅ EXCELLENT' : passedTests / totalTests >= 0.8 ? '⚠️ ACCEPTABLE' : '❌ NEEDS IMPROVEMENT'}`);
+    console.log(
+      `Overall Performance: ${passedTests === totalTests ? '✅ EXCELLENT' : passedTests / totalTests >= 0.8 ? '⚠️ ACCEPTABLE' : '❌ NEEDS IMPROVEMENT'}`
+    );
   }
 }
 

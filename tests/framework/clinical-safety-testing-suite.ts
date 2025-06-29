@@ -1,6 +1,6 @@
 /**
  * PRANEYA HEALTHCARE SAAS - CLINICAL SAFETY TESTING SUITE
- * 
+ *
  * Comprehensive clinical safety validation for healthcare features including:
  * - Medical content validation and accuracy
  * - Drug-food interaction screening
@@ -8,7 +8,7 @@
  * - Clinical decision support safety
  * - Emergency protocol testing
  * - Safety incident response validation
- * 
+ *
  * @compliance FDA 21 CFR Part 820, ISO 14155, ISO 13485
  * @version 2.0.0
  */
@@ -42,7 +42,7 @@ export enum ClinicalSafetyCategory {
   EMERGENCY_PROTOCOLS = 'emergency-protocols',
   SAFETY_INCIDENT_RESPONSE = 'safety-incident-response',
   CONTRAINDICATION_SCREENING = 'contraindication-screening',
-  DOSAGE_VALIDATION = 'dosage-validation'
+  DOSAGE_VALIDATION = 'dosage-validation',
 }
 
 export enum RiskLevel {
@@ -50,11 +50,16 @@ export enum RiskLevel {
   LOW = 'low',
   MODERATE = 'moderate',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export interface ClinicalFinding {
-  findingType: 'interaction' | 'allergy' | 'contraindication' | 'dosage' | 'safety';
+  findingType:
+    | 'interaction'
+    | 'allergy'
+    | 'contraindication'
+    | 'dosage'
+    | 'safety';
   severity: 'mild' | 'moderate' | 'severe' | 'life-threatening';
   description: string;
   recommendation: string;
@@ -65,7 +70,11 @@ export interface ClinicalFinding {
 export interface InteractionViolation {
   drugName: string;
   foodItem: string;
-  interactionType: 'absorption' | 'metabolism' | 'excretion' | 'pharmacodynamic';
+  interactionType:
+    | 'absorption'
+    | 'metabolism'
+    | 'excretion'
+    | 'pharmacodynamic';
   severity: 'mild' | 'moderate' | 'severe' | 'contraindicated';
   mechanism: string;
   clinicalSignificance: string;
@@ -93,7 +102,12 @@ export interface ClinicalSafetyMetrics {
 }
 
 export interface ClinicalEvidence {
-  evidenceType: 'research' | 'clinical-trial' | 'case-study' | 'guideline' | 'pharmacokinetic';
+  evidenceType:
+    | 'research'
+    | 'clinical-trial'
+    | 'case-study'
+    | 'guideline'
+    | 'pharmacokinetic';
   source: string;
   relevance: 'high' | 'medium' | 'low';
   qualityScore: number;
@@ -109,7 +123,7 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
     MIN_ALLERGEN_SENSITIVITY: 99.0, // 99% allergen detection sensitivity
     MAX_EMERGENCY_RESPONSE_TIME: 30, // 30 seconds max emergency response
     MIN_CLINICAL_RELEVANCE: 95.0, // 95% clinical relevance score
-    MIN_SAFETY_COMPLIANCE: 100.0 // 100% safety protocol compliance
+    MIN_SAFETY_COMPLIANCE: 100.0, // 100% safety protocol compliance
   };
 
   constructor() {
@@ -118,38 +132,39 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
   }
 
   async runClinicalSafetyTests(): Promise<ClinicalSafetyTestResult[]> {
-    console.log('\n🏥 CLINICAL SAFETY TESTING SUITE - Starting comprehensive validation');
+    console.log(
+      '\n🏥 CLINICAL SAFETY TESTING SUITE - Starting comprehensive validation'
+    );
     console.log(`🆔 Execution ID: ${this.executionId}`);
-    
+
     try {
       // Phase 1: Drug-Food Interaction Screening
       await this.testDrugInteractionScreening();
-      
+
       // Phase 2: Allergen Detection and Cross-Contamination
       await this.testAllergenDetection();
-      
+
       // Phase 3: Medical Content Validation
       await this.testMedicalContentValidation();
-      
+
       // Phase 4: Clinical Decision Support Safety
       await this.testClinicalDecisionSupport();
-      
+
       // Phase 5: Emergency Protocol Testing
       await this.testEmergencyProtocols();
-      
+
       // Phase 6: Safety Incident Response
       await this.testSafetyIncidentResponse();
-      
+
       // Phase 7: Contraindication Screening
       await this.testContraindicationScreening();
-      
+
       // Phase 8: Dosage Validation
       await this.testDosageValidation();
-      
+
       await this.generateClinicalSafetyReport();
-      
+
       return this.results;
-      
     } catch (error) {
       console.error('❌ CRITICAL CLINICAL SAFETY FAILURE:', error);
       await this.handleCriticalSafetyFailure(error);
@@ -160,29 +175,29 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
   private async testDrugInteractionScreening(): Promise<void> {
     console.log('\n🧬 Testing Drug-Food Interaction Screening...');
     const startTime = performance.now();
-    
+
     const testCases = [
       {
         name: 'Warfarin-Vitamin K Interaction',
         drug: 'warfarin',
         foods: ['kale', 'spinach', 'broccoli'],
         expectedSeverity: 'severe',
-        expectedMechanism: 'vitamin-k-antagonism'
+        expectedMechanism: 'vitamin-k-antagonism',
       },
       {
         name: 'Monoamine Oxidase Inhibitor-Tyramine',
         drug: 'phenelzine',
         foods: ['aged cheese', 'wine', 'fermented foods'],
         expectedSeverity: 'life-threatening',
-        expectedMechanism: 'tyramine-crisis'
+        expectedMechanism: 'tyramine-crisis',
       },
       {
         name: 'Calcium Channel Blocker-Grapefruit',
         drug: 'amlodipine',
         foods: ['grapefruit', 'grapefruit juice'],
         expectedSeverity: 'moderate',
-        expectedMechanism: 'cyp3a4-inhibition'
-      }
+        expectedMechanism: 'cyp3a4-inhibition',
+      },
     ];
 
     let passedTests = 0;
@@ -192,13 +207,23 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
     for (const testCase of testCases) {
       try {
         // Simulate interaction screening API call
-        const screeningResult = await this.simulateInteractionScreening(testCase.drug, testCase.foods);
-        
-        if (screeningResult.detected && screeningResult.severity === testCase.expectedSeverity) {
+        const screeningResult = await this.simulateInteractionScreening(
+          testCase.drug,
+          testCase.foods
+        );
+
+        if (
+          screeningResult.detected &&
+          screeningResult.severity === testCase.expectedSeverity
+        ) {
           passedTests++;
-          console.log(`  ✅ ${testCase.name} - Correctly identified ${screeningResult.severity} interaction`);
+          console.log(
+            `  ✅ ${testCase.name} - Correctly identified ${screeningResult.severity} interaction`
+          );
         } else {
-          console.log(`  ❌ ${testCase.name} - Failed to identify or incorrect severity`);
+          console.log(
+            `  ❌ ${testCase.name} - Failed to identify or incorrect severity`
+          );
           violations.push({
             drugName: testCase.drug,
             foodItem: testCase.foods.join(', '),
@@ -206,19 +231,19 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
             severity: screeningResult.severity || 'unknown',
             mechanism: testCase.expectedMechanism,
             clinicalSignificance: 'High - potential for adverse events',
-            monitoring: 'Enhanced clinical monitoring required'
+            monitoring: 'Enhanced clinical monitoring required',
           });
         }
-        
+
         findings.push({
           findingType: 'interaction',
           severity: testCase.expectedSeverity as any,
           description: `${testCase.drug} interaction with ${testCase.foods.join(', ')}`,
           recommendation: 'Avoid concurrent use or monitor closely',
-          clinicalEvidence: 'Published clinical studies demonstrate significant interaction',
-          riskMitigation: 'Patient education and dietary modification'
+          clinicalEvidence:
+            'Published clinical studies demonstrate significant interaction',
+          riskMitigation: 'Patient education and dietary modification',
         });
-        
       } catch (error) {
         console.error(`  ❌ ${testCase.name} - Test execution failed:`, error);
       }
@@ -226,7 +251,7 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
 
     const duration = performance.now() - startTime;
     const accuracy = (passedTests / testCases.length) * 100;
-    
+
     this.results.push({
       testId: `drug-interaction-${Date.now()}`,
       category: ClinicalSafetyCategory.DRUG_INTERACTION_SCREENING,
@@ -241,49 +266,50 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
         interactionScreeningAccuracy: accuracy,
         allergenDetectionSensitivity: 0,
         falsePositiveRate: 0,
-        falseNegativeRate: (testCases.length - passedTests) / testCases.length * 100,
+        falseNegativeRate:
+          ((testCases.length - passedTests) / testCases.length) * 100,
         clinicalRelevanceScore: 95.0,
         safetyProtocolCompliance: 100.0,
-        emergencyResponseTime: 0
+        emergencyResponseTime: 0,
       },
       evidenceDocuments: [],
       duration,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     this.emit('clinical-test-complete', {
       category: 'drug-interaction-screening',
       passed: accuracy >= this.SAFETY_THRESHOLDS.MIN_INTERACTION_ACCURACY,
-      accuracy
+      accuracy,
     });
   }
 
   private async testAllergenDetection(): Promise<void> {
     console.log('\n🥜 Testing Allergen Detection and Cross-Contamination...');
     const startTime = performance.now();
-    
+
     const allergenTestCases = [
       {
         name: 'Tree Nut Cross-Contamination',
         recipe: 'chocolate chip cookies',
         allergens: ['tree nuts', 'peanuts'],
         expectedDetection: true,
-        crossContamination: true
+        crossContamination: true,
       },
       {
         name: 'Shellfish Hidden Ingredients',
         recipe: 'fish sauce pasta',
         allergens: ['shellfish', 'fish'],
         expectedDetection: true,
-        crossContamination: false
+        crossContamination: false,
       },
       {
         name: 'Gluten-Free Validation',
         recipe: 'gluten-free bread',
         allergens: ['gluten', 'wheat'],
         expectedDetection: false,
-        crossContamination: false
-      }
+        crossContamination: false,
+      },
     ];
 
     let passedTests = 0;
@@ -292,14 +318,17 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
 
     for (const testCase of allergenTestCases) {
       try {
-        const detectionResult = await this.simulateAllergenDetection(testCase.recipe, testCase.allergens);
-        
+        const detectionResult = await this.simulateAllergenDetection(
+          testCase.recipe,
+          testCase.allergens
+        );
+
         if (detectionResult.detected === testCase.expectedDetection) {
           passedTests++;
           console.log(`  ✅ ${testCase.name} - Allergen detection accurate`);
         } else {
           console.log(`  ❌ ${testCase.name} - Allergen detection failed`);
-          
+
           incidents.push({
             allergen: testCase.allergens.join(', '),
             food: testCase.recipe,
@@ -307,19 +336,23 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
             severity: 'moderate',
             symptoms: ['hives', 'swelling', 'difficulty breathing'],
             treatmentProtocol: 'Antihistamines, epinephrine if severe',
-            preventionMeasures: ['Ingredient verification', 'Cross-contamination prevention']
+            preventionMeasures: [
+              'Ingredient verification',
+              'Cross-contamination prevention',
+            ],
           });
         }
-        
+
         findings.push({
           findingType: 'allergy',
           severity: 'moderate',
           description: `Potential allergen exposure in ${testCase.recipe}`,
           recommendation: 'Verify all ingredients and preparation methods',
-          clinicalEvidence: 'Documented allergen reactions in clinical literature',
-          riskMitigation: 'Alternative ingredient substitution and preparation protocols'
+          clinicalEvidence:
+            'Documented allergen reactions in clinical literature',
+          riskMitigation:
+            'Alternative ingredient substitution and preparation protocols',
         });
-        
       } catch (error) {
         console.error(`  ❌ ${testCase.name} - Test execution failed:`, error);
       }
@@ -327,7 +360,7 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
 
     const duration = performance.now() - startTime;
     const sensitivity = (passedTests / allergenTestCases.length) * 100;
-    
+
     this.results.push({
       testId: `allergen-detection-${Date.now()}`,
       category: ClinicalSafetyCategory.ALLERGEN_DETECTION,
@@ -342,20 +375,23 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
         interactionScreeningAccuracy: 0,
         allergenDetectionSensitivity: sensitivity,
         falsePositiveRate: 0,
-        falseNegativeRate: (allergenTestCases.length - passedTests) / allergenTestCases.length * 100,
+        falseNegativeRate:
+          ((allergenTestCases.length - passedTests) /
+            allergenTestCases.length) *
+          100,
         clinicalRelevanceScore: 98.0,
         safetyProtocolCompliance: 100.0,
-        emergencyResponseTime: 0
+        emergencyResponseTime: 0,
       },
       evidenceDocuments: [],
       duration,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     this.emit('clinical-test-complete', {
       category: 'allergen-detection',
       passed: sensitivity >= this.SAFETY_THRESHOLDS.MIN_ALLERGEN_SENSITIVITY,
-      sensitivity
+      sensitivity,
     });
   }
 
@@ -389,31 +425,56 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
     // Implementation for dosage validation
   }
 
-  private async simulateInteractionScreening(drug: string, foods: string[]): Promise<any> {
+  private async simulateInteractionScreening(
+    drug: string,
+    _foods: string[]
+  ): Promise<any> {
     // Simulate drug-food interaction screening API
     const interactions = {
-      'warfarin': { foods: ['kale', 'spinach', 'broccoli'], severity: 'severe', detected: true },
-      'phenelzine': { foods: ['aged cheese', 'wine'], severity: 'life-threatening', detected: true },
-      'amlodipine': { foods: ['grapefruit'], severity: 'moderate', detected: true }
+      warfarin: {
+        foods: ['kale', 'spinach', 'broccoli'],
+        severity: 'severe',
+        detected: true,
+      },
+      phenelzine: {
+        foods: ['aged cheese', 'wine'],
+        severity: 'life-threatening',
+        detected: true,
+      },
+      amlodipine: {
+        foods: ['grapefruit'],
+        severity: 'moderate',
+        detected: true,
+      },
     };
-    
+
     return interactions[drug] || { detected: false, severity: 'none' };
   }
 
-  private async simulateAllergenDetection(recipe: string, allergens: string[]): Promise<any> {
+  private async simulateAllergenDetection(
+    recipe: string,
+    _allergens: string[]
+  ): Promise<any> {
     // Simulate allergen detection API
     const recipeAllergens = {
-      'chocolate chip cookies': { allergens: ['tree nuts', 'peanuts'], detected: true },
+      'chocolate chip cookies': {
+        allergens: ['tree nuts', 'peanuts'],
+        detected: true,
+      },
       'fish sauce pasta': { allergens: ['shellfish', 'fish'], detected: true },
-      'gluten-free bread': { allergens: [], detected: false }
+      'gluten-free bread': { allergens: [], detected: false },
     };
-    
+
     return recipeAllergens[recipe] || { detected: false, allergens: [] };
   }
 
   private async generateClinicalSafetyReport(): Promise<void> {
-    const reportPath = path.join(process.cwd(), 'reports', `clinical-safety-report-${this.executionId}.json`);
-    
+    const reportPath = path.join(
+      process.cwd(),
+      'reports',
+      `clinical-safety-report-${this.executionId}.json`
+    );
+
     const report = {
       executionId: this.executionId,
       timestamp: new Date().toISOString(),
@@ -421,22 +482,29 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
       overallSafetyScore: this.calculateOverallSafetyScore(),
       criticalFindings: this.identifyCriticalFindings(),
       recommendations: this.generateSafetyRecommendations(),
-      complianceStatus: this.validateComplianceRequirements()
+      complianceStatus: this.validateComplianceRequirements(),
     };
-    
+
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
     console.log(`\n📊 Clinical Safety Report saved: ${reportPath}`);
   }
 
   private calculateOverallSafetyScore(): number {
     if (this.results.length === 0) return 0;
-    return this.results.reduce((sum, result) => sum + result.safetyScore, 0) / this.results.length;
+    return (
+      this.results.reduce((sum, result) => sum + result.safetyScore, 0) /
+      this.results.length
+    );
   }
 
   private identifyCriticalFindings(): ClinicalFinding[] {
     return this.results
       .flatMap(result => result.clinicalFindings)
-      .filter(finding => finding.severity === 'severe' || finding.severity === 'life-threatening');
+      .filter(
+        finding =>
+          finding.severity === 'severe' ||
+          finding.severity === 'life-threatening'
+      );
   }
 
   private generateSafetyRecommendations(): string[] {
@@ -444,7 +512,7 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
       'Implement continuous monitoring of drug-food interaction database',
       'Enhance allergen cross-contamination detection algorithms',
       'Establish real-time clinical decision support validation',
-      'Develop comprehensive emergency response protocols'
+      'Develop comprehensive emergency response protocols',
     ];
   }
 
@@ -453,14 +521,18 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
       fda21CFR820: true,
       iso14155: true,
       iso13485: true,
-      clinicalSafetyCompliance: this.calculateOverallSafetyScore() >= 95
+      clinicalSafetyCompliance: this.calculateOverallSafetyScore() >= 95,
     };
   }
 
   private async handleCriticalSafetyFailure(error: any): Promise<void> {
-    console.error('🚨 CRITICAL CLINICAL SAFETY FAILURE - Immediate attention required');
-    console.error('This failure could result in patient harm - production deployment blocked');
-    
+    console.error(
+      '🚨 CRITICAL CLINICAL SAFETY FAILURE - Immediate attention required'
+    );
+    console.error(
+      'This failure could result in patient harm - production deployment blocked'
+    );
+
     const emergencyReport = {
       timestamp: new Date().toISOString(),
       executionId: this.executionId,
@@ -471,15 +543,22 @@ export class ClinicalSafetyTestingSuite extends EventEmitter {
         'Block production deployment',
         'Notify clinical safety team',
         'Review all safety protocols',
-        'Conduct emergency safety assessment'
-      ]
+        'Conduct emergency safety assessment',
+      ],
     };
-    
-    const emergencyReportPath = path.join(process.cwd(), 'reports', `EMERGENCY-clinical-safety-${Date.now()}.json`);
-    fs.writeFileSync(emergencyReportPath, JSON.stringify(emergencyReport, null, 2));
-    
+
+    const emergencyReportPath = path.join(
+      process.cwd(),
+      'reports',
+      `EMERGENCY-clinical-safety-${Date.now()}.json`
+    );
+    fs.writeFileSync(
+      emergencyReportPath,
+      JSON.stringify(emergencyReport, null, 2)
+    );
+
     this.emit('critical-safety-failure', emergencyReport);
   }
 }
 
-export default ClinicalSafetyTestingSuite; 
+export default ClinicalSafetyTestingSuite;
