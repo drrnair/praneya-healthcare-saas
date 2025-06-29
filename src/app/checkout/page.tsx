@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Check, Shield, CreditCard, Lock, Star } from 'lucide-react';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
@@ -204,9 +204,9 @@ export default function CheckoutPage() {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                   placeholder="Enter your full name"
+                  required
                 />
               </div>
 
@@ -220,9 +220,9 @@ export default function CheckoutPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                  placeholder="Enter your email"
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                  placeholder="Enter your email address"
                 />
               </div>
 
@@ -236,9 +236,9 @@ export default function CheckoutPage() {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                   placeholder="Create a secure password"
+                  required
                 />
               </div>
 
@@ -252,71 +252,56 @@ export default function CheckoutPage() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
                   placeholder="Confirm your password"
+                  required
                 />
               </div>
 
-              {/* Payment Method */}
+              {/* Payment Method Placeholder */}
               <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
                   Payment Method
                 </h3>
-                
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-                  <div className="text-gray-600 mb-2">
-                    <CreditCard className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                    <div className="text-sm">Secure payment processing powered by Stripe</div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      Payment details will be collected on the next step
-                    </div>
-                  </div>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                  <p className="text-gray-600 mb-2">Payment integration coming soon</p>
+                  <p className="text-sm text-gray-500">For demo purposes, account will be created without payment</p>
                 </div>
-              </div>
-
-              {/* Terms */}
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  required
-                  className="mt-1 w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
-                />
-                <label htmlFor="terms" className="text-sm text-gray-600">
-                  I agree to the{' '}
-                  <Link href="/terms" className="text-teal-600 hover:text-teal-700 underline">
-                    Terms of Service
-                  </Link>
-                  {' '}and{' '}
-                  <Link href="/privacy" className="text-teal-600 hover:text-teal-700 underline">
-                    Privacy Policy
-                  </Link>
-                </label>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-teal-700 hover:to-cyan-700 transform transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-teal-500/50"
+                className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
               >
-                Start Your Free Trial
+                <Lock className="w-5 h-5" />
+                Create Account & Start Demo
               </button>
-            </form>
 
-            {/* Trial Info */}
-            <div className="mt-6 text-center text-sm text-gray-500">
-              <div className="bg-teal-50 border border-teal-200 rounded-lg p-3">
-                <div className="text-teal-700">
-                  🎉 <strong>7-day free trial</strong> • No charges until {' '}
-                  {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}
-                </div>
-              </div>
-            </div>
+              <p className="text-xs text-gray-500 text-center">
+                By creating an account, you agree to our Terms of Service and Privacy Policy.
+                Your data is protected with enterprise-grade security.
+              </p>
+            </form>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-teal-300 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading checkout...</p>
+        </div>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 } 
