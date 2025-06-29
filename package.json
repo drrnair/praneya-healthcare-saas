@@ -192,7 +192,6 @@
     "redis": "^4.6.12",
     "stripe": "^14.25.0",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
     "winston": "^3.17.0",
     "zod": "^3.22.4",
@@ -203,6 +202,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@netlify/plugin-nextjs": "^5.11.4",
     "@playwright/test": "^1.40.1",
+    "@tailwindcss/forms": "^0.5.10",
     "@types/bcrypt": "^5.0.2",
     "@types/bull": "^4.10.0",
     "@types/cors": "^2.8.19",
@@ -244,6 +244,7 @@
     "snyk": "^1.1000.0",
     "supertest": "^6.3.3",
     "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.7",
     "ts-jest": "^29.1.1",
     "tsx": "^4.6.2",
     "typescript": "^5.8.3"

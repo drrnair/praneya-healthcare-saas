@@ -9,743 +9,345 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Mobile-First CSS Variables */
-:root {
-  /* Custom viewport height for mobile devices */
-  --vh: 1vh;
-  
-  /* Safe area insets for devices with notches */
-  --safe-area-inset-top: env(safe-area-inset-top);
-  --safe-area-inset-right: env(safe-area-inset-right);
-  --safe-area-inset-bottom: env(safe-area-inset-bottom);
-  --safe-area-inset-left: env(safe-area-inset-left);
-  
-  /* Touch-optimized sizing */
-  --touch-target-min: 44px;
-  --touch-target-comfortable: 48px;
-  
-  /* Mobile-specific spacing */
-  --mobile-padding: 1rem;
-  --mobile-margin: 0.5rem;
-}
+/* ==========================================
+ * VIBRANT COLOR SYSTEM 2025
+ * Modern, engaging colors for healthcare SaaS
+ * ========================================== */
 
-/* Mobile viewport height fix */
-.min-h-screen-mobile {
-  min-height: 100vh;
-  min-height: calc(var(--vh, 1vh) * 100);
-}
-
-/* Touch-friendly utilities */
-.touch-manipulation {
-  touch-action: manipulation;
-}
-
-.touch-target {
-  min-height: var(--touch-target-min);
-  min-width: var(--touch-target-min);
-}
-
-.touch-target-comfortable {
-  min-height: var(--touch-target-comfortable);
-  min-width: var(--touch-target-comfortable);
-}
-
-/* Safe area utilities */
-.safe-top {
-  padding-top: var(--safe-area-inset-top);
-}
-
-.safe-bottom {
-  padding-bottom: var(--safe-area-inset-bottom);
-}
-
-.safe-left {
-  padding-left: var(--safe-area-inset-left);
-}
-
-.safe-right {
-  padding-right: var(--safe-area-inset-right);
-}
-
-/* Mobile scrolling improvements */
-.mobile-scroll {
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-}
-
-/* Prevent text selection on UI elements */
-.no-select {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Prevent double-tap zoom */
-.no-zoom {
-  touch-action: manipulation;
-}
-
-/* Mobile-optimized animations */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Smooth scrolling for supported devices */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .shadow-lg {
-    box-shadow: 0 0 0 2px currentColor;
-  }
-  
-  .border {
-    border-width: 2px;
-  }
-}
-
-/* Dark mode support for PWA */
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Mobile-First CSS Variables */
+    --vh: 1vh;
+    
+    /* Safe area insets for devices with notches */
+    --safe-area-inset-top: env(safe-area-inset-top);
+    --safe-area-inset-right: env(safe-area-inset-right);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+    --safe-area-inset-left: env(safe-area-inset-left);
+    
+    /* Touch-optimized sizing */
+    --touch-target-min: 44px;
+    --touch-target-comfortable: 48px;
+    
+    /* Mobile-specific spacing */
+    --mobile-padding: 1rem;
+    --mobile-margin: 0.5rem;
   }
 }
 
-/* Mobile keyboard adjustments */
-@media screen and (max-height: 500px) {
-  .mobile-keyboard-open {
-    height: 100vh;
+/* ==========================================
+ * VIBRANT GRADIENT CLASSES
+ * Eye-catching gradients for modern appeal
+ * ========================================== */
+@layer utilities {
+  .bg-gradient-vibrant-hero {
+    background: var(--gradient-hero-primary);
+  }
+
+  .bg-gradient-cta-primary {
+    background: var(--gradient-cta-primary);
+  }
+
+  .bg-gradient-cta-secondary {
+    background: var(--gradient-cta-secondary);
+  }
+
+  .bg-gradient-cta-purple {
+    background: var(--gradient-cta-purple);
+  }
+
+  .bg-gradient-page {
+    background: var(--gradient-page-bg);
+  }
+
+  .bg-gradient-card {
+    background: var(--gradient-card-bg);
+  }
+
+  /* Text Gradients */
+  .text-gradient-hero {
+    background: var(--gradient-hero-primary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease-in-out infinite;
+  }
+
+  .text-gradient-cta {
+    background: var(--gradient-hero-cta);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-feature {
+    background: var(--gradient-feature-1);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* ==========================================
+  * VIBRANT SHADOW CLASSES
+  * Colorful shadows for depth and energy
+  * ========================================== */
+
+  .shadow-primary {
+    box-shadow: var(--shadow-primary);
+  }
+
+  .shadow-secondary {
+    box-shadow: var(--shadow-secondary);
+  }
+
+  .shadow-accent {
+    box-shadow: var(--shadow-accent);
+  }
+
+  .shadow-purple {
+    box-shadow: var(--shadow-purple);
+  }
+
+  .shadow-pink {
+    box-shadow: var(--shadow-pink);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 30px rgba(49, 130, 206, 0.3);
+  }
+
+  .shadow-glow-hover:hover {
+    box-shadow: 0 0 40px rgba(49, 130, 206, 0.4);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+
+  /* ==========================================
+  * MODERN BUTTON STYLES
+  * High-conversion, vibrant CTAs
+  * ========================================== */
+
+  .btn-vibrant-primary {
+    padding: 1rem 2rem; /* Replaces px-8 py-4 */
+    border-radius: 0.75rem; /* Replaces rounded-xl */
+    font-weight: 600; /* Replaces font-semibold */
+    color: white;
+    transition: all 0.3s ease-in-out;
+    background: var(--gradient-cta-primary);
+    box-shadow: var(--shadow-accent);
+  }
+
+  .btn-vibrant-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(249, 115, 22, 0.4);
+  }
+
+  .btn-vibrant-secondary {
+    padding: 1rem 2rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease-in-out;
+    background: var(--gradient-cta-secondary);
+    box-shadow: var(--shadow-secondary);
+  }
+
+  .btn-vibrant-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(16, 185, 129, 0.4);
+  }
+
+  .btn-vibrant-purple {
+    padding: 1rem 2rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease-in-out;
+    background: var(--gradient-cta-purple);
+    box-shadow: var(--shadow-purple);
+  }
+
+  .btn-vibrant-purple:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(168, 85, 247, 0.4);
+  }
+
+  /* ==========================================
+  * MODERN CARD STYLES
+  * Engaging, interactive cards
+  * ========================================== */
+
+  .card-vibrant {
+    border-radius: 1.5rem; /* equvalent to rounded-2xl */
+    padding: 2rem; /* equvalent to p-8 */
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    background: var(--gradient-card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-large);
+  }
+
+  .card-vibrant:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .card-feature {
+    position: relative;
     overflow: hidden;
   }
-}
 
-/* Landscape mobile optimizations */
-@media screen and (orientation: landscape) and (max-height: 500px) {
-  .landscape-compact {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
-}
-
-/* PWA display modes */
-@media (display-mode: standalone) {
-  .pwa-only {
-    display: block;
-  }
-  
-  .browser-only {
-    display: none;
-  }
-}
-
-@media (display-mode: browser) {
-  .pwa-only {
-    display: none;
-  }
-  
-  .browser-only {
-    display: block;
-  }
-}
-
-/* Loading states for better perceived performance */
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* Performance optimizations */
-.gpu-accelerated {
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-/* Focus management for accessibility */
-.focus-trap {
-  position: relative;
-}
-
-.focus-trap::before,
-.focus-trap::after {
-  content: '';
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Gesture-friendly spacing */
-.gesture-area {
-  padding: 0.75rem;
-  margin: 0.25rem;
-}
-
-/* Mobile-specific button styles */
-.mobile-button {
-  min-height: var(--touch-target-min);
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.mobile-button:active {
-  transform: scale(0.98);
-}
-
-/* Haptic feedback simulation */
-.haptic-light:active {
-  animation: haptic-pulse 0.1s ease;
-}
-
-@keyframes haptic-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.98); }
-  100% { transform: scale(1); }
-}
-
-/* ======================
-   GLOBAL BASE STYLES
-   ====================== */
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-family: var(--font-primary);
-  font-size: 16px;
-  line-height: var(--leading-normal);
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-body {
-  background-color: var(--color-neutral-0);
-  color: var(--color-neutral-900);
-  font-family: var(--font-primary);
-  line-height: var(--leading-normal);
-  overflow-x: hidden;
-}
-
-/* ======================
-   HEALTHCARE TYPOGRAPHY
-   ====================== */
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-primary);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-tight);
-  color: var(--color-neutral-900);
-  margin-bottom: var(--space-4);
-}
-
-h1 {
-  font-size: var(--text-6xl);
-  font-weight: var(--font-weight-extrabold);
-  line-height: var(--leading-none);
-}
-
-h2 {
-  font-size: var(--text-5xl);
-  font-weight: var(--font-weight-bold);
-}
-
-h3 {
-  font-size: var(--text-4xl);
-  font-weight: var(--font-weight-bold);
-}
-
-h4 {
-  font-size: var(--text-3xl);
-  font-weight: var(--font-weight-semibold);
-}
-
-h5 {
-  font-size: var(--text-2xl);
-  font-weight: var(--font-weight-semibold);
-}
-
-h6 {
-  font-size: var(--text-xl);
-  font-weight: var(--font-weight-medium);
-}
-
-p {
-  font-size: var(--text-lg);
-  line-height: var(--leading-relaxed);
-  color: var(--color-neutral-700);
-  margin-bottom: var(--space-4);
-}
-
-/* ======================
-   HEALTHCARE ACCESSIBILITY
-   ====================== */
-
-/* Focus Management */
-*:focus {
-  outline: none;
-}
-
-*:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
-}
-
-/* Skip Links */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: var(--color-primary-500);
-  color: white;
-  padding: 8px;
-  text-decoration: none;
-  transition: top 0.3s;
-  z-index: var(--z-modal);
-}
-
-.skip-link:focus {
-  top: 6px;
-}
-
-/* High Contrast Support */
-@media (prefers-contrast: high) {
-  * {
-    border-color: var(--border-contrast) !important;
-  }
-  
-  .text-neutral-700 {
-    color: var(--text-contrast) !important;
-  }
-}
-
-/* ======================
-   HEALTHCARE SCROLLBAR
-   ====================== */
-
-/* Webkit Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-neutral-100);
-  border-radius: var(--radius-full);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-primary-300);
-  border-radius: var(--radius-full);
-  transition: background-color 0.2s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-500);
-}
-
-/* Firefox Scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-primary-300) var(--color-neutral-100);
-}
-
-/* ======================
-   HEALTHCARE SELECTION
-   ====================== */
-
-::selection {
-  background-color: var(--color-primary-100);
-  color: var(--color-primary-800);
-}
-
-::-moz-selection {
-  background-color: var(--color-primary-100);
-  color: var(--color-primary-800);
-}
-
-/* ======================
-   HEALTHCARE ANIMATIONS
-   ====================== */
-
-/* Disable animations for users who prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Smooth page transitions */
-.page-transition-enter {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.page-transition-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity var(--duration-300) var(--ease-healthcare),
-              transform var(--duration-300) var(--ease-healthcare);
-}
-
-.page-transition-exit {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.page-transition-exit-active {
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: opacity var(--duration-300) var(--ease-healthcare),
-              transform var(--duration-300) var(--ease-healthcare);
-}
-
-/* ======================
-   HEALTHCARE UTILITIES
-   ====================== */
-
-/* Glass morphism effects */
-.glass-morphism {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.glass-morphism-dark {
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-/* Text gradients */
-.text-gradient-primary {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-wellness {
-  background: var(--gradient-wellness);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-energy {
-  background: var(--gradient-energy);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-hero {
-  background: var(--gradient-hero-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Background gradients */
-.bg-gradient-primary {
-  background: var(--gradient-primary);
-}
-
-.bg-gradient-wellness {
-  background: var(--gradient-wellness);
-}
-
-.bg-gradient-energy {
-  background: var(--gradient-energy);
-}
-
-.bg-gradient-hero-overlay {
-  background: var(--gradient-hero-overlay);
-}
-
-/* Enhanced Healthcare Colors */
-.text-primary-vibrant {
-  color: var(--color-primary-500) !important;
-}
-
-.text-success-vibrant {
-  color: var(--color-success-500) !important;
-}
-
-.text-warning-vibrant {
-  color: var(--color-warning-500) !important;
-}
-
-.bg-primary-vibrant {
-  background-color: var(--color-primary-500) !important;
-}
-
-.bg-success-vibrant {
-  background-color: var(--color-success-500) !important;
-}
-
-.border-primary-vibrant {
-  border-color: var(--color-primary-500) !important;
-}
-
-/* Neuomorphism effects */
-.neomorphism {
-  background: var(--color-neutral-50);
-  box-shadow: 
-    20px 20px 60px rgba(0, 0, 0, 0.1),
-    -20px -20px 60px rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.neomorphism-inset {
-  background: var(--color-neutral-50);
-  box-shadow: 
-    inset 20px 20px 60px rgba(0, 0, 0, 0.1),
-    inset -20px -20px 60px rgba(255, 255, 255, 0.8);
-}
-
-/* ======================
-   HEALTHCARE RESPONSIVE HELPERS
-   ====================== */
-
-/* Container queries support */
-@container (min-width: 640px) {
-  .container-sm\:text-lg {
-    font-size: var(--text-lg);
-  }
-}
-
-@container (min-width: 768px) {
-  .container-md\:text-xl {
-    font-size: var(--text-xl);
-  }
-}
-
-/* ======================
-   HEALTHCARE PRINT STYLES
-   ====================== */
-
-@media print {
-  * {
-    background: transparent !important;
-    color: black !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
+  .card-feature::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-hero-primary);
   }
 
-  a, a:visited {
-    text-decoration: underline;
+  /* ==========================================
+  * ANIMATED BACKGROUNDS
+  * Dynamic, engaging background elements
+  * ========================================== */
+
+  .bg-animated-dots {
+    background-image: radial-gradient(circle at 1px 1px, rgba(49, 130, 206, 0.3) 1px, transparent 0);
+    background-size: 20px 20px;
+    animation: dots-move 20s linear infinite;
   }
 
-  a[href]:after {
-    content: " (" attr(href) ")";
+  @keyframes dots-move {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
   }
 
-  abbr[title]:after {
-    content: " (" attr(title) ")";
+  .bg-animated-waves {
+    background: linear-gradient(-45deg, 
+      rgba(49, 130, 206, 0.1), 
+      rgba(16, 185, 129, 0.1), 
+      rgba(168, 85, 247, 0.1), 
+      rgba(249, 115, 22, 0.1)
+    );
+    background-size: 400% 400%;
+    animation: waves-flow 15s ease-in-out infinite;
   }
 
-  .no-print {
-    display: none !important;
+  @keyframes waves-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 
-  .page-break {
-    page-break-before: always;
+  /* ==========================================
+  * INTERACTIVE ELEMENTS
+  * Micro-interactions for engagement
+  * ========================================== */
+
+  .hover-lift {
+    transition: all 0.3s ease;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    page-break-after: avoid;
+  .hover-lift:hover {
+    transform: translateY(-4px);
   }
 
-  p, img {
-    page-break-inside: avoid;
+  .hover-glow {
+    transition: all 0.3s ease;
   }
 
-  img {
-    max-width: 100% !important;
+  .hover-glow:hover {
+    box-shadow: 0 0 30px rgba(49, 130, 206, 0.3);
   }
 
-  @page {
-    margin: 0.5in;
-  }
-}
-
-/* ======================
-   HEALTHCARE DARK THEME
-   ====================== */
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: var(--color-neutral-900);
-    color: var(--color-neutral-100);
+  .pulse-primary {
+    animation: pulse-primary 2s infinite;
   }
 
-  .glass-morphism {
-    background: rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+  @keyframes pulse-primary {
+    0%, 100% { 
+      box-shadow: 0 0 0 0 rgba(49, 130, 206, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(49, 130, 206, 0);
+    }
   }
 
-  .neomorphism {
-    background: var(--color-neutral-800);
-    box-shadow: 
-      20px 20px 60px rgba(0, 0, 0, 0.3),
-      -20px -20px 60px rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .pulse-secondary {
+    animation: pulse-secondary 2s infinite;
   }
-}
 
-/* ======================
-   HEALTHCARE LOADING STATES
-   ====================== */
-
-.loading-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--color-neutral-200) 0%,
-    var(--color-neutral-100) 50%,
-    var(--color-neutral-200) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
+  @keyframes pulse-secondary {
+    0%, 100% { 
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
   }
-  100% {
-    background-position: 200% 0;
+
+  /* Mobile viewport height fix */
+  .min-h-screen-mobile {
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
   }
-}
 
-/* ======================
-   HEALTHCARE MICRO-INTERACTIONS
-   ====================== */
-
-/* Hover effects */
-.hover-lift {
-  transition: transform var(--duration-200) var(--ease-healthcare);
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-}
-
-/* Click effects */
-.click-scale {
-  transition: transform var(--duration-100) var(--ease-micro-interaction);
-}
-
-.click-scale:active {
-  transform: scale(0.98);
-}
-
-/* Focus effects */
-.focus-ring {
-  transition: box-shadow var(--duration-200) var(--ease-healthcare);
-}
-
-.focus-ring:focus-visible {
-  box-shadow: var(--focus-ring);
-}
-
-/* ======================
-   HEALTHCARE PERFORMANCE
-   ====================== */
-
-/* GPU acceleration for animations */
-.gpu-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
-
-/* Content visibility for performance */
-.content-auto {
-  content-visibility: auto;
-}
-
-/* ======================
-   HEALTHCARE COMPONENT STYLES
-   ====================== */
-
-/* Custom component styles can be added here */
-.healthcare-component {
-  /* Base styles for healthcare components */
-  font-family: var(--font-primary);
-  color: var(--color-neutral-900);
-  transition: all var(--duration-200) var(--ease-healthcare);
-}
-
-/* ======================
-   HEALTHCARE RESPONSIVE BREAKPOINTS
-   ====================== */
-
-/* Mobile-first responsive design */
-@media (min-width: 640px) {
-  .sm\:healthcare-text-lg {
-    font-size: var(--text-lg);
+  /* Touch-friendly utilities */
+  .touch-manipulation {
+    touch-action: manipulation;
   }
-}
 
-@media (min-width: 768px) {
-  .md\:healthcare-text-xl {
-    font-size: var(--text-xl);
+  .touch-target {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
   }
-}
 
-@media (min-width: 1024px) {
-  .lg\:healthcare-text-2xl {
-    font-size: var(--text-2xl);
+  .touch-target-comfortable {
+    min-height: var(--touch-target-comfortable);
+    min-width: var(--touch-target-comfortable);
   }
-}
 
-@media (min-width: 1280px) {
-  .xl\:healthcare-text-3xl {
-    font-size: var(--text-3xl);
+  /* Safe area utilities */
+  .safe-top {
+    padding-top: var(--safe-area-inset-top);
   }
-}
 
-@media (min-width: 1536px) {
-  .2xl\:healthcare-text-4xl {
-    font-size: var(--text-4xl);
+  .safe-bottom {
+    padding-bottom: var(--safe-area-inset-bottom);
   }
-}
+
+  .safe-left {
+    padding-left: var(--safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: var(--safe-area-inset-right);
+  }
+
+  /* Mobile scrolling improvements */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Prevent text selection on UI elements */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Prevent double-tap zoom */
+  .no-zoom {
+    touch-action: manipulation;
+  }
+} 
