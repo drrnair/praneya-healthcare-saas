@@ -44,9 +44,7 @@
   "include": [
     "src/server/**/*",
     "src/lib/**/*",
-    "src/types/**/*",
-    "database/**/*",
-    "scripts/**/*"
+    "src/types/**/*"
   ],
   "exclude": [
     "node_modules",
