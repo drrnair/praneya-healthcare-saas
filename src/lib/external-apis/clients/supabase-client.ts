@@ -133,7 +133,7 @@ export class SupabaseClient {
     try {
       const { data, error } = await this.client
         .from('family_members')
-        .select(\`
+        .select(`
           *,
           users:user_id (
             id,
@@ -141,7 +141,7 @@ export class SupabaseClient {
             name,
             healthcare_role
           )
-        \`)
+        `)
         .eq('family_account_id', familyAccountId);
 
       if (error) throw error;
@@ -155,12 +155,12 @@ export class SupabaseClient {
   // Real-time subscriptions for healthcare data
   subscribeToUserUpdates(userId: string, callback: (payload: any) => void) {
     return this.client
-      .channel(\`user-\${userId}\`)
+      .channel(`user-\${userId}`)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'users',
-        filter: \`id=eq.\${userId}\`
+        filter: `id=eq.\${userId}`
       }, callback)
       .subscribe();
   }

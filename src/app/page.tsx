@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import AIFeatureShowcase from '@/components/landing/AIFeatureShowcase';
+import { SocialProofSection } from '@/components/landing/SocialProofSection';
+import { PricingSection } from '@/components/landing/PricingSection';
 
 /**
  * =======================================================================
@@ -407,6 +409,12 @@ export default function HomePage() {
 
         {/* AI Feature Showcase - NEW SECTION */}
         <AIFeatureShowcase />
+
+        {/* Social Proof Section - Trust & Credibility */}
+        <SocialProofSection />
+
+        {/* Pricing Section - Conversion Optimized */}
+        <PricingSection />
 
         {/* Demo Navigation */}
         <motion.section

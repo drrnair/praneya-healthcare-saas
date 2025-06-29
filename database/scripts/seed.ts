@@ -9,12 +9,12 @@ import {
   users,
   medicalDisclaimers,
   userConsents,
-  clinicalProfiles,
-  clinicalEvidence,
-  drugFoodInteractions,
-  subscriptionTiers,
+  // clinicalProfiles,
+  // clinicalEvidence,  
+  // drugFoodInteractions,
+  // subscriptionTiers,
   familyAccounts,
-  familyPermissions,
+  // familyPermissions,
 } from '../../src/lib/database/schema';
 
 // Database connection for seeding

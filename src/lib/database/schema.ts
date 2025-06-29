@@ -83,6 +83,48 @@ export const users = pgTable('users', {
 });
 
 // ===========================================
+// MEDICAL DISCLAIMERS AND CONSENT TRACKING
+// ===========================================
+
+export const medicalDisclaimers = pgTable('medical_disclaimers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  version: varchar('version', { length: 50 }).notNull(),
+  content: text('content').notNull(),
+  effectiveDate: timestamp('effective_date').notNull(),
+  isCurrent: boolean('is_current').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull()
+}, (table) => {
+  return {
+    versionIdx: index('medical_disclaimers_version_idx').on(table.version),
+    currentIdx: index('medical_disclaimers_current_idx').on(table.isCurrent),
+    effectiveDateIdx: index('medical_disclaimers_effective_date_idx').on(table.effectiveDate)
+  };
+});
+
+export const userConsents = pgTable('user_consents', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').references(() => tenants.id).notNull(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  disclaimerId: uuid('disclaimer_id').references(() => medicalDisclaimers.id).notNull(),
+  status: text('status', {
+    enum: ['granted', 'revoked', 'pending']
+  }).notNull(),
+  ipAddress: varchar('ip_address', { length: 45 }),
+  userAgent: text('user_agent'),
+  consentedAt: timestamp('consented_at').defaultNow().notNull(),
+  revokedAt: timestamp('revoked_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull()
+}, (table) => {
+  return {
+    userDisclaimerIdx: uniqueIndex('user_consents_user_disclaimer_idx').on(table.userId, table.disclaimerId),
+    tenantIdx: index('user_consents_tenant_idx').on(table.tenantId),
+    statusIdx: index('user_consents_status_idx').on(table.status),
+    consentedAtIdx: index('user_consents_consented_at_idx').on(table.consentedAt)
+  };
+});
+
+// ===========================================
 // HEALTH PROFILES WITH TIERED DATA
 // ===========================================
 

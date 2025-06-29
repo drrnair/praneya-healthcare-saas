@@ -255,7 +255,7 @@ export default function FamilyManagementDemoPage() {
                   <div className="flex items-center space-x-3 mb-3">
                     <div className="relative">
                       <Avatar className="h-12 w-12">
-                        <AvatarImage src={member.avatar} />
+                        <AvatarImage src={member.avatar} alt={`${member.name}'s profile picture`} />
                         <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                       </Avatar>
                       <div className="absolute -top-1 -right-1 p-1 bg-blue-600 rounded-full">
@@ -336,7 +336,7 @@ export default function FamilyManagementDemoPage() {
                 <div className="flex flex-col items-center space-y-2">
                   <div className="relative">
                     <Avatar className="h-16 w-16">
-                      <AvatarImage src="/avatars/sarah.jpg" />
+                      <AvatarImage src="/avatars/sarah.jpg" alt="Sarah's profile picture" />
                       <AvatarFallback>SJ</AvatarFallback>
                     </Avatar>
                     <div className="absolute -top-1 -right-1 p-1 bg-blue-600 rounded-full">
@@ -356,12 +356,12 @@ export default function FamilyManagementDemoPage() {
                 return (
                   <div key={member.id} className="p-4 bg-white rounded-lg border border-gray-200">
                     <div className="flex items-center space-x-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={member.avatar} />
-                        <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h3 className="font-semibold text-sm">{member.name}</h3>
+                                          <Avatar className="h-12 w-12">
+                      <AvatarImage src={member.avatar} alt={`${member.name}'s profile picture`} />
+                      <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="font-semibold text-sm">{member.name}</h3>
                         <p className="text-xs text-gray-500">{member.relationship}</p>
                         <Badge size="sm" className="capitalize mt-1">{member.role}</Badge>
                       </div>
@@ -394,7 +394,7 @@ export default function FamilyManagementDemoPage() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={member.avatar} />
+                      <AvatarImage src={member.avatar} alt={`${member.name}'s profile picture`} />
                       <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <div>
@@ -610,7 +610,7 @@ export default function FamilyManagementDemoPage() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={member.avatar} />
+                      <AvatarImage src={member.avatar} alt={`${member.name}'s profile picture`} />
                       <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <h3 className="font-semibold">{member.name}</h3>
@@ -744,7 +744,7 @@ export default function FamilyManagementDemoPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-12 w-12">
-                      <AvatarImage src={child.avatar} />
+                      <AvatarImage src={child.avatar} alt={`${child.name}'s profile picture`} />
                       <AvatarFallback>{child.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     <div>

@@ -1,0 +1,14 @@
+{
+  "healthData": {
+    "maxAge": 300000,
+    "strategy": "stale-while-revalidate"
+  },
+  "emergencyData": {
+    "maxAge": 3600000,
+    "strategy": "cache-first"
+  },
+  "phiData": {
+    "maxAge": 0,
+    "strategy": "network-only"
+  }
+}

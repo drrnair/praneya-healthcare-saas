@@ -1,0 +1,21 @@
+2025-06-29T00:30:55.815Z [INFO] Starting healthcare optimization automation
+2025-06-29T00:30:55.821Z [INFO] Validating healthcare environment
+2025-06-29T00:30:55.821Z [WARN] Environment variable not set: NODE_ENV
+2025-06-29T00:30:55.821Z [WARN] Environment variable not set: HEALTHCARE_MODE
+2025-06-29T00:30:55.821Z [WARN] Environment variable not set: MONITORING_ENABLED
+2025-06-29T00:30:55.821Z [INFO] Environment validation completed
+2025-06-29T00:30:55.821Z [INFO] Optimizing healthcare-specific features
+2025-06-29T00:30:55.821Z [INFO] Optimizing emergency access performance
+2025-06-29T00:30:55.822Z [INFO] Emergency access optimization completed
+2025-06-29T00:30:55.822Z [INFO] Optimizing health data caching
+2025-06-29T00:30:55.823Z [INFO] Health data caching optimization completed
+2025-06-29T00:30:55.823Z [INFO] Optimizing clinical features
+2025-06-29T00:30:55.921Z [WARN] Clinical features build failed {"error":"Command failed: npm run build:clinical\nsh: webpack: command not found\n"}
+2025-06-29T00:30:55.922Z [INFO] Clinical feature optimization completed
+2025-06-29T00:30:55.922Z [INFO] Validating PHI data protection
+2025-06-29T00:30:55.931Z [INFO] PHI protection validation completed
+2025-06-29T00:30:55.931Z [INFO] Healthcare feature optimization completed
+2025-06-29T00:30:55.931Z [INFO] Optimizing application performance
+2025-06-29T00:30:55.931Z [INFO] Optimizing application bundles
+2025-06-29T00:30:59.677Z [ERROR] Bundle optimization failed {"error":"Command failed: npm run analyze\nFailed to compile.\n\n./src/app/family-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/card'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n./src/app/family-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/button'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n./src/app/family-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/badge'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n./src/app/family-management-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/card'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n./src/app/family-management-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/button'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n\n> Build failed because of webpack errors\n"}
+2025-06-29T00:30:59.677Z [ERROR] Healthcare optimization automation failed {"error":"Command failed: npm run analyze\nFailed to compile.\n\n./src/app/family-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/card'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n./src/app/family-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/button'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n./src/app/family-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/badge'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n./src/app/family-management-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/card'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n./src/app/family-management-demo/page.tsx\nModule not found: Can't resolve '@/components/ui/button'\n\nhttps://nextjs.org/docs/messages/module-not-found\n\n\n> Build failed because of webpack errors\n"}

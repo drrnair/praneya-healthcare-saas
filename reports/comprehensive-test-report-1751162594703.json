@@ -1,0 +1,269 @@
+{
+  "passed": 33,
+  "failed": 4,
+  "warnings": 1,
+  "critical": 0,
+  "tests": [
+    {
+      "name": "TypeScript Compilation",
+      "status": "FAIL",
+      "passed": false,
+      "message": "Command failed: npx tsc --noEmit\n",
+      "timestamp": "2025-06-29T02:02:59.479Z"
+    },
+    {
+      "name": "ESLint Check",
+      "status": "FAIL",
+      "passed": false,
+      "message": "Command failed: npx eslint src --ext .ts,.tsx --max-warnings 0\nInvalid option '--ext' - perhaps you meant '-c'?\nYou're using eslint.config.js, some command line flags are no longer available. Please see https://eslint.org/docs/latest/use/command-line-interface for details.\n",
+      "timestamp": "2025-06-29T02:02:59.797Z"
+    },
+    {
+      "name": "Package Dependencies",
+      "status": "FAIL",
+      "passed": false,
+      "message": "Command failed: npm audit --audit-level moderate\n",
+      "timestamp": "2025-06-29T02:03:14.696Z"
+    },
+    {
+      "name": "Environment Configuration",
+      "status": "PASS",
+      "passed": true,
+      "message": "100 environment variables configured",
+      "timestamp": "2025-06-29T02:03:14.697Z"
+    },
+    {
+      "name": "Landing Page - HeroSection",
+      "status": "PASS",
+      "passed": true,
+      "message": "HeroSection component exists and has valid structure",
+      "timestamp": "2025-06-29T02:03:14.698Z"
+    },
+    {
+      "name": "Landing Page - ProblemAgitationSection",
+      "status": "PASS",
+      "passed": true,
+      "message": "ProblemAgitationSection component exists and has valid structure",
+      "timestamp": "2025-06-29T02:03:14.698Z"
+    },
+    {
+      "name": "Landing Page - SolutionPresentationSection",
+      "status": "PASS",
+      "passed": true,
+      "message": "SolutionPresentationSection component exists and has valid structure",
+      "timestamp": "2025-06-29T02:03:14.699Z"
+    },
+    {
+      "name": "Landing Page - SocialProofSection",
+      "status": "PASS",
+      "passed": true,
+      "message": "SocialProofSection component exists and has valid structure",
+      "timestamp": "2025-06-29T02:03:14.699Z"
+    },
+    {
+      "name": "Landing Page - PricingSection",
+      "status": "PASS",
+      "passed": true,
+      "message": "PricingSection component exists and has valid structure",
+      "timestamp": "2025-06-29T02:03:14.699Z"
+    },
+    {
+      "name": "Landing Page - AudienceValueCard",
+      "status": "PASS",
+      "passed": true,
+      "message": "AudienceValueCard component exists and has valid structure",
+      "timestamp": "2025-06-29T02:03:14.699Z"
+    },
+    {
+      "name": "Conversion Funnel System",
+      "status": "PASS",
+      "passed": true,
+      "message": "All conversion system components present",
+      "timestamp": "2025-06-29T02:03:14.699Z"
+    },
+    {
+      "name": "Demo Page - clinical-interfaces-demo",
+      "status": "PASS",
+      "passed": true,
+      "message": "clinical-interfaces-demo page exists and exportable",
+      "timestamp": "2025-06-29T02:03:14.700Z"
+    },
+    {
+      "name": "Demo Page - data-visualization-demo",
+      "status": "PASS",
+      "passed": true,
+      "message": "data-visualization-demo page exists and exportable",
+      "timestamp": "2025-06-29T02:03:14.700Z"
+    },
+    {
+      "name": "Demo Page - family-management-demo",
+      "status": "PASS",
+      "passed": true,
+      "message": "family-management-demo page exists and exportable",
+      "timestamp": "2025-06-29T02:03:14.700Z"
+    },
+    {
+      "name": "Demo Page - gamification-demo",
+      "status": "PASS",
+      "passed": true,
+      "message": "gamification-demo page exists and exportable",
+      "timestamp": "2025-06-29T02:03:14.700Z"
+    },
+    {
+      "name": "Demo Page - micro-interactions-demo",
+      "status": "PASS",
+      "passed": true,
+      "message": "micro-interactions-demo page exists and exportable",
+      "timestamp": "2025-06-29T02:03:14.701Z"
+    },
+    {
+      "name": "Demo Page - onboarding-demo",
+      "status": "PASS",
+      "passed": true,
+      "message": "onboarding-demo page exists and exportable",
+      "timestamp": "2025-06-29T02:03:14.701Z"
+    },
+    {
+      "name": "Demo Page - pwa-demo",
+      "status": "PASS",
+      "passed": true,
+      "message": "pwa-demo page exists and exportable",
+      "timestamp": "2025-06-29T02:03:14.701Z"
+    },
+    {
+      "name": "Healthcare Server Config",
+      "status": "PASS",
+      "passed": true,
+      "message": "Healthcare server configured with required compliance features",
+      "timestamp": "2025-06-29T02:03:14.701Z"
+    },
+    {
+      "name": "API Route - route",
+      "status": "PASS",
+      "passed": true,
+      "message": "API route properly structured",
+      "timestamp": "2025-06-29T02:03:14.701Z"
+    },
+    {
+      "name": "API Route - route",
+      "status": "PASS",
+      "passed": true,
+      "message": "API route properly structured",
+      "timestamp": "2025-06-29T02:03:14.701Z"
+    },
+    {
+      "name": "API Route - route",
+      "status": "PASS",
+      "passed": true,
+      "message": "API route properly structured",
+      "timestamp": "2025-06-29T02:03:14.701Z"
+    },
+    {
+      "name": "Security Middleware",
+      "status": "PASS",
+      "passed": true,
+      "message": "All 5 security middleware components present",
+      "timestamp": "2025-06-29T02:03:14.701Z"
+    },
+    {
+      "name": "Database Schema",
+      "status": "PASS",
+      "passed": true,
+      "message": "All database schema files present",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "Drizzle ORM Configuration",
+      "status": "PASS",
+      "passed": true,
+      "message": "Drizzle ORM properly configured",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "Database Connection Modules",
+      "status": "PASS",
+      "passed": true,
+      "message": "Database connection modules present",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "HIPAA Compliance Implementation",
+      "status": "PASS",
+      "passed": true,
+      "message": "HIPAA compliance test suite present",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "Security Optimization",
+      "status": "PASS",
+      "passed": true,
+      "message": "Security implementation files present",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "Google AI Integration",
+      "status": "PASS",
+      "passed": true,
+      "message": "Google AI client properly structured",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "Edamam API Integration",
+      "status": "PASS",
+      "passed": true,
+      "message": "Edamam API client properly structured",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "Stripe Integration",
+      "status": "PASS",
+      "passed": true,
+      "message": "Stripe client properly structured",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "Supabase Integration",
+      "status": "PASS",
+      "passed": true,
+      "message": "Supabase client properly structured",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "API Manager",
+      "status": "FAIL",
+      "passed": false,
+      "message": "Invalid API manager structure",
+      "timestamp": "2025-06-29T02:03:14.702Z"
+    },
+    {
+      "name": "Performance Optimization",
+      "status": "PASS",
+      "passed": true,
+      "message": "Performance optimization modules present",
+      "timestamp": "2025-06-29T02:03:14.703Z"
+    },
+    {
+      "name": "PWA Configuration",
+      "status": "PASS",
+      "passed": true,
+      "message": "PWA configuration files present",
+      "timestamp": "2025-06-29T02:03:14.703Z"
+    },
+    {
+      "name": "Mobile Layout Components",
+      "status": "PASS",
+      "passed": true,
+      "message": "Mobile layout components present",
+      "timestamp": "2025-06-29T02:03:14.703Z"
+    },
+    {
+      "name": "Responsive Design Configuration",
+      "status": "PASS",
+      "passed": true,
+      "message": "Responsive design configuration present",
+      "timestamp": "2025-06-29T02:03:14.703Z"
+    }
+  ],
+  "generatedAt": "2025-06-29T02:03:14.703Z",
+  "environment": "development"
+}

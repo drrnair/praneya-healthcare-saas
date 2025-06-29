@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praneya Healthcare - Social Proof Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e3f2fd 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 2rem 0;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .tab-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: #6b7280;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.25);
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Testimonials Grid */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.12);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 123, 255, 0.2);
+        }
+
+        .quote-icon {
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .star {
+            color: #FFC107;
+            font-size: 1.2rem;
+        }
+
+        .rating-text {
+            margin-left: 0.5rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .quote {
+            font-size: 1.1rem;
+            color: #374151;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .outcome-metric {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(0, 123, 255, 0.1) 100%);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .outcome-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #28A745;
+        }
+
+        .outcome-label {
+            color: #1f8139;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .outcome-time {
+            color: #6b7280;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007BFF 0%, #28A745 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            background: #28A745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            border: 2px solid white;
+        }
+
+        .author-details h4 {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .author-role {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .author-company {
+            color: #007BFF;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .credentials {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .credential-badge {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007BFF;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Statistics Grid */
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.12);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(0, 123, 255, 0.2);
+        }
+
+        .stat-bg-gradient {
+            position: absolute;
+            top: -64px;
+            right: -64px;
+            width: 128px;
+            height: 128px;
+            border-radius: 50%;
+            opacity: 0.05;
+        }
+
+        .stat-card.primary .stat-bg-gradient {
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+        }
+
+        .stat-card.success .stat-bg-gradient {
+            background: linear-gradient(135deg, #28A745 0%, #20c997 100%);
+        }
+
+        .stat-card.warning .stat-bg-gradient {
+            background: linear-gradient(135deg, #FFC107 0%, #fd7e14 100%);
+        }
+
+        .stat-card.error .stat-bg-gradient {
+            background: linear-gradient(135deg, #F44336 0%, #e91e63 100%);
+        }
+
+        .stat-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card.primary .stat-icon {
+            background: rgba(0, 123, 255, 0.1);
+            color: #007BFF;
+        }
+
+        .stat-card.success .stat-icon {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28A745;
+        }
+
+        .stat-card.warning .stat-icon {
+            background: rgba(255, 193, 7, 0.1);
+            color: #FFC107;
+        }
+
+        .stat-card.error .stat-icon {
+            background: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card.primary .stat-value {
+            color: #007BFF;
+        }
+
+        .stat-card.success .stat-value {
+            color: #28A745;
+        }
+
+        .stat-card.warning .stat-value {
+            color: #FFC107;
+        }
+
+        .stat-card.error .stat-value {
+            color: #F44336;
+        }
+
+        .stat-label {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-description {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            animation: progressFill 2s ease-out;
+        }
+
+        .stat-card.primary .progress-fill {
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+        }
+
+        .stat-card.success .progress-fill {
+            background: linear-gradient(135deg, #28A745 0%, #20c997 100%);
+        }
+
+        .stat-card.warning .progress-fill {
+            background: linear-gradient(135deg, #FFC107 0%, #fd7e14 100%);
+        }
+
+        .stat-card.error .progress-fill {
+            background: linear-gradient(135deg, #F44336 0%, #e91e63 100%);
+        }
+
+        @keyframes progressFill {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* Credentials Grid */
+        .credentials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .credential-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid #e2e8f0;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .credential-card:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .credential-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .credential-name {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .credential-verified {
+            width: 16px;
+            height: 16px;
+            background: #28A745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+        }
+
+        .security-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            text-align: center;
+        }
+
+        .security-stat {
+            color: #6b7280;
+        }
+
+        .security-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .security-stat:nth-child(1) .security-value { color: #007BFF; }
+        .security-stat:nth-child(2) .security-value { color: #28A745; }
+        .security-stat:nth-child(3) .security-value { color: #FFC107; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .tab-navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .testimonials-grid,
+            .statistics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .security-stats {
+                flex-direction: column;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Trusted by Healthcare Professionals Worldwide</h1>
+            <p>Join thousands of healthcare professionals and families who trust Praneya for evidence-based nutrition guidance.</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="showTab('testimonials')">
+                <span>💬</span><span>Testimonials</span>
+            </button>
+            <button class="tab-button" onclick="showTab('statistics')">
+                <span>📊</span><span>Impact</span>
+            </button>
+            <button class="tab-button" onclick="showTab('credentials')">
+                <span>🏆</span><span>Credentials</span>
+            </button>
+        </div>
+
+        <!-- Testimonials Section -->
+        <div id="testimonials" class="content-section active">
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    
+                    <div class="rating">
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="rating-text">5.0</span>
+                    </div>
+
+                    <blockquote class="quote">
+                        "Praneya's AI-driven nutrition insights have revolutionized how we approach personalized patient care. The clinical accuracy is remarkable."
+                    </blockquote>
+
+                    <div class="outcome-metric">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="outcome-value">40%</div>
+                                <div class="outcome-label">Patient outcomes improved</div>
+                            </div>
+                            <div class="outcome-time">in 6 months</div>
+                        </div>
+                    </div>
+
+                    <div class="author-info">
+                        <div class="author-avatar">
+                            SC
+                            <div class="verified-badge">✓</div>
+                        </div>
+                        <div class="author-details">
+                            <h4>Dr. Sarah Chen</h4>
+                            <div class="author-role">Registered Dietitian</div>
+                            <div class="author-company">Stanford Health Care</div>
+                            <div class="credentials">
+                                <span class="credential-badge">RD</span>
+                                <span class="credential-badge">CDE</span>
+                                <span class="credential-badge">PhD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    
+                    <div class="rating">
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="rating-text">5.0</span>
+                    </div>
+
+                    <blockquote class="quote">
+                        "Finally found a nutrition app that works for our busy family. My kids actually enjoy eating healthier now!"
+                    </blockquote>
+
+                    <div class="outcome-metric">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="outcome-value">85%</div>
+                                <div class="outcome-label">Family meal satisfaction</div>
+                            </div>
+                            <div class="outcome-time">in 3 months</div>
+                        </div>
+                    </div>
+
+                    <div class="author-info">
+                        <div class="author-avatar">
+                            MR
+                            <div class="verified-badge">✓</div>
+                        </div>
+                        <div class="author-details">
+                            <h4>Michael Rodriguez</h4>
+                            <div class="author-role">Family Health Manager</div>
+                            <div class="author-company">Parent of 3</div>
+                            <div class="credentials">
+                                <span class="credential-badge">Parent Ambassador</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="quote-icon">"</div>
+                    
+                    <div class="rating">
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="rating-text">5.0</span>
+                    </div>
+
+                    <blockquote class="quote">
+                        "The HIPAA compliance and clinical oversight features make this the only nutrition platform we recommend to our patients."
+                    </blockquote>
+
+                    <div class="outcome-metric">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="outcome-value">65%</div>
+                                <div class="outcome-label">Patient engagement increase</div>
+                            </div>
+                            <div class="outcome-time">in 4 months</div>
+                        </div>
+                    </div>
+
+                    <div class="author-info">
+                        <div class="author-avatar">
+                            JT
+                            <div class="verified-badge">✓</div>
+                        </div>
+                        <div class="author-details">
+                            <h4>Dr. James Thompson</h4>
+                            <div class="author-role">Chief Medical Officer</div>
+                            <div class="author-company">HealthFirst Medical Group</div>
+                            <div class="credentials">
+                                <span class="credential-badge">MD</span>
+                                <span class="credential-badge">MBA</span>
+                                <span class="credential-badge">FACEP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div id="statistics" class="content-section">
+            <div class="statistics-grid">
+                <div class="stat-card primary">
+                    <div class="stat-bg-gradient"></div>
+                    <div class="stat-icon">👨‍👩‍👧‍👦</div>
+                    <div class="stat-value">50K+</div>
+                    <div class="stat-label">Active Families</div>
+                    <div class="stat-description">Trusted by families worldwide for personalized nutrition guidance</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-bg-gradient"></div>
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">$12.5M+</div>
+                    <div class="stat-label">Grocery Savings</div>
+                    <div class="stat-description">Total savings on grocery bills through smart meal planning</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-bg-gradient"></div>
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value">85%</div>
+                    <div class="stat-label">Energy Improvement</div>
+                    <div class="stat-description">Users report significant energy level improvements</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card error">
+                    <div class="stat-bg-gradient"></div>
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                    <div class="stat-description">User satisfaction with our AI-powered recommendations</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credentials Section -->
+        <div id="credentials" class="content-section">
+            <div class="credentials-grid">
+                <div class="credential-card">
+                    <div class="credential-logo" style="background-color: #007BFF;">🛡️</div>
+                    <div class="credential-name">HIPAA Compliant</div>
+                    <div class="credential-verified">✓</div>
+                </div>
+
+                <div class="credential-card">
+                    <div class="credential-logo" style="background-color: #28A745;">✅</div>
+                    <div class="credential-name">RD Approved</div>
+                    <div class="credential-verified">✓</div>
+                </div>
+
+                <div class="credential-card">
+                    <div class="credential-logo" style="background-color: #FFC107;">🏛️</div>
+                    <div class="credential-name">FDA Guidelines</div>
+                    <div class="credential-verified">✓</div>
+                </div>
+
+                <div class="credential-card">
+                    <div class="credential-logo" style="background-color: #6C757D;">🔒</div>
+                    <div class="credential-name">SOC 2 Certified</div>
+                    <div class="credential-verified">✓</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <p style="font-size: 1.125rem; color: #6b7280; margin-bottom: 2rem;">
+                    Praneya meets the highest standards for healthcare technology, ensuring your family's health data is protected and our recommendations are clinically sound.
+                </p>
+            </div>
+
+            <div class="security-stats">
+                <div class="security-stat">
+                    <div class="security-value">99.9%</div>
+                    <div>Uptime SLA</div>
+                </div>
+                <div class="security-stat">
+                    <div class="security-value">256-bit</div>
+                    <div>Encryption</div>
+                </div>
+                <div class="security-stat">
+                    <div class="security-value">24/7</div>
+                    <div>Support</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Add some interactivity for better UX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to testimonial cards
+            const testimonialCards = document.querySelectorAll('.testimonial-card');
+            testimonialCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Add hover effects to stat cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Auto-play progress bars when statistics tab is shown
+            const progressBars = document.querySelectorAll('.progress-fill');
+            const statsTab = document.getElementById('statistics');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        progressBars.forEach((bar, index) => {
+                            setTimeout(() => {
+                                bar.style.width = '100%';
+                            }, index * 200);
+                        });
+                    }
+                });
+            });
+
+            observer.observe(statsTab);
+        });
+    </script>
+</body>
+</html> 

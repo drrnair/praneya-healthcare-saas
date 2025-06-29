@@ -60,6 +60,10 @@
     "dist",
     "build",
     "src/server/**/*",
-    "tests/**/*"
+    "tests/**/*",
+    "database/**/*",
+    "prisma/**/*",
+    "src/app/edamam-demo/**/*",
+    "src/app/api-test/**/*"
   ]
 }

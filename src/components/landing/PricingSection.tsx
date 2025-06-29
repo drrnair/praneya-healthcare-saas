@@ -6,7 +6,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView, AnimatePresence, useAnimation } from 'framer-motion';
 import { 
   Check,
   X,
@@ -36,6 +36,7 @@ import {
   UserCheck,
   BarChart3
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface PricingTier {
   id: string;
@@ -89,6 +90,456 @@ interface PricingSectionProps {
   onCalculatorUse?: (type: string, value: number) => void;
 }
 
+interface PricingFeature {
+  text: string;
+  included: boolean;
+  tooltip?: string;
+  premium?: boolean;
+}
+
+interface PricingPlan {
+  id: string;
+  name: string;
+  tagline: string;
+  monthlyPrice: number;
+  annualPrice: number;
+  originalMonthlyPrice?: number;
+  originalAnnualPrice?: number;
+  features: PricingFeature[];
+  ctaText: string;
+  ctaSecondary?: string;
+  popular?: boolean;
+  colorScheme: 'basic' | 'enhanced' | 'premium';
+  testimonial?: {
+    text: string;
+    author: string;
+    role: string;
+  };
+  badge?: string;
+  urgency?: string;
+}
+
+interface TooltipProps {
+  content: string;
+  children: React.ReactNode;
+}
+
+interface AnimatedPriceProps {
+  value: number;
+  duration?: number;
+  prefix?: string;
+  suffix?: string;
+  className?: string;
+}
+
+interface PricingToggleProps {
+  isAnnual: boolean;
+  onToggle: (isAnnual: boolean) => void;
+  savingsPercentage: number;
+}
+
+interface PricingCardProps {
+  plan: PricingPlan;
+  isAnnual: boolean;
+  isPopular?: boolean;
+  index: number;
+}
+
+const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div className="relative inline-block">
+      <div
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+        className="cursor-help"
+      >
+        {children}
+      </div>
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: -8, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50"
+          >
+            <div className="bg-neutral-900 text-white text-sm px-3 py-2 rounded-lg shadow-xl max-w-xs">
+              {content}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-neutral-900" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const AnimatedPrice: React.FC<AnimatedPriceProps> = ({
+  value,
+  duration = 0.8,
+  prefix = '$',
+  suffix = '',
+  className = ''
+}) => {
+  const [displayValue, setDisplayValue] = useState(value);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (displayValue !== value) {
+      setIsAnimating(true);
+      
+      let startTime: number;
+      const startValue = displayValue;
+      const endValue = value;
+      
+      const animate = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+        
+        // Smooth easing function
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue = startValue + (endValue - startValue) * easeOutQuart;
+        
+        setDisplayValue(Math.round(currentValue));
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setIsAnimating(false);
+        }
+      };
+      
+      requestAnimationFrame(animate);
+    }
+  }, [value, duration, displayValue]);
+
+  return (
+    <span className={cn('inline-block', isAnimating && 'animate-pulse', className)}>
+      {prefix}{displayValue}{suffix}
+    </span>
+  );
+};
+
+const PricingToggle: React.FC<PricingToggleProps> = ({ isAnnual, onToggle, savingsPercentage }) => {
+  return (
+    <div className="flex items-center justify-center space-x-4 mb-12">
+      <span className={cn(
+        "text-lg font-medium transition-colors duration-200",
+        !isAnnual ? "text-neutral-900" : "text-neutral-500"
+      )}>
+        Monthly
+      </span>
+      
+      <div className="relative">
+        <motion.button
+          onClick={() => onToggle(!isAnnual)}
+          className="relative w-16 h-8 bg-neutral-200 rounded-full focus:outline-none focus:ring-4 focus:ring-primary-500/20 transition-colors duration-300"
+          whileTap={{ scale: 0.95 }}
+        >
+          <motion.div
+            className="absolute top-1 w-6 h-6 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full shadow-lg"
+            animate={{
+              x: isAnnual ? 32 : 4,
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 500,
+              damping: 30
+            }}
+          />
+        </motion.button>
+        
+        {/* Savings Badge */}
+        <AnimatePresence>
+          {isAnnual && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0, y: 10 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 400,
+                damping: 25
+              }}
+              className="absolute -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
+            >
+              <div className="bg-gradient-to-r from-success-500 to-success-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                Save {savingsPercentage}%
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      
+      <span className={cn(
+        "text-lg font-medium transition-colors duration-200",
+        isAnnual ? "text-neutral-900" : "text-neutral-500"
+      )}>
+        Annual
+      </span>
+    </div>
+  );
+};
+
+const PricingCard: React.FC<PricingCardProps> = ({ plan, isAnnual, isPopular, index }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const currentPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+  const originalPrice = isAnnual ? plan.originalAnnualPrice : plan.originalMonthlyPrice;
+
+  const colorSchemes = {
+    basic: {
+      gradient: 'from-neutral-50 to-neutral-100',
+      border: 'border-neutral-200',
+      accent: 'text-primary-600',
+      button: 'bg-neutral-900 hover:bg-neutral-800 text-white',
+      shadow: 'shadow-lg hover:shadow-xl'
+    },
+    enhanced: {
+      gradient: 'from-primary-50 to-secondary-50',
+      border: 'border-primary-200',
+      accent: 'text-primary-600',
+      button: 'bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white',
+      shadow: 'shadow-xl hover:shadow-2xl'
+    },
+    premium: {
+      gradient: 'from-primary-100 to-warning-50',
+      border: 'border-primary-300',
+      accent: 'text-primary-700',
+      button: 'bg-gradient-to-r from-primary-600 to-primary-800 hover:from-primary-700 hover:to-primary-900 text-white',
+      shadow: 'shadow-2xl hover:shadow-3xl'
+    }
+  };
+
+  const scheme = colorSchemes[plan.colorScheme];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ 
+        duration: 0.6, 
+        delay: index * 0.1,
+        type: "spring",
+        stiffness: 100
+      }}
+      whileHover={{ 
+        y: -8,
+        transition: { duration: 0.2 }
+      }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className={cn(
+        "relative bg-white rounded-3xl p-8 border-2 transition-all duration-300",
+        scheme.gradient,
+        scheme.border,
+        scheme.shadow,
+        isPopular && "ring-4 ring-primary-500/20 scale-105"
+      )}
+      style={{
+        backdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)'
+      }}
+    >
+      {/* Popular Badge */}
+      {isPopular && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5, type: "spring" }}
+          className="absolute -top-4 left-1/2 transform -translate-x-1/2"
+        >
+          <motion.div
+            animate={{ 
+              scale: [1, 1.05, 1],
+            }}
+            transition={{ 
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="bg-gradient-to-r from-primary-500 to-primary-700 text-white px-6 py-2 rounded-full font-bold text-sm shadow-lg"
+          >
+            Most Popular
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Badge */}
+      {plan.badge && (
+        <div className="absolute top-4 right-4">
+          <div className="bg-success-100 text-success-700 px-3 py-1 rounded-full text-xs font-bold border border-success-200">
+            {plan.badge}
+          </div>
+        </div>
+      )}
+
+      {/* Plan Header */}
+      <div className="text-center mb-8">
+        <h3 className="text-2xl font-bold text-neutral-900 mb-2">{plan.name}</h3>
+        <p className="text-neutral-600 mb-6">{plan.tagline}</p>
+
+        {/* Pricing */}
+        <div className="mb-4">
+          <div className="flex items-baseline justify-center space-x-2">
+            <motion.span
+              key={currentPrice}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className={cn("text-5xl font-extrabold", scheme.accent)}
+            >
+              <AnimatedPrice value={currentPrice} />
+            </motion.span>
+            <span className="text-xl text-neutral-600 font-medium">
+              /{isAnnual ? 'year' : 'month'}
+            </span>
+          </div>
+
+          {/* Original Price */}
+          {originalPrice && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center justify-center space-x-2 mt-2"
+            >
+              <span className="text-lg text-neutral-400 line-through">
+                ${originalPrice}/{isAnnual ? 'year' : 'month'}
+              </span>
+              <span className="bg-success-100 text-success-700 px-2 py-1 rounded text-xs font-bold">
+                {Math.round(((originalPrice - currentPrice) / originalPrice) * 100)}% OFF
+              </span>
+            </motion.div>
+          )}
+
+          {/* Per User Calculation */}
+          {isAnnual && (
+            <p className="text-sm text-neutral-500 mt-2">
+              ${Math.round(currentPrice / 12)}/month billed annually
+            </p>
+          )}
+        </div>
+
+        {/* Urgency */}
+        {plan.urgency && (
+          <motion.div
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="bg-warning-100 text-warning-800 px-4 py-2 rounded-lg text-sm font-medium border border-warning-200 mb-4"
+          >
+            ⚡ {plan.urgency}
+          </motion.div>
+        )}
+      </div>
+
+      {/* Features List */}
+      <div className="mb-8">
+        <div className="space-y-4">
+          {plan.features.map((feature, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8 + idx * 0.1 }}
+              className="flex items-start space-x-3"
+            >
+              <div className={cn(
+                "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5",
+                feature.included
+                  ? "bg-success-500 text-white"
+                  : "bg-neutral-300 text-neutral-500"
+              )}>
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.9 + idx * 0.1, type: "spring" }}
+                  className="text-xs font-bold"
+                >
+                  {feature.included ? '✓' : '×'}
+                </motion.span>
+              </div>
+              
+              <div className="flex-1">
+                {feature.tooltip ? (
+                  <Tooltip content={feature.tooltip}>
+                    <span className={cn(
+                      "text-sm",
+                      feature.included ? "text-neutral-700" : "text-neutral-400",
+                      feature.premium && "font-semibold text-primary-700",
+                      "border-b border-dashed border-neutral-300 cursor-help"
+                    )}>
+                      {feature.text}
+                    </span>
+                  </Tooltip>
+                ) : (
+                  <span className={cn(
+                    "text-sm",
+                    feature.included ? "text-neutral-700" : "text-neutral-400",
+                    feature.premium && "font-semibold text-primary-700"
+                  )}>
+                    {feature.text}
+                  </span>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA Button */}
+      <div className="space-y-4">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className={cn(
+            "w-full py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-200",
+            scheme.button,
+            "shadow-lg hover:shadow-xl"
+          )}
+        >
+          {plan.ctaText}
+        </motion.button>
+
+        {plan.ctaSecondary && (
+          <button className="w-full py-3 px-6 border-2 border-neutral-300 text-neutral-700 rounded-xl font-medium hover:bg-neutral-50 transition-colors duration-200">
+            {plan.ctaSecondary}
+          </button>
+        )}
+
+        {/* Trust Indicators */}
+        <div className="text-center space-y-2">
+          <p className="text-xs text-neutral-500">
+            🔒 No credit card required • 30-day money-back guarantee
+          </p>
+          <div className="flex justify-center space-x-4">
+            <span className="text-xs text-neutral-400">✅ HIPAA Compliant</span>
+            <span className="text-xs text-neutral-400">🛡️ SOC 2 Certified</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonial */}
+      {plan.testimonial && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="mt-6 p-4 bg-white/80 rounded-xl border border-neutral-200"
+        >
+          <p className="text-sm text-neutral-600 italic mb-2">
+            "{plan.testimonial.text}"
+          </p>
+          <div className="text-xs text-neutral-500">
+            <strong>{plan.testimonial.author}</strong>, {plan.testimonial.role}
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+};
+
 const PricingSection: React.FC<PricingSectionProps> = ({
   onTierSelect,
   onCalculatorUse
@@ -100,9 +551,12 @@ const PricingSection: React.FC<PricingSectionProps> = ({
   const [calculatorValues, setCalculatorValues] = useState<Record<string, number>>({});
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
   const [showComparison, setShowComparison] = useState(false);
+  const [isAnnual, setIsAnnual] = useState(false);
+  const [socialProofCount, setSocialProofCount] = useState(1247);
   
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
+  const controls = useAnimation();
 
   const pricingTiers: PricingTier[] = [
     {
@@ -348,562 +802,267 @@ const PricingSection: React.FC<PricingSectionProps> = ({
     return monthlyPrice === 0 ? '$0' : `$${(monthlyPrice / 30).toFixed(2)}`;
   };
 
+  const pricingPlans: PricingPlan[] = [
+    {
+      id: 'basic',
+      name: 'Starter',
+      tagline: 'Perfect for individuals getting started',
+      monthlyPrice: 29,
+      annualPrice: 290,
+      originalMonthlyPrice: 39,
+      originalAnnualPrice: 390,
+      colorScheme: 'basic',
+      ctaText: 'Start Free Trial',
+      ctaSecondary: 'Learn More',
+      features: [
+        { text: 'AI-powered meal planning', included: true, tooltip: 'Get personalized meal plans based on your preferences and health goals' },
+        { text: 'Basic nutrition tracking', included: true },
+        { text: 'Recipe recommendations', included: true },
+        { text: 'Mobile app access', included: true },
+        { text: 'Email support', included: true },
+        { text: 'Family sharing (up to 4)', included: false },
+        { text: 'Advanced health analytics', included: false },
+        { text: 'Clinical integration', included: false },
+        { text: 'Priority support', included: false }
+      ],
+      testimonial: {
+        text: "Great value for someone just starting their health journey!",
+        author: "Sarah M.",
+        role: "Health Enthusiast"
+      }
+    },
+    {
+      id: 'enhanced',
+      name: 'Family',
+      tagline: 'Ideal for families and health-conscious groups',
+      monthlyPrice: 59,
+      annualPrice: 590,
+      originalMonthlyPrice: 79,
+      originalAnnualPrice: 790,
+      colorScheme: 'enhanced',
+      ctaText: 'Start Family Plan',
+      popular: true,
+      badge: 'Most Popular',
+      features: [
+        { text: 'Everything in Starter', included: true, premium: true },
+        { text: 'Family sharing (up to 6)', included: true, tooltip: 'Manage health plans for your entire family from one account' },
+        { text: 'Advanced health analytics', included: true, premium: true },
+        { text: 'Dietary restriction management', included: true },
+        { text: 'Shopping list automation', included: true },
+        { text: 'Progress tracking & goals', included: true },
+        { text: 'Phone & chat support', included: true },
+        { text: 'Clinical integration', included: false },
+        { text: 'Dedicated success manager', included: false }
+      ],
+      testimonial: {
+        text: "Perfect for our family of 5. The kids love the meal planning!",
+        author: "Michael R.",
+        role: "Parent & Health Coach"
+      },
+      urgency: "🔥 Limited time: 25% off first year"
+    },
+    {
+      id: 'premium',
+      name: 'Professional',
+      tagline: 'For healthcare providers and enterprises',
+      monthlyPrice: 129,
+      annualPrice: 1290,
+      originalMonthlyPrice: 179,
+      originalAnnualPrice: 1790,
+      colorScheme: 'premium',
+      ctaText: 'Contact Sales',
+      ctaSecondary: 'Book Demo',
+      badge: 'Enterprise',
+      features: [
+        { text: 'Everything in Family', included: true, premium: true },
+        { text: 'Clinical integration & HIPAA', included: true, tooltip: 'Full HIPAA compliance with clinical data integration for healthcare providers' },
+        { text: 'Unlimited family members', included: true },
+        { text: 'Advanced reporting & analytics', included: true, premium: true },
+        { text: 'API access & integrations', included: true },
+        { text: 'Custom branding options', included: true },
+        { text: 'Dedicated success manager', included: true, premium: true },
+        { text: 'Priority phone support', included: true },
+        { text: 'Training & onboarding', included: true }
+      ],
+      testimonial: {
+        text: "Essential for our clinic. The clinical integration is seamless.",
+        author: "Dr. James T.",
+        role: "Chief Medical Officer"
+      }
+    }
+  ];
+
+  const savingsPercentage = 25;
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [isInView, controls]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSocialProofCount(prev => prev + Math.floor(Math.random() * 3) + 1);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <section 
-      ref={ref}
-      className="relative py-20 bg-gradient-to-b from-white to-gray-50"
-      aria-label="Pricing Plans"
-    >
-      <div className="relative z-10 container mx-auto px-4 max-w-7xl">
-        {/* Section Header */}
+    <section className="py-24 bg-gradient-to-br from-neutral-50 via-primary-50/30 to-secondary-50/30 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,_theme(colors.primary.500)_0%,_transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,_theme(colors.secondary.500)_0%,_transparent_50%)]" />
+      </div>
+
+      <div className="container mx-auto px-6 relative z-10" ref={ref}>
         <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={controls}
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
         >
           <motion.div
-            className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full mb-6"
-            initial={{ scale: 0 }}
-            animate={isInView ? { scale: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="mb-6"
           >
-            <Crown className="w-6 h-6 text-teal-600" />
-            <span className="font-semibold text-teal-800">Choose Your Path</span>
+            <span className="bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent text-sm font-bold uppercase tracking-wider">
+              Transparent Pricing
+            </span>
           </motion.div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-            Choose Your Path to{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-cyan-600">
-              Better Nutrition
+          <motion.h2
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="text-5xl lg:text-6xl font-extrabold mb-6"
+          >
+            <span className="bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+              Choose Your Plan
             </span>
-          </h2>
-          
-          <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            Investment in your nutrition is investment in your future. Choose the level of support 
-            that matches your goals and see the transformation begin immediately.
-          </p>
-        </motion.div>
+            <br />
+            <span className="text-neutral-800">Start Your Health Journey</span>
+          </motion.h2>
 
-        {/* Billing & Plan Type Controls */}
-        <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          {/* Billing Cycle Toggle */}
-          <div className="flex items-center gap-4">
-            <span className="text-gray-700 font-medium">Monthly</span>
-            <button
-              onClick={() => setBillingCycle(prev => prev === 'monthly' ? 'annual' : 'monthly')}
-              className={`relative w-16 h-8 rounded-full transition-colors ${
-                billingCycle === 'annual' ? 'bg-teal-600' : 'bg-gray-300'
-              }`}
-              aria-label="Toggle billing cycle"
-            >
-              <div className={`absolute w-6 h-6 bg-white rounded-full top-1 transition-transform ${
-                billingCycle === 'annual' ? 'translate-x-9' : 'translate-x-1'
-              }`} />
-            </button>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-700 font-medium">Annual</span>
-              <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">
-                Save 20%
-              </span>
-            </div>
-          </div>
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="text-xl text-neutral-600 max-w-3xl mx-auto mb-8"
+          >
+            Join thousands of families and healthcare professionals who trust Praneya 
+            for personalized nutrition guidance and evidence-based health outcomes.
+          </motion.p>
 
-          {/* Plan Type Toggle */}
-          <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
-            <button
-              onClick={() => setPlanType('individual')}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                planType === 'individual'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Individual
-            </button>
-            <button
-              onClick={() => setPlanType('family')}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                planType === 'family'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Family
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Audience Filter */}
-        <motion.div
-          className="flex justify-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <div className="inline-flex items-center gap-2 p-2 bg-white rounded-xl shadow-lg border border-gray-200">
-            {[
-              { id: 'all', label: 'All Features', icon: <Target className="w-4 h-4" /> },
-              { id: 'fitness', label: 'Fitness', icon: <Dumbbell className="w-4 h-4" /> },
-              { id: 'families', label: 'Families', icon: <Users className="w-4 h-4" /> },
-              { id: 'health', label: 'Health', icon: <Heart className="w-4 h-4" /> }
-            ].map((filter) => (
-              <button
-                key={filter.id}
-                onClick={() => setSelectedAudience(filter.id as any)}
-                className={`
-                  flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300
-                  ${selectedAudience === filter.id
-                    ? 'bg-teal-100 text-teal-700 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }
-                `}
-              >
-                {filter.icon}
-                <span>{filter.label}</span>
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Pricing Cards */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.8 }}
-        >
-          {pricingTiers.map((tier, index) => (
-            <motion.div
-              key={tier.id}
-              className={`relative bg-white rounded-3xl shadow-lg border border-gray-200 overflow-hidden ${
-                tier.popular ? 'ring-2 ring-teal-500 scale-105' : ''
-              }`}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 1.0 + (index * 0.1) }}
-              whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-            >
-              {/* Badge */}
-              {tier.badge && (
-                <div className={`absolute top-6 left-6 right-6 text-center`}>
-                  <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r ${tier.color}`}>
-                    {tier.popular && <Sparkles className="w-4 h-4" />}
-                    {tier.badge}
-                  </span>
-                </div>
-              )}
-
-              <div className="p-8 pt-16">
-                {/* Header */}
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    {tier.name}
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    {tier.tagline}
-                  </p>
-
-                  {/* Pricing */}
-                  <div className="mb-4">
-                    <div className="flex items-baseline justify-center gap-2 mb-2">
-                      <span className="text-4xl font-bold text-gray-900">
-                        {formatPrice(calculatePrice(tier))}
-                      </span>
-                      {tier.id !== 'basic' && (
-                        <span className="text-gray-600">
-                          /{billingCycle === 'monthly' ? 'month' : 'month*'}
-                        </span>
-                      )}
-                    </div>
-                    
-                    {tier.id !== 'basic' && (
-                      <div className="space-y-1">
-                        <p className="text-sm text-gray-500">
-                          {getDailyPrice(tier)} per day
-                        </p>
-                        {planType === 'family' && (
-                          <p className="text-sm text-teal-600">
-                            ${(calculatePrice(tier) / 6).toFixed(2)} per family member
-                          </p>
-                        )}
-                        {billingCycle === 'annual' && calculateAnnualSavings(tier) > 0 && (
-                          <p className="text-sm text-green-600 font-medium">
-                            Save ${calculateAnnualSavings(tier).toFixed(0)} annually
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Trust Indicators */}
-                  {tier.id === 'basic' && (
-                    <div className="flex flex-col gap-1 text-sm text-gray-600">
-                      <div className="flex items-center justify-center gap-2">
-                        <Shield className="w-4 h-4 text-green-500" />
-                        <span>No Credit Card Required</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {tier.guarantee && (
-                    <div className="flex items-center justify-center gap-2 text-sm text-teal-600">
-                      <CheckCircle className="w-4 h-4" />
-                      <span>{tier.guarantee}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Features */}
-                <div className="mb-8">
-                  <ul className="space-y-3">
-                    {tier.features.basic.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700 text-sm">{feature}</span>
-                      </li>
-                    ))}
-                    
-                    {/* Audience-Specific Features */}
-                    {selectedAudience !== 'all' && tier.features.audienceSpecific[selectedAudience] && (
-                      <>
-                        <li className="border-t border-gray-200 pt-3 mt-4">
-                          <div className={`flex items-center gap-2 mb-2 text-sm font-medium bg-gradient-to-r ${getAudienceColor(selectedAudience)} bg-clip-text text-transparent`}>
-                            {getAudienceIcon(selectedAudience)}
-                            <span className="capitalize">{selectedAudience} Benefits:</span>
-                          </div>
-                        </li>
-                        {tier.features.audienceSpecific[selectedAudience].map((feature, featureIndex) => (
-                          <li key={`${selectedAudience}-${featureIndex}`} className="flex items-start gap-3">
-                            <Sparkles className="w-5 h-5 text-teal-500 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 text-sm">{feature}</span>
-                          </li>
-                        ))}
-                      </>
-                    )}
-                  </ul>
-                </div>
-
-                {/* Social Proof */}
-                <div className="mb-8">
-                  <div className="space-y-2">
-                    {tier.socialProof.map((proof, proofIndex) => (
-                      <div key={proofIndex} className="flex items-center gap-2 text-sm text-gray-600">
-                        <UserCheck className="w-4 h-4 text-blue-500" />
-                        <span>{proof}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Urgency */}
-                {tier.urgency && (
-                  <div className="mb-6 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                    <div className="flex items-center gap-2 text-orange-800">
-                      <Timer className="w-4 h-4" />
-                      <span className="text-sm font-medium">{tier.urgency}</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* CTA Button */}
-                <button
-                  onClick={() => onTierSelect?.(tier.id, billingCycle, planType)}
-                  className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition-all duration-300 transform hover:scale-105 bg-gradient-to-r ${tier.color} hover:shadow-lg`}
+          {/* Social Proof Counter */}
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, scale: 0.8 },
+              visible: { opacity: 1, scale: 1 }
+            }}
+            className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full border border-neutral-200 shadow-lg"
+          >
+            <div className="flex -space-x-2">
+              {Array.from({ length: 4 }, (_, i) => (
+                <div
+                  key={i}
+                  className="w-8 h-8 rounded-full bg-gradient-to-r from-primary-400 to-secondary-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold"
                 >
-                  <div className="flex items-center justify-center gap-2">
-                    <span>{tier.cta}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </button>
-
-                {/* Secondary Info */}
-                {tier.id !== 'basic' && (
-                  <p className="text-center text-xs text-gray-500 mt-3">
-                    Cancel anytime • No setup fees
-                  </p>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Feature Comparison Table */}
-        <motion.div
-          className="mb-16"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 1.4 }}
-        >
-          <div className="text-center mb-8">
-            <button
-              onClick={() => setShowComparison(!showComparison)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <BarChart3 className="w-5 h-5" />
-              <span>Compare All Features</span>
-              {showComparison ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
-          </div>
-
-          <AnimatePresence>
-            {showComparison && (
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-                    Detailed Feature Comparison
-                  </h3>
-                  
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-gray-200">
-                          <th className="text-left py-4 px-4 font-semibold text-gray-900">Features</th>
-                          <th className="text-center py-4 px-4 font-semibold text-gray-900">Basic</th>
-                          <th className="text-center py-4 px-4 font-semibold text-gray-900">Enhanced</th>
-                          <th className="text-center py-4 px-4 font-semibold text-gray-900">Premium</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          ['Recipe Generation', true, true, true],
-                          ['Food Recognition', true, true, true],
-                          ['Nutrition Tracking', true, true, true],
-                          ['Allergy Screening', true, true, true],
-                          ['Family Coordination', false, true, true],
-                          ['Meal Planning', false, true, true],
-                          ['Shopping Lists', false, true, true],
-                          ['Progress Analytics', false, true, true],
-                          ['Biometric Integration', false, false, true],
-                          ['Healthcare Reports', false, false, true],
-                          ['Specialist Access', false, false, true]
-                        ].map(([feature, basic, enhanced, premium], index) => (
-                          <tr key={index} className="border-b border-gray-100">
-                            <td className="py-4 px-4 text-gray-700">{feature}</td>
-                            <td className="py-4 px-4 text-center">
-                              {basic ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-gray-300 mx-auto" />}
-                            </td>
-                            <td className="py-4 px-4 text-center">
-                              {enhanced ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-gray-300 mx-auto" />}
-                            </td>
-                            <td className="py-4 px-4 text-center">
-                              {premium ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-gray-300 mx-auto" />}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Value Calculators */}
-        <motion.div
-          className="mb-16"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 1.6 }}
-        >
-          <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Calculate Your Value
-            </h3>
-            <p className="text-xl text-gray-600">
-              See how much Praneya can save you based on your current situation
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {valueCalculators.map((calculator, index) => (
-              <motion.div
-                key={calculator.type}
-                className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6"
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 1.8 + (index * 0.1) }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`p-2 rounded-lg bg-gradient-to-r ${getAudienceColor(calculator.type)}`}>
-                    {getAudienceIcon(calculator.type)}
-                  </div>
-                  <h4 className="font-bold text-gray-900">{calculator.title}</h4>
-                </div>
-
-                <p className="text-gray-600 mb-4">{calculator.question}</p>
-
-                <div className="space-y-4">
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      {calculator.unit}
-                    </span>
-                    <input
-                      type="number"
-                      placeholder={calculator.placeholder}
-                      className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value) || 0;
-                        handleCalculatorSubmit(calculator.type, value);
-                      }}
-                    />
-                  </div>
-
-                  {calculatorValues[calculator.type] !== undefined && (
-                    <motion.div
-                      className="p-4 bg-teal-50 border border-teal-200 rounded-lg"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <TrendingUp className="w-5 h-5 text-teal-600" />
-                        <span className="font-semibold text-teal-800">Your Potential Value:</span>
-                      </div>
-                      <p className="text-teal-700">
-                        {calculator.calculation(calculatorValues[calculator.type]!).description}
-                      </p>
-                    </motion.div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* FAQ Section */}
-        <motion.div
-          className="mb-16"
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 2.0 }}
-        >
-          <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h3>
-            <p className="text-xl text-gray-600">
-              Everything you need to know about our pricing
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto space-y-4">
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 2.2 + (index * 0.05) }}
-              >
-                <button
-                  onClick={() => setExpandedFAQ(expandedFAQ === `faq-${index}` ? null : `faq-${index}`)}
-                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <span className="font-semibold text-gray-900">{faq.question}</span>
-                  {expandedFAQ === `faq-${index}` ? 
-                    <ChevronUp className="w-5 h-5 text-gray-500" /> : 
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
-                  }
-                </button>
-                
-                <AnimatePresence>
-                  {expandedFAQ === `faq-${index}` && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="px-6 pb-4 text-gray-700 leading-relaxed">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Money-Back Guarantee */}
-        <motion.div
-          className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-8 border border-green-200 mb-16"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.8, delay: 2.4 }}
-        >
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-              <Shield className="w-8 h-8 text-green-600" />
-            </div>
-            
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Try Praneya Risk-Free
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              {[
-                { icon: <Clock className="w-6 h-6" />, text: '30-day money-back guarantee on all paid plans' },
-                { icon: <CheckCircle className="w-6 h-6" />, text: 'Cancel anytime with one click' },
-                { icon: <Gift className="w-6 h-6" />, text: 'Keep all recipes and meal plans you\'ve created' },
-                { icon: <Heart className="w-6 h-6" />, text: 'No questions asked refund policy' }
-              ].map((item, index) => (
-                <div key={index} className="flex flex-col items-center text-center">
-                  <div className="text-green-600 mb-2">{item.icon}</div>
-                  <p className="text-gray-700 text-sm">{item.text}</p>
+                  {String.fromCharCode(65 + i)}
                 </div>
               ))}
             </div>
-          </div>
+            <span className="text-sm text-neutral-600">
+              <motion.span
+                key={socialProofCount}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="font-bold text-primary-600"
+              >
+                {socialProofCount.toLocaleString()}
+              </motion.span>
+              {' '}people upgraded this week
+            </span>
+          </motion.div>
         </motion.div>
 
-        {/* Payment Options */}
+        {/* Pricing Toggle */}
         <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 2.6 }}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { opacity: 1, y: 0 }
+          }}
         >
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">
-            Secure Payment Options
-          </h3>
-          
-          <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
+          <PricingToggle
+            isAnnual={isAnnual}
+            onToggle={setIsAnnual}
+            savingsPercentage={savingsPercentage}
+          />
+        </motion.div>
+
+        {/* Pricing Cards */}
+        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {pricingPlans.map((plan, index) => (
+            <PricingCard
+              key={plan.id}
+              plan={plan}
+              isAnnual={isAnnual}
+              isPopular={plan.popular || false}
+              index={index}
+            />
+          ))}
+        </div>
+
+        {/* Bottom Trust Indicators */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 30 },
+            visible: { opacity: 1, y: 0 }
+          }}
+          className="mt-16 text-center"
+        >
+          <div className="flex flex-wrap justify-center items-center gap-8 mb-8">
             {[
-              { icon: <CreditCard className="w-8 h-8" />, label: 'Credit Cards' },
-              { icon: <Smartphone className="w-8 h-8" />, label: 'PayPal' },
-              { icon: <Smartphone className="w-8 h-8" />, label: 'Apple Pay' },
-              { icon: <Smartphone className="w-8 h-8" />, label: 'Google Pay' }
-            ].map((payment, index) => (
-              <div key={index} className="flex items-center gap-2 text-gray-600">
-                {payment.icon}
-                <span>{payment.label}</span>
-              </div>
+              { icon: '🔒', text: 'HIPAA Compliant' },
+              { icon: '🛡️', text: 'SOC 2 Certified' },
+              { icon: '✅', text: 'FDA Guidelines' },
+              { icon: '💳', text: 'Secure Payments' },
+              { icon: '↩️', text: '30-Day Guarantee' }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1 + index * 0.1 }}
+                className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-neutral-200"
+              >
+                <span className="text-lg">{item.icon}</span>
+                <span className="text-sm font-medium text-neutral-700">{item.text}</span>
+              </motion.div>
             ))}
           </div>
-          
-          <p className="text-gray-600 mb-4">
-            All payments are secured with 256-bit SSL encryption
+
+          <p className="text-neutral-600 max-w-2xl mx-auto">
+            All plans come with a 30-day money-back guarantee. No setup fees, no hidden costs. 
+            Cancel anytime with just one click. Questions? Our support team is here to help 24/7.
           </p>
-          
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-500">
-            <span>• Annual plans receive 20% discount</span>
-            <span>• Family plan payment splitting available</span>
-            <span>• No setup fees or hidden charges</span>
-          </div>
         </motion.div>
       </div>
     </section>

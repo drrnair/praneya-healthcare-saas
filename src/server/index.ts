@@ -30,7 +30,7 @@ import { auditRoutes } from './routes/audit';
 import { emergencyRoutes } from './routes/emergency';
 
 // Database and utilities
-import { connectDatabase } from '@/lib/database/connection';
+import { initializeDatabase as connectDatabase } from '@/lib/database/connection';
 import { initializeRedis } from '@/lib/cache/redis';
 import { healthCheckHandler } from './utils/health-check';
 import { errorHandler } from './middleware/error-handler';

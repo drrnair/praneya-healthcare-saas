@@ -56,7 +56,7 @@ export default function EdamamDemo() {
       cleanedQuery = 'chicken';
     }
 
-    return { healthLabels: [...new Set(healthLabels)], cleanedQuery };
+    return { healthLabels: Array.from(new Set(healthLabels)), cleanedQuery };
   };
 
   const searchRecipes = async () => {
@@ -74,7 +74,7 @@ export default function EdamamDemo() {
         
         const result = await edamamClient.searchRecipes({
           query: cleanedQuery,
-          healthLabels: healthLabels.length > 0 ? healthLabels : undefined,
+          healthLabels: healthLabels.length > 0 ? healthLabels : [] as string[],
           from: 0,
           to: 8
         });

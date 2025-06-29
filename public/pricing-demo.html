@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praneya Healthcare - Pricing Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e3f2fd 50%, #f1f8e9 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 2rem 0;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .social-proof {
+            display: inline-flex;
+            items-center: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatars {
+            display: flex;
+            margin-left: -0.5rem;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007BFF 0%, #28A745 100%);
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            margin-left: -0.5rem;
+        }
+
+        .social-text {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .social-number {
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        /* Pricing Toggle */
+        .pricing-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .toggle-label {
+            font-size: 1.125rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-label.active {
+            color: #1f2937;
+        }
+
+        .toggle-label.inactive {
+            color: #9ca3af;
+        }
+
+        .toggle-container {
+            position: relative;
+        }
+
+        .toggle-switch {
+            width: 64px;
+            height: 32px;
+            background: #e5e7eb;
+            border-radius: 16px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #dbeafe;
+        }
+
+        .toggle-handle {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .toggle-switch.active .toggle-handle {
+            transform: translateX(32px);
+        }
+
+        .savings-badge {
+            position: absolute;
+            top: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #28A745 0%, #20c997 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .savings-badge.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-0.25rem);
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            transition: all 0.3s ease;
+            transform-origin: center bottom;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 48px rgba(0, 123, 255, 0.15);
+        }
+
+        .pricing-card.popular {
+            transform: scale(1.05);
+            border-color: #007BFF;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+        }
+
+        .pricing-card.popular:hover {
+            transform: translateY(-8px) scale(1.07);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(40, 167, 69, 0.1);
+            color: #28A745;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-tagline {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-display {
+            margin-bottom: 1rem;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .price-main {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #007BFF;
+            transition: all 0.5s ease;
+        }
+
+        .price-period {
+            font-size: 1.25rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .price-original {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .price-crossed {
+            text-decoration: line-through;
+            color: #9ca3af;
+            font-size: 1.125rem;
+        }
+
+        .discount-badge {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28A745;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .price-annual-note {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .urgency-banner {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #b45309;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            animation: urgencyPulse 2s infinite;
+        }
+
+        @keyframes urgencyPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Features List */
+        .features-list {
+            margin-bottom: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .feature-icon.included {
+            background: #28A745;
+            color: white;
+        }
+
+        .feature-icon.excluded {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        .feature-text.excluded {
+            color: #9ca3af;
+        }
+
+        .feature-text.premium {
+            color: #007BFF;
+            font-weight: 600;
+        }
+
+        .feature-tooltip {
+            position: relative;
+            border-bottom: 1px dashed #9ca3af;
+            cursor: help;
+        }
+
+        /* CTA Buttons */
+        .cta-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-primary {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 16px;
+            font-weight: bold;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .cta-basic {
+            background: #1f2937;
+            color: white;
+        }
+
+        .cta-basic:hover {
+            background: #374151;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(31, 41, 55, 0.3);
+        }
+
+        .cta-enhanced {
+            background: linear-gradient(135deg, #007BFF 0%, #28A745 100%);
+            color: white;
+        }
+
+        .cta-enhanced:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #1e7e34 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+        }
+
+        .cta-premium {
+            background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .cta-premium:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
+        }
+
+        .cta-secondary {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            background: transparent;
+            color: #4b5563;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        /* Trust Indicators */
+        .trust-indicators {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .trust-main {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        /* Testimonials */
+        .testimonial {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            margin-top: 1rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover .testimonial {
+            opacity: 1;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #4b5563;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .testimonial-author {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        /* Bottom Trust Section */
+        .bottom-trust {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .trust-badges-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .trust-badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 1rem;
+            border-radius: 30px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .trust-badge-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .trust-icon {
+            font-size: 1.125rem;
+        }
+
+        .trust-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .guarantee-text {
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-badges-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pricing-toggle {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Animation Classes */
+        .animate-in {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-price {
+            animation: priceChange 0.5s ease-out;
+        }
+
+        @keyframes priceChange {
+            0% { transform: translateY(-10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Choose Your Plan</h1>
+            <p>Join thousands of families and healthcare professionals who trust Praneya for personalized nutrition guidance and evidence-based health outcomes.</p>
+            
+            <div class="social-proof">
+                <div class="avatars">
+                    <div class="avatar">A</div>
+                    <div class="avatar">B</div>
+                    <div class="avatar">C</div>
+                    <div class="avatar">D</div>
+                </div>
+                <span class="social-text">
+                    <span class="social-number" id="socialCount">1,247</span> people upgraded this week
+                </span>
+            </div>
+        </div>
+
+        <!-- Pricing Toggle -->
+        <div class="pricing-toggle">
+            <span class="toggle-label active" id="monthlyLabel">Monthly</span>
+            <div class="toggle-container">
+                <div class="toggle-switch" id="toggleSwitch" onclick="togglePricing()">
+                    <div class="toggle-handle"></div>
+                </div>
+                <div class="savings-badge" id="savingsBadge">Save 25%</div>
+            </div>
+            <span class="toggle-label inactive" id="annualLabel">Annual</span>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="pricing-grid">
+            <!-- Starter Plan -->
+            <div class="pricing-card animate-in">
+                <div class="plan-header">
+                    <h3 class="plan-name">Starter</h3>
+                    <p class="plan-tagline">Perfect for individuals getting started</p>
+                    
+                    <div class="pricing-display">
+                        <div class="price-container">
+                            <span class="price-main" id="starterPrice">$29</span>
+                            <span class="price-period" id="starterPeriod">/month</span>
+                        </div>
+                        <div class="price-original" id="starterOriginal">
+                            <span class="price-crossed">$39/month</span>
+                            <span class="discount-badge">26% OFF</span>
+                        </div>
+                        <div class="price-annual-note" id="starterAnnualNote" style="display: none;">
+                            $24/month billed annually
+                        </div>
+                    </div>
+                </div>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">
+                            <span class="feature-tooltip">AI-powered meal planning</span>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Basic nutrition tracking</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Recipe recommendations</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Mobile app access</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Email support</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon excluded">×</div>
+                        <div class="feature-text excluded">Family sharing (up to 4)</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon excluded">×</div>
+                        <div class="feature-text excluded">Advanced health analytics</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon excluded">×</div>
+                        <div class="feature-text excluded">Clinical integration</div>
+                    </div>
+                </div>
+
+                <div class="cta-section">
+                    <button class="cta-primary cta-basic">Start Free Trial</button>
+                    <button class="cta-secondary">Learn More</button>
+                </div>
+
+                <div class="trust-indicators">
+                    <p class="trust-main">🔒 No credit card required • 30-day money-back guarantee</p>
+                    <div class="trust-badges">
+                        <span class="trust-badge">✅ HIPAA Compliant</span>
+                        <span class="trust-badge">🛡️ SOC 2 Certified</span>
+                    </div>
+                </div>
+
+                <div class="testimonial">
+                    <p class="testimonial-text">"Great value for someone just starting their health journey!"</p>
+                    <div class="testimonial-author"><strong>Sarah M.</strong>, Health Enthusiast</div>
+                </div>
+            </div>
+
+            <!-- Family Plan -->
+            <div class="pricing-card popular animate-in">
+                <div class="popular-badge">Most Popular</div>
+                <div class="plan-badge">Most Popular</div>
+                
+                <div class="plan-header">
+                    <h3 class="plan-name">Family</h3>
+                    <p class="plan-tagline">Ideal for families and health-conscious groups</p>
+                    
+                    <div class="pricing-display">
+                        <div class="price-container">
+                            <span class="price-main" id="familyPrice">$59</span>
+                            <span class="price-period" id="familyPeriod">/month</span>
+                        </div>
+                        <div class="price-original" id="familyOriginal">
+                            <span class="price-crossed">$79/month</span>
+                            <span class="discount-badge">25% OFF</span>
+                        </div>
+                        <div class="price-annual-note" id="familyAnnualNote" style="display: none;">
+                            $49/month billed annually
+                        </div>
+                    </div>
+
+                    <div class="urgency-banner">
+                        ⚡ Limited time: 25% off first year
+                    </div>
+                </div>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text premium">Everything in Starter</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">
+                            <span class="feature-tooltip">Family sharing (up to 6)</span>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text premium">Advanced health analytics</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Dietary restriction management</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Shopping list automation</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Progress tracking & goals</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Phone & chat support</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon excluded">×</div>
+                        <div class="feature-text excluded">Clinical integration</div>
+                    </div>
+                </div>
+
+                <div class="cta-section">
+                    <button class="cta-primary cta-enhanced">Start Family Plan</button>
+                </div>
+
+                <div class="trust-indicators">
+                    <p class="trust-main">🔒 No credit card required • 30-day money-back guarantee</p>
+                    <div class="trust-badges">
+                        <span class="trust-badge">✅ HIPAA Compliant</span>
+                        <span class="trust-badge">🛡️ SOC 2 Certified</span>
+                    </div>
+                </div>
+
+                <div class="testimonial">
+                    <p class="testimonial-text">"Perfect for our family of 5. The kids love the meal planning!"</p>
+                    <div class="testimonial-author"><strong>Michael R.</strong>, Parent & Health Coach</div>
+                </div>
+            </div>
+
+            <!-- Professional Plan -->
+            <div class="pricing-card animate-in">
+                <div class="plan-badge">Enterprise</div>
+                
+                <div class="plan-header">
+                    <h3 class="plan-name">Professional</h3>
+                    <p class="plan-tagline">For healthcare providers and enterprises</p>
+                    
+                    <div class="pricing-display">
+                        <div class="price-container">
+                            <span class="price-main" id="professionalPrice">$129</span>
+                            <span class="price-period" id="professionalPeriod">/month</span>
+                        </div>
+                        <div class="price-original" id="professionalOriginal">
+                            <span class="price-crossed">$179/month</span>
+                            <span class="discount-badge">28% OFF</span>
+                        </div>
+                        <div class="price-annual-note" id="professionalAnnualNote" style="display: none;">
+                            $108/month billed annually
+                        </div>
+                    </div>
+                </div>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text premium">Everything in Family</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">
+                            <span class="feature-tooltip">Clinical integration & HIPAA</span>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Unlimited family members</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text premium">Advanced reporting & analytics</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">API access & integrations</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Custom branding options</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text premium">Dedicated success manager</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon included">✓</div>
+                        <div class="feature-text">Priority phone support</div>
+                    </div>
+                </div>
+
+                <div class="cta-section">
+                    <button class="cta-primary cta-premium">Contact Sales</button>
+                    <button class="cta-secondary">Book Demo</button>
+                </div>
+
+                <div class="trust-indicators">
+                    <p class="trust-main">🔒 No credit card required • 30-day money-back guarantee</p>
+                    <div class="trust-badges">
+                        <span class="trust-badge">✅ HIPAA Compliant</span>
+                        <span class="trust-badge">🛡️ SOC 2 Certified</span>
+                    </div>
+                </div>
+
+                <div class="testimonial">
+                    <p class="testimonial-text">"Essential for our clinic. The clinical integration is seamless."</p>
+                    <div class="testimonial-author"><strong>Dr. James T.</strong>, Chief Medical Officer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Trust Section -->
+        <div class="bottom-trust">
+            <div class="trust-badges-grid">
+                <div class="trust-badge-item">
+                    <span class="trust-icon">🔒</span>
+                    <span class="trust-text">HIPAA Compliant</span>
+                </div>
+                <div class="trust-badge-item">
+                    <span class="trust-icon">🛡️</span>
+                    <span class="trust-text">SOC 2 Certified</span>
+                </div>
+                <div class="trust-badge-item">
+                    <span class="trust-icon">✅</span>
+                    <span class="trust-text">FDA Guidelines</span>
+                </div>
+                <div class="trust-badge-item">
+                    <span class="trust-icon">💳</span>
+                    <span class="trust-text">Secure Payments</span>
+                </div>
+                <div class="trust-badge-item">
+                    <span class="trust-icon">↩️</span>
+                    <span class="trust-text">30-Day Guarantee</span>
+                </div>
+            </div>
+            
+            <p class="guarantee-text">
+                All plans come with a 30-day money-back guarantee. No setup fees, no hidden costs. 
+                Cancel anytime with just one click. Questions? Our support team is here to help 24/7.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let isAnnual = false;
+        let socialCount = 1247;
+
+        // Pricing data
+        const pricingData = {
+            starter: {
+                monthly: { price: 29, original: 39, annual: 24 },
+                annual: { price: 290, original: 390, annual: 24 }
+            },
+            family: {
+                monthly: { price: 59, original: 79, annual: 49 },
+                annual: { price: 590, original: 790, annual: 49 }
+            },
+            professional: {
+                monthly: { price: 129, original: 179, annual: 108 },
+                annual: { price: 1290, original: 1790, annual: 108 }
+            }
+        };
+
+        function togglePricing() {
+            isAnnual = !isAnnual;
+            
+            const toggleSwitch = document.getElementById('toggleSwitch');
+            const savingsBadge = document.getElementById('savingsBadge');
+            const monthlyLabel = document.getElementById('monthlyLabel');
+            const annualLabel = document.getElementById('annualLabel');
+
+            // Update toggle UI
+            if (isAnnual) {
+                toggleSwitch.classList.add('active');
+                savingsBadge.classList.add('show');
+                monthlyLabel.classList.add('inactive');
+                monthlyLabel.classList.remove('active');
+                annualLabel.classList.add('active');
+                annualLabel.classList.remove('inactive');
+            } else {
+                toggleSwitch.classList.remove('active');
+                savingsBadge.classList.remove('show');
+                monthlyLabel.classList.add('active');
+                monthlyLabel.classList.remove('inactive');
+                annualLabel.classList.add('inactive');
+                annualLabel.classList.remove('active');
+            }
+
+            // Update pricing for all plans
+            updatePricing('starter');
+            updatePricing('family');
+            updatePricing('professional');
+        }
+
+        function updatePricing(plan) {
+            const period = isAnnual ? 'annual' : 'monthly';
+            const data = pricingData[plan][period];
+            
+            const priceElement = document.getElementById(`${plan}Price`);
+            const periodElement = document.getElementById(`${plan}Period`);
+            const originalElement = document.getElementById(`${plan}Original`);
+            const annualNoteElement = document.getElementById(`${plan}AnnualNote`);
+
+            // Animate price change
+            priceElement.classList.add('animate-price');
+            setTimeout(() => {
+                priceElement.textContent = `$${data.price}`;
+                periodElement.textContent = isAnnual ? '/year' : '/month';
+                
+                if (isAnnual) {
+                    annualNoteElement.style.display = 'block';
+                    annualNoteElement.textContent = `$${data.annual}/month billed annually`;
+                } else {
+                    annualNoteElement.style.display = 'none';
+                }
+                
+                priceElement.classList.remove('animate-price');
+            }, 250);
+
+            // Update original pricing
+            const originalPrice = isAnnual ? data.original : data.original;
+            const periodText = isAnnual ? '/year' : '/month';
+            const discount = Math.round(((originalPrice - data.price) / originalPrice) * 100);
+            
+            originalElement.innerHTML = `
+                <span class="price-crossed">$${originalPrice}${periodText}</span>
+                <span class="discount-badge">${discount}% OFF</span>
+            `;
+        }
+
+        // Social proof counter animation
+        function updateSocialProof() {
+            socialCount += Math.floor(Math.random() * 3) + 1;
+            const socialElement = document.getElementById('socialCount');
+            socialElement.style.opacity = '0';
+            socialElement.style.transform = 'translateY(-10px)';
+            
+            setTimeout(() => {
+                socialElement.textContent = socialCount.toLocaleString();
+                socialElement.style.opacity = '1';
+                socialElement.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on load
+            const cards = document.querySelectorAll('.pricing-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Update social proof periodically
+            setInterval(updateSocialProof, 5000);
+
+            // Add hover effects
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = this.classList.contains('popular') 
+                        ? 'translateY(-8px) scale(1.07)' 
+                        : 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = this.classList.contains('popular') 
+                        ? 'scale(1.05)' 
+                        : 'scale(1)';
+                });
+            });
+
+            // Button interactions
+            const buttons = document.querySelectorAll('.cta-primary, .cta-secondary');
+            buttons.forEach(button => {
+                button.addEventListener('mousedown', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                button.addEventListener('mouseup', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

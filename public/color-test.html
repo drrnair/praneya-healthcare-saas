@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praneya Colors Test</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #E3F2FD 0%, #E8F5E8 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.12);
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, #007BFF 0%, #1565C0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .color-card {
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+        
+        .color-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .primary { background: linear-gradient(135deg, #007BFF 0%, #1976D2 100%); }
+        .success { background: linear-gradient(135deg, #28A745 0%, #52B265 100%); }
+        .warning { background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%); }
+        .error { background: linear-gradient(135deg, #F44336 0%, #E53935 100%); }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0.25rem;
+        }
+        
+        .badge-success {
+            background: #E8F5E8;
+            color: #2E7D32;
+            border: 1px solid #C8E6C9;
+        }
+        
+        .badge-primary {
+            background: #E3F2FD;
+            color: #0D47A1;
+            border: 1px solid #BBDEFB;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(0,123,255,0.08) 0%, rgba(40,167,69,0.05) 100%);
+            padding: 4rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #007BFF 0%, #1565C0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #6C757D;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #007BFF 0%, #1976D2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.3);
+            transition: transform 0.2s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 123, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌈 Praneya Vibrant Colors Test</h1>
+        
+        <div class="color-grid">
+            <div class="color-card primary">
+                <h3>Medical Blue Primary</h3>
+                <p>#007BFF</p>
+                <p>Trust & Clinical Accuracy</p>
+            </div>
+            
+            <div class="color-card success">
+                <h3>Healing Green</h3>
+                <p>#28A745</p>
+                <p>Wellness & Growth</p>
+            </div>
+            
+            <div class="color-card warning">
+                <h3>Warm Amber</h3>
+                <p>#FFC107</p>
+                <p>Energy & Motivation</p>
+            </div>
+            
+            <div class="color-card error">
+                <h3>Compassionate Red</h3>
+                <p>#F44336</p>
+                <p>Alerts & Attention</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <h2 style="color: #007BFF; margin-bottom: 1rem;">Trust Indicators</h2>
+            <span class="badge badge-success">🛡️ HIPAA Compliant</span>
+            <span class="badge badge-primary">✅ RD Approved</span>
+            <span class="badge badge-success">⭐ 4.8 Rating</span>
+        </div>
+        
+        <div class="hero-section">
+            <h1 class="hero-title">Transform Your Health Journey</h1>
+            <p class="hero-subtitle">AI-powered nutrition planning trusted by 50,000+ families</p>
+            <button class="cta-button">Start Free Trial</button>
+        </div>
+    </div>
+</body>
+</html> 

@@ -6,6 +6,8 @@ import { MedicalDisclaimerBanner } from '@/components/layout/MedicalDisclaimerBa
 import { SecurityHeaders } from '@/components/layout/SecurityHeaders';
 import { ConsentManagement } from '@/components/layout/ConsentManagement';
 import { HealthcareThemeProvider } from '@/lib/design-system/theme-provider';
+import { MobileNavigation } from '@/components/layout/MobileNavigation';
+import { MobileViewport } from '@/components/mobile/ResponsiveLayout';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -49,9 +51,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: process.env.GOOGLE_SITE_VERIFICATION 
-    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
-    : undefined,
+  ...(process.env.GOOGLE_SITE_VERIFICATION && {
+    verification: { google: process.env.GOOGLE_SITE_VERIFICATION }
+  }),
   alternates: {
     canonical: process.env.NEXT_PUBLIC_APP_URL || defaultUrl,
   },
@@ -145,12 +147,32 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <SecurityHeaders />
         <MedicalDisclaimerBanner />
-        <HealthcareProviders>
-          <HealthcareThemeProvider userId="demo-user" subscriptionTier="enhanced">
-            {children}
-          </HealthcareThemeProvider>
-        </HealthcareProviders>
+        <MobileViewport>
+          <HealthcareProviders>
+            <HealthcareThemeProvider userId="demo-user" subscriptionTier="enhanced">
+              <MobileNavigation />
+              {children}
+            </HealthcareThemeProvider>
+          </HealthcareProviders>
+        </MobileViewport>
         <ConsentManagement />
+        
+        {/* Service Worker Registration */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                  .then(function(registration) {
+                    console.log('SW registered: ', registration);
+                  })
+                  .catch(function(registrationError) {
+                    console.log('SW registration failed: ', registrationError);
+                  });
+              });
+            }
+          `
+        }} />
       </body>
     </html>
   );

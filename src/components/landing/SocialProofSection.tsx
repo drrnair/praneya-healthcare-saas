@@ -6,7 +6,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView, AnimatePresence, useAnimation } from 'framer-motion';
 import { 
   Star,
   ChevronLeft,
@@ -29,6 +29,7 @@ import {
   Globe,
   BarChart3
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Testimonial {
   id: string;
@@ -72,6 +73,376 @@ interface Award {
 interface SocialProofSectionProps {
   onTestimonialClick?: (testimonial: Testimonial) => void;
 }
+
+interface TestimonialData {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  image: string;
+  quote: string;
+  rating: number;
+  credentials: string[];
+  verified: boolean;
+  linkedIn?: string;
+  outcome: {
+    metric: string;
+    improvement: string;
+    timeframe: string;
+  };
+}
+
+interface StatisticData {
+  value: number;
+  suffix: string;
+  prefix?: string;
+  label: string;
+  description: string;
+  icon: string;
+  color: 'primary' | 'success' | 'warning' | 'error';
+}
+
+interface CredentialBadge {
+  name: string;
+  organization: string;
+  logo: string;
+  color: string;
+  verified: boolean;
+}
+
+interface AnimatedCounterProps {
+  end: number;
+  duration?: number;
+  suffix?: string;
+  prefix?: string;
+  decimals?: number;
+  className?: string;
+}
+
+interface CredentialBadgeProps {
+  badge: CredentialBadge;
+  className?: string;
+}
+
+interface TestimonialCardProps {
+  testimonial: TestimonialData;
+  index: number;
+}
+
+interface StatisticsCardProps {
+  stat: StatisticData;
+  index: number;
+}
+
+const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
+  end,
+  duration = 2.5,
+  suffix = '',
+  prefix = '',
+  decimals = 0,
+  className = ''
+}) => {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (inView && !isVisible) {
+      setIsVisible(true);
+      
+      let startTime: number;
+      const startValue = 0;
+      const endValue = end;
+      
+      const animate = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue = startValue + (endValue - startValue) * easeOutQuart;
+        
+        setCount(currentValue);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      
+      requestAnimationFrame(animate);
+    }
+  }, [inView, end, duration, isVisible]);
+
+  const formatNumber = (num: number) => {
+    if (decimals > 0) {
+      return num.toFixed(decimals);
+    }
+    return Math.floor(num).toLocaleString();
+  };
+
+  return (
+    <span ref={ref} className={className}>
+      {prefix}{formatNumber(count)}{suffix}
+    </span>
+  );
+};
+
+const CredentialBadgeComponent: React.FC<CredentialBadgeProps> = ({ badge, className }) => {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.05, y: -2 }}
+      className={cn(
+        "relative inline-flex items-center space-x-2 px-3 py-2 rounded-full",
+        "bg-white/80 backdrop-blur-sm border shadow-sm",
+        "transition-all duration-200 ease-healthcare",
+        className
+      )}
+      style={{ borderColor: badge.color }}
+    >
+      <div 
+        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
+        style={{ backgroundColor: badge.color }}
+      >
+        {badge.logo}
+      </div>
+      <span className="text-sm font-medium text-neutral-700">{badge.name}</span>
+      {badge.verified && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2, type: "spring" }}
+          className="w-4 h-4 bg-success-500 rounded-full flex items-center justify-center"
+        >
+          <span className="text-white text-xs">✓</span>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+};
+
+const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, index }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ 
+        duration: 0.6, 
+        delay: index * 0.1,
+        ease: "easeOut"
+      }}
+      whileHover={{ 
+        y: -8,
+        transition: { duration: 0.2 }
+      }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className="group relative bg-white rounded-2xl p-6 shadow-healthcare-card hover:shadow-healthcare-hover transition-all duration-300 ease-healthcare border border-neutral-100"
+    >
+      {/* Quote Icon */}
+      <div className="absolute -top-3 -left-3 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center shadow-lg">
+        <span className="text-white text-sm font-bold">"</span>
+      </div>
+
+      {/* Rating Stars */}
+      <div className="flex items-center space-x-1 mb-4">
+        {Array.from({ length: 5 }, (_, i) => (
+          <motion.span
+            key={i}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 + i * 0.1 }}
+            className={cn(
+              "text-lg",
+              i < testimonial.rating ? "text-warning-500" : "text-neutral-300"
+            )}
+          >
+            ⭐
+          </motion.span>
+        ))}
+        <span className="ml-2 text-sm font-medium text-neutral-600">
+          {testimonial.rating}.0
+        </span>
+      </div>
+
+      {/* Quote */}
+      <blockquote className="text-neutral-700 leading-relaxed mb-6 text-base">
+        "{testimonial.quote}"
+      </blockquote>
+
+      {/* Outcome Metrics */}
+      <motion.div 
+        className="bg-gradient-to-r from-success-50 to-primary-50 rounded-lg p-4 mb-6 border border-success-200"
+        animate={{
+          scale: isHovered ? 1.02 : 1,
+        }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-2xl font-bold text-success-600">{testimonial.outcome.improvement}</p>
+            <p className="text-sm text-success-700">{testimonial.outcome.metric}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-neutral-600">in {testimonial.outcome.timeframe}</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Author Info */}
+      <div className="flex items-start space-x-4">
+        <div className="relative">
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 p-0.5"
+          >
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+              <span className="text-primary-600 font-bold text-lg">
+                {testimonial.name.split(' ').map(n => n[0]).join('')}
+              </span>
+            </div>
+          </motion.div>
+          
+          {testimonial.verified && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.8, type: "spring" }}
+              className="absolute -bottom-1 -right-1 w-5 h-5 bg-success-500 rounded-full flex items-center justify-center border-2 border-white"
+            >
+              <span className="text-white text-xs">✓</span>
+            </motion.div>
+          )}
+        </div>
+        
+        <div className="flex-1">
+          <h4 className="font-semibold text-neutral-900">{testimonial.name}</h4>
+          <p className="text-sm text-neutral-600">{testimonial.role}</p>
+          <p className="text-sm text-primary-600 font-medium">{testimonial.company}</p>
+          
+          {/* Credentials */}
+          <div className="flex flex-wrap gap-1 mt-2">
+            {testimonial.credentials.map((credential, idx) => (
+              <span
+                key={idx}
+                className="inline-block px-2 py-1 bg-primary-100 text-primary-700 rounded text-xs font-medium"
+              >
+                {credential}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {testimonial.linkedIn && (
+          <motion.a
+            href={testimonial.linkedIn}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white text-sm hover:bg-blue-700 transition-colors"
+          >
+            in
+          </motion.a>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+const StatisticsCard: React.FC<StatisticsCardProps> = ({ stat, index }) => {
+  const colorClasses = {
+    primary: {
+      bg: 'from-primary-500 to-primary-600',
+      icon: 'bg-primary-100 text-primary-600',
+      text: 'text-primary-600'
+    },
+    success: {
+      bg: 'from-success-500 to-success-600',
+      icon: 'bg-success-100 text-success-600',
+      text: 'text-success-600'
+    },
+    warning: {
+      bg: 'from-warning-500 to-warning-600',
+      icon: 'bg-warning-100 text-warning-600',
+      text: 'text-warning-600'
+    },
+    error: {
+      bg: 'from-error-500 to-error-600',
+      icon: 'bg-error-100 text-error-600',
+      text: 'text-error-600'
+    }
+  };
+
+  const colors = colorClasses[stat.color];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ 
+        duration: 0.6, 
+        delay: index * 0.15,
+        type: "spring",
+        stiffness: 100
+      }}
+      whileHover={{ 
+        scale: 1.05,
+        y: -5,
+        transition: { duration: 0.2 }
+      }}
+      className="relative bg-white rounded-2xl p-8 shadow-healthcare-card hover:shadow-healthcare-hover transition-all duration-300 ease-healthcare border border-neutral-100 overflow-hidden"
+    >
+      {/* Background Gradient */}
+      <div className={cn(
+        "absolute top-0 right-0 w-32 h-32 bg-gradient-to-br opacity-5 rounded-full -translate-y-16 translate-x-16",
+        colors.bg
+      )} />
+
+      {/* Icon */}
+      <div className={cn(
+        "w-16 h-16 rounded-2xl flex items-center justify-center text-2xl mb-6",
+        colors.icon
+      )}>
+        {stat.icon}
+      </div>
+
+      {/* Main Statistic */}
+      <div className="mb-4">
+                 <div className={cn("text-5xl font-bold mb-2", colors.text)}>
+           <AnimatedCounter
+             end={stat.value}
+             prefix={stat.prefix || ''}
+             suffix={stat.suffix}
+             decimals={stat.suffix === 'M+' ? 1 : 0}
+           />
+         </div>
+        <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+          {stat.label}
+        </h3>
+        <p className="text-neutral-600 leading-relaxed">
+          {stat.description}
+        </p>
+      </div>
+
+      {/* Progress Indicator */}
+      <div className="w-full bg-neutral-200 rounded-full h-2 overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: "100%" }}
+          transition={{ 
+            duration: 2,
+            delay: index * 0.2 + 0.5,
+            ease: "easeOut"
+          }}
+          className={cn("h-full bg-gradient-to-r", colors.bg)}
+        />
+      </div>
+    </motion.div>
+  );
+};
 
 const SocialProofSection: React.FC<SocialProofSectionProps> = ({
   onTestimonialClick
@@ -367,6 +738,123 @@ const SocialProofSection: React.FC<SocialProofSectionProps> = ({
       case 'families': return 'from-green-500 to-emerald-600';
       case 'health': return 'from-orange-500 to-amber-600';
       default: return 'from-teal-500 to-cyan-600';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'testimonials' | 'statistics' | 'credentials'>('testimonials');
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [isInView, controls]);
+
+  // Sample Data
+  const sampleTestimonials: TestimonialData[] = [
+    {
+      id: '1',
+      name: 'Dr. Sarah Chen',
+      role: 'Registered Dietitian',
+      company: 'Stanford Health Care',
+      image: '/testimonials/dr-chen.jpg',
+      quote: 'Praneya\'s AI-driven nutrition insights have revolutionized how we approach personalized patient care. The clinical accuracy is remarkable.',
+      rating: 5,
+      credentials: ['RD', 'CDE', 'PhD'],
+      verified: true,
+      linkedIn: 'https://linkedin.com/in/dr-sarah-chen',
+      outcome: {
+        metric: 'Patient outcomes improved',
+        improvement: '40%',
+        timeframe: '6 months'
+      }
+    },
+    {
+      id: '2',
+      name: 'Michael Rodriguez',
+      role: 'Family Health Manager',
+      company: 'Parent of 3',
+      image: '/testimonials/michael.jpg',
+      quote: 'Finally found a nutrition app that works for our busy family. My kids actually enjoy eating healthier now!',
+      rating: 5,
+      credentials: ['Parent Ambassador'],
+      verified: true,
+      outcome: {
+        metric: 'Family meal satisfaction',
+        improvement: '85%',
+        timeframe: '3 months'
+      }
+    },
+    {
+      id: '3',
+      name: 'Dr. James Thompson',
+      role: 'Chief Medical Officer',
+      company: 'HealthFirst Medical Group',
+      image: '/testimonials/dr-thompson.jpg',
+      quote: 'The HIPAA compliance and clinical oversight features make this the only nutrition platform we recommend to our patients.',
+      rating: 5,
+      credentials: ['MD', 'MBA', 'FACEP'],
+      verified: true,
+      linkedIn: 'https://linkedin.com/in/dr-james-thompson',
+      outcome: {
+        metric: 'Patient engagement increase',
+        improvement: '65%',
+        timeframe: '4 months'
+      }
+    }
+  ];
+
+  const statistics: StatisticData[] = [
+    {
+      value: 50,
+      suffix: 'K+',
+      label: 'Active Families',
+      description: 'Trusted by families worldwide for personalized nutrition guidance',
+      icon: '👨‍👩‍👧‍👦',
+      color: 'primary'
+    },
+    {
+      value: 12.5,
+      suffix: 'M+',
+      prefix: '$',
+      label: 'Grocery Savings',
+      description: 'Total savings on grocery bills through smart meal planning',
+      icon: '💰',
+      color: 'success'
+    },
+    {
+      value: 85,
+      suffix: '%',
+      label: 'Energy Improvement',
+      description: 'Users report significant energy level improvements',
+      icon: '⚡',
+      color: 'warning'
+    },
+    {
+      value: 98,
+      suffix: '%',
+      label: 'Satisfaction Rate',
+      description: 'User satisfaction with our AI-powered recommendations',
+      icon: '⭐',
+      color: 'error'
+    }
+  ];
+
+  const credentials: CredentialBadge[] = [
+    { name: 'HIPAA Compliant', organization: 'Healthcare', logo: '🛡️', color: '#007BFF', verified: true },
+    { name: 'RD Approved', organization: 'Nutrition', logo: '✅', color: '#28A745', verified: true },
+    { name: 'FDA Guidelines', organization: 'Regulatory', logo: '🏛️', color: '#FFC107', verified: true },
+    { name: 'SOC 2 Certified', organization: 'Security', logo: '🔒', color: '#6C757D', verified: true }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        staggerChildren: 0.1
+      }
     }
   };
 

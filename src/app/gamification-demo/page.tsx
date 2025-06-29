@@ -226,12 +226,12 @@ export default function GamificationDemo() {
       const achievement: Achievement = {
         id: `score-${Date.now()}`,
         userId: 'demo-user',
-        type: 'health_score',
+        type: 'milestone',
         title: `Health Score ${achievedMilestone}!`,
         description: `Your overall health score reached ${achievedMilestone} points!`,
         badgeIcon: achievedMilestone >= 90 ? '🌟' : achievedMilestone >= 80 ? '⭐' : '🎯',
         earnedAt: new Date(),
-        category: 'health',
+        category: 'wellness',
         points: achievedMilestone * 2
       };
       
@@ -293,12 +293,12 @@ export default function GamificationDemo() {
     const welcomeAchievement: Achievement = {
       id: 'welcome-demo',
       userId: 'demo-user',
-      type: 'system',
+      type: 'milestone',
       title: 'Welcome to Gamification!',
       description: 'You\'ve entered the gamification demo. Try updating your goals!',
       badgeIcon: '🎮',
       earnedAt: new Date(),
-      category: 'system',
+      category: 'wellness',
       points: 10
     };
     

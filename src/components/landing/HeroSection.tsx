@@ -13,6 +13,8 @@ import { trackConversion, initializeABTest } from '@/lib/analytics/conversion-tr
 import { AudienceValueCard } from './AudienceValueCard';
 import { TrustIndicators } from './TrustIndicators';
 import { HeroBackground } from './HeroBackground';
+import { HeroAIImage } from '@/components/images/AIGeneratedImages';
+import { AnimatedButton } from '@/components/animations/MicroInteractions';
 import { 
   Dumbbell, 
   Calendar, 
@@ -255,13 +257,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             className="relative w-full max-w-4xl mx-auto mb-12"
           >
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl">
-              <Image
-                src="/images/hero/diverse-families-cooking.jpg"
-                alt="Diverse families cooking healthy meals together with AI nutrition guidance"
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
+              <HeroAIImage
+                imageKey="heroFamilyCooking"
+                className="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               

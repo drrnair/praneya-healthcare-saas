@@ -18,9 +18,9 @@ export default function APITestPage() {
       }
       
       const data = await response.json();
-      setTestResults(prev => ({ ...prev, recipes: data }));
+      setTestResults((prev: any) => ({ ...prev, recipes: data }));
     } catch (error) {
-      setTestResults(prev => ({ 
+      setTestResults((prev: any) => ({ 
         ...prev, 
         recipes: { 
           error: 'Configure EDAMAM_APP_ID and EDAMAM_APP_KEY in .env.local',

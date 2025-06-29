@@ -1,78 +1,75 @@
 // Praneya Healthcare PWA Service Worker
-// Optimized for healthcare data with offline support and background sync
+// Version: 1.0.0
 
 const CACHE_NAME = 'praneya-healthcare-v1';
-const STATIC_CACHE = 'praneya-static-v1';
-const DYNAMIC_CACHE = 'praneya-dynamic-v1';
-const API_CACHE = 'praneya-api-v1';
+const RUNTIME_CACHE = 'praneya-runtime-v1';
 
-// Resources to cache immediately
+// Assets to cache on install
 const STATIC_ASSETS = [
   '/',
-  '/dashboard',
-  '/health',
-  '/medications',
-  '/family',
   '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/offline',
+  '/static/css/main.css',
+  '/static/js/main.js',
+  '/images/icons/icon-192x192.png',
+  '/images/icons/icon-512x512.png',
+  '/images/hero/diverse-families-cooking.jpg'
 ];
 
-// API endpoints that can be cached
-const CACHEABLE_API_ROUTES = [
-  '/api/health-goals',
-  '/api/streaks',
-  '/api/achievements',
-  '/api/health-score',
-  '/api/user/profile'
+// API endpoints to cache
+const API_CACHE_PATTERNS = [
+  '/api/health-check',
+  '/api/ai/analyze-nutrition',
+  '/api/users/',
 ];
 
-// Critical healthcare data that should never be cached
-const NEVER_CACHE_ROUTES = [
-  '/api/medications/emergency',
-  '/api/emergency',
-  '/api/auth',
-  '/api/payments'
-];
+// Cache strategies
+const CACHE_STRATEGIES = {
+  CACHE_FIRST: 'cache-first',
+  NETWORK_FIRST: 'network-first',
+  STALE_WHILE_REVALIDATE: 'stale-while-revalidate',
+  NETWORK_ONLY: 'network-only',
+  CACHE_ONLY: 'cache-only'
+};
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing...');
+  console.log('[SW] Installing service worker...');
   
   event.waitUntil(
-    caches.open(STATIC_CACHE)
+    caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Service Worker: Caching static assets');
+        console.log('[SW] Caching static assets');
         return cache.addAll(STATIC_ASSETS);
       })
       .then(() => {
-        console.log('Service Worker: Static assets cached');
+        console.log('[SW] Static assets cached successfully');
         return self.skipWaiting();
+      })
+      .catch((error) => {
+        console.error('[SW] Failed to cache static assets:', error);
       })
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activating...');
+  console.log('[SW] Activating service worker...');
   
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME && 
-                cacheName !== STATIC_CACHE && 
-                cacheName !== DYNAMIC_CACHE &&
-                cacheName !== API_CACHE) {
-              console.log('Service Worker: Deleting old cache:', cacheName);
+            if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
+              console.log('[SW] Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       })
       .then(() => {
-        console.log('Service Worker: Cache cleanup complete');
+        console.log('[SW] Service worker activated');
         return self.clients.claim();
       })
   );
@@ -83,329 +80,311 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip caching for chrome-extension requests
-  if (url.protocol === 'chrome-extension:') {
+  // Skip non-GET requests
+  if (request.method !== 'GET') {
     return;
   }
 
-  // Never cache critical healthcare endpoints
-  if (NEVER_CACHE_ROUTES.some(route => url.pathname.includes(route))) {
-    event.respondWith(fetch(request));
-    return;
-  }
-
-  // Handle different types of requests
-  if (request.method === 'GET') {
-    if (url.pathname.startsWith('/api/')) {
-      event.respondWith(handleAPIRequest(request));
-    } else {
-      event.respondWith(handlePageRequest(request));
-    }
-  } else if (request.method === 'POST' && url.pathname.startsWith('/api/')) {
-    event.respondWith(handleAPIPost(request));
-  }
+  // Handle different request types with appropriate strategies
+  event.respondWith(handleRequest(request, url));
 });
 
-// Handle page requests with cache-first strategy for static assets
-async function handlePageRequest(request) {
-  const url = new URL(request.url);
-  
-  try {
-    // Try cache first for static assets
-    if (STATIC_ASSETS.includes(url.pathname) || 
-        url.pathname.includes('.js') || 
-        url.pathname.includes('.css') ||
-        url.pathname.includes('/icons/')) {
-      
-      const cachedResponse = await caches.match(request);
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-    }
+// Main request handler
+async function handleRequest(request, url) {
+  // Static assets - Cache First
+  if (isStaticAsset(url)) {
+    return cacheFirst(request);
+  }
 
-    // Fetch from network
-    const networkResponse = await fetch(request);
-    
-    if (networkResponse.ok) {
-      // Cache successful responses
-      const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(request, networkResponse.clone());
-    }
-    
-    return networkResponse;
-    
-  } catch (error) {
-    console.log('Service Worker: Network failed, trying cache:', error);
-    
-    // Fallback to cache
+  // API requests - Network First with offline fallback
+  if (isApiRequest(url)) {
+    return networkFirstWithFallback(request);
+  }
+
+  // HTML pages - Network First with offline fallback
+  if (isHTMLRequest(request)) {
+    return networkFirstWithOffline(request);
+  }
+
+  // Images - Cache First with network fallback
+  if (isImageRequest(request)) {
+    return cacheFirst(request);
+  }
+
+  // External resources - Stale While Revalidate
+  if (isExternalResource(url)) {
+    return staleWhileRevalidate(request);
+  }
+
+  // Default - Network with cache fallback
+  return networkWithCacheFallback(request);
+}
+
+// Cache strategies implementation
+
+async function cacheFirst(request) {
+  try {
     const cachedResponse = await caches.match(request);
     if (cachedResponse) {
       return cachedResponse;
     }
-    
-    // Return offline page for navigation requests
-    if (request.mode === 'navigate') {
-      return caches.match('/offline.html') || 
-             new Response('Offline - Please check your connection', {
-               status: 503,
-               statusText: 'Service Unavailable'
-             });
+
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
     }
-    
-    throw error;
+    return response;
+  } catch (error) {
+    console.error('[SW] Cache first strategy failed:', error);
+    return new Response('Offline content not available', { status: 503 });
   }
 }
 
-// Handle API requests with network-first strategy
-async function handleAPIRequest(request) {
-  const url = new URL(request.url);
-  
+async function networkFirstWithFallback(request) {
   try {
-    // Try network first for fresh data
-    const networkResponse = await fetch(request);
-    
-    if (networkResponse.ok) {
-      // Cache successful API responses for cacheable routes
-      if (CACHEABLE_API_ROUTES.some(route => url.pathname.includes(route))) {
-        const cache = await caches.open(API_CACHE);
-        cache.put(request, networkResponse.clone());
-      }
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
     }
-    
-    return networkResponse;
-    
+    return response;
   } catch (error) {
-    console.log('Service Worker: API network failed, trying cache:', error);
-    
-    // Fallback to cached API response
+    console.log('[SW] Network failed, trying cache:', request.url);
     const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      // Add offline indicator header
-      const response = cachedResponse.clone();
-      response.headers.set('X-From-Cache', 'true');
-      return response;
-    }
     
-    // Return error response for failed API calls
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
+    // Return offline fallback for API requests
     return new Response(JSON.stringify({
-      error: 'Offline - Data unavailable',
-      offline: true
+      error: 'Network unavailable',
+      offline: true,
+      timestamp: Date.now()
     }), {
       status: 503,
-      statusText: 'Service Unavailable',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 }
 
-// Handle POST requests with background sync
-async function handleAPIPost(request) {
+async function networkFirstWithOffline(request) {
   try {
-    // Try to send immediately
     const response = await fetch(request);
-    return response;
-    
-  } catch (error) {
-    console.log('Service Worker: POST failed, queuing for background sync:', error);
-    
-    // Store request for background sync
-    const requestData = {
-      url: request.url,
-      method: request.method,
-      headers: [...request.headers.entries()],
-      body: await request.text(),
-      timestamp: Date.now()
-    };
-    
-    // Store in IndexedDB for background sync
-    await storeFailedRequest(requestData);
-    
-    // Register background sync
-    if (self.registration.sync) {
-      await self.registration.sync.register('healthcare-data-sync');
+    if (response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
     }
+    return response;
+  } catch (error) {
+    console.log('[SW] Network failed, trying cache:', request.url);
+    const cachedResponse = await caches.match(request);
     
-    return new Response(JSON.stringify({
-      queued: true,
-      message: 'Request queued for when connection is restored'
-    }), {
-      status: 202,
-      statusText: 'Accepted',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
+    // Return offline page
+    return caches.match('/offline');
   }
 }
 
-// Background sync for healthcare data
+async function staleWhileRevalidate(request) {
+  const cachedResponse = await caches.match(request);
+  
+  const networkResponsePromise = fetch(request).then((response) => {
+    if (response.ok) {
+      const cache = caches.open(RUNTIME_CACHE);
+      cache.then(c => c.put(request, response.clone()));
+    }
+    return response;
+  }).catch(() => cachedResponse);
+
+  return cachedResponse || networkResponsePromise;
+}
+
+async function networkWithCacheFallback(request) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch (error) {
+    return caches.match(request) || new Response('Content not available offline', { status: 503 });
+  }
+}
+
+// Helper functions
+
+function isStaticAsset(url) {
+  return url.pathname.includes('/static/') ||
+         url.pathname.includes('/images/') ||
+         url.pathname.includes('/icons/') ||
+         url.pathname.includes('/_next/static/');
+}
+
+function isApiRequest(url) {
+  return url.pathname.startsWith('/api/') ||
+         API_CACHE_PATTERNS.some(pattern => url.pathname.includes(pattern));
+}
+
+function isHTMLRequest(request) {
+  return request.headers.get('accept')?.includes('text/html');
+}
+
+function isImageRequest(request) {
+  return request.headers.get('accept')?.includes('image/') ||
+         request.url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/);
+}
+
+function isExternalResource(url) {
+  return url.origin !== self.location.origin;
+}
+
+// Background sync for offline actions
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'healthcare-data-sync') {
-    event.waitUntil(syncHealthcareData());
+  console.log('[SW] Background sync triggered:', event.tag);
+  
+  if (event.tag === 'background-sync-health-data') {
+    event.waitUntil(syncHealthData());
   }
 });
 
-// Sync queued healthcare data when online
-async function syncHealthcareData() {
-  console.log('Service Worker: Syncing healthcare data...');
-  
+async function syncHealthData() {
   try {
-    const failedRequests = await getFailedRequests();
+    // Sync cached health data when online
+    const cache = await caches.open(RUNTIME_CACHE);
+    const cachedRequests = await cache.keys();
     
-    for (const requestData of failedRequests) {
-      try {
-        const request = new Request(requestData.url, {
-          method: requestData.method,
-          headers: requestData.headers,
-          body: requestData.body
-        });
-        
-        const response = await fetch(request);
-        
-        if (response.ok) {
-          await removeFailedRequest(requestData.timestamp);
-          console.log('Service Worker: Synced request:', requestData.url);
-          
-          // Notify client of successful sync
-          notifyClients('sync-success', {
-            url: requestData.url,
-            timestamp: requestData.timestamp
-          });
+    for (const request of cachedRequests) {
+      if (request.url.includes('/api/health/') && request.method === 'POST') {
+        try {
+          await fetch(request);
+          await cache.delete(request);
+          console.log('[SW] Synced health data:', request.url);
+        } catch (error) {
+          console.error('[SW] Failed to sync health data:', error);
         }
-        
-      } catch (error) {
-        console.log('Service Worker: Sync failed for:', requestData.url, error);
       }
     }
-    
   } catch (error) {
-    console.log('Service Worker: Background sync failed:', error);
+    console.error('[SW] Background sync failed:', error);
   }
 }
 
-// IndexedDB operations for failed requests
-async function storeFailedRequest(requestData) {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('praneya-offline', 1);
-    
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => {
-      const db = request.result;
-      const transaction = db.transaction(['requests'], 'readwrite');
-      const store = transaction.objectStore('requests');
-      
-      store.add(requestData);
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    };
-    
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      db.createObjectStore('requests', { keyPath: 'timestamp' });
-    };
-  });
-}
-
-async function getFailedRequests() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('praneya-offline', 1);
-    
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => {
-      const db = request.result;
-      const transaction = db.transaction(['requests'], 'readonly');
-      const store = transaction.objectStore('requests');
-      const getAllRequest = store.getAll();
-      
-      getAllRequest.onsuccess = () => resolve(getAllRequest.result);
-      getAllRequest.onerror = () => reject(getAllRequest.error);
-    };
-  });
-}
-
-async function removeFailedRequest(timestamp) {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('praneya-offline', 1);
-    
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => {
-      const db = request.result;
-      const transaction = db.transaction(['requests'], 'readwrite');
-      const store = transaction.objectStore('requests');
-      
-      store.delete(timestamp);
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
-    };
-  });
-}
-
-// Notify clients of important events
-function notifyClients(type, data) {
-  self.clients.matchAll().then(clients => {
-    clients.forEach(client => {
-      client.postMessage({
-        type,
-        data
-      });
-    });
-  });
-}
-
-// Push notifications for medication reminders
+// Push notifications
 self.addEventListener('push', (event) => {
-  if (!event.data) return;
-  
-  const data = event.data.json();
+  console.log('[SW] Push notification received');
   
   const options = {
-    body: data.body,
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-72x72.png',
-    tag: data.tag || 'healthcare-notification',
-    requireInteraction: data.urgent || false,
-    actions: data.actions || [],
-    data: data.data || {}
+    body: 'Stay on track with your health goals!',
+    icon: '/images/icons/icon-192x192.png',
+    badge: '/images/icons/badge-72x72.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    },
+    actions: [
+      {
+        action: 'view',
+        title: 'View Details',
+        icon: '/images/icons/view-icon.png'
+      },
+      {
+        action: 'dismiss',
+        title: 'Dismiss',
+        icon: '/images/icons/dismiss-icon.png'
+      }
+    ]
   };
-  
+
+  if (event.data) {
+    const data = event.data.json();
+    options.body = data.body || options.body;
+    options.data = { ...options.data, ...data };
+  }
+
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification('Praneya Healthcare', options)
   );
 });
 
-// Handle notification clicks
+// Notification click handling
 self.addEventListener('notificationclick', (event) => {
+  console.log('[SW] Notification clicked:', event.action);
+  
   event.notification.close();
-  
-  const { action, data } = event;
-  
-  let url = '/dashboard';
-  
-  if (action === 'log-medication') {
-    url = '/medications/log';
-  } else if (action === 'view-appointment') {
-    url = '/appointments';
-  } else if (data?.url) {
-    url = data.url;
+
+  if (event.action === 'view') {
+    event.waitUntil(
+      clients.openWindow('/health/dashboard')
+    );
+  } else if (event.action === 'dismiss') {
+    // Just close the notification
+    return;
+  } else {
+    // Default action - open the app
+    event.waitUntil(
+      clients.openWindow('/')
+    );
   }
-  
-  event.waitUntil(
-    self.clients.matchAll().then(clients => {
-      // Check if app is already open
-      const existingClient = clients.find(client => 
-        client.url.includes(url) && 'focus' in client
-      );
-      
-      if (existingClient) {
-        return existingClient.focus();
+});
+
+// Error handling
+self.addEventListener('error', (event) => {
+  console.error('[SW] Service worker error:', event.error);
+});
+
+self.addEventListener('unhandledrejection', (event) => {
+  console.error('[SW] Unhandled promise rejection:', event.reason);
+});
+
+// Periodic background sync (if supported)
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'health-reminder') {
+    event.waitUntil(sendHealthReminder());
+  }
+});
+
+async function sendHealthReminder() {
+  try {
+    // Send periodic health reminders
+    await self.registration.showNotification('Health Check Reminder', {
+      body: 'Time for your daily health check-in!',
+      icon: '/images/icons/icon-192x192.png',
+      data: { type: 'health-reminder' }
+    });
+  } catch (error) {
+    console.error('[SW] Failed to send health reminder:', error);
+  }
+}
+
+// Clean up old cache entries periodically
+setInterval(async () => {
+  try {
+    const cache = await caches.open(RUNTIME_CACHE);
+    const keys = await cache.keys();
+    const now = Date.now();
+    const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+    for (const request of keys) {
+      const response = await cache.match(request);
+      if (response) {
+        const dateHeader = response.headers.get('date');
+        if (dateHeader) {
+          const responseDate = new Date(dateHeader).getTime();
+          if (now - responseDate > maxAge) {
+            await cache.delete(request);
+            console.log('[SW] Cleaned up old cache entry:', request.url);
+          }
+        }
       }
-      
-      // Open new window
-      if (clients.openWindow) {
-        return clients.openWindow(url);
-      }
-    })
-  );
-}); 
+    }
+  } catch (error) {
+    console.error('[SW] Cache cleanup failed:', error);
+  }
+}, 24 * 60 * 60 * 1000); // Run daily 

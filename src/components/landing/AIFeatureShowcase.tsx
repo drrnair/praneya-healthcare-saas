@@ -9,6 +9,24 @@ import {
   HealthcareBadge,
   HealthcareTooltip 
 } from '@/lib/design-system/healthcare-components';
+import { FeatureAIImage, TrustAIImage } from '@/components/images/AIGeneratedImages';
+import { trackConversion } from '@/lib/analytics/conversion-tracking';
+import { 
+  Scan, 
+  Brain, 
+  Target, 
+  Zap,
+  Check,
+  ArrowRight,
+  Sparkles,
+  Camera,
+  BarChart3,
+  Users,
+  Calendar,
+  ShoppingCart,
+  Clock,
+  Heart
+} from 'lucide-react';
 
 /**
  * =======================================================================
@@ -276,7 +294,7 @@ export const AIFeatureShowcase: React.FC<AIFeatureShowcaseProps> = ({ className 
   const [selectedRecipe, setSelectedRecipe] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, threshold: 0.2 });
+  const isInView = useInView(containerRef, { once: true, margin: '-20%' });
   const controls = useAnimation();
 
   const tabs = [
@@ -634,153 +652,128 @@ export const AIFeatureShowcase: React.FC<AIFeatureShowcaseProps> = ({ className 
               transition={{ duration: 0.5 }}
               className="grid lg:grid-cols-2 gap-12"
             >
-              {/* Dashboard Mockup */}
-              <div className="space-y-6">
-                <h3 className="text-3xl font-bold text-neutral-800">
-                  Comprehensive Nutrition Dashboard
-                </h3>
+              {/* Feature Demonstration Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+                {/* AI Dashboard Visualization */}
+                <motion.div
+                  variants={itemVariants}
+                  className="order-2 lg:order-1"
+                >
+                  <FeatureAIImage
+                    imageKey="nutritionDashboard"
+                    className="rounded-2xl shadow-2xl"
+                  />
+                </motion.div>
                 
-                {/* Macro Nutrients */}
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-[0_8px_32px_rgba(0,123,255,0.12)]">
-                  <h4 className="text-lg font-semibold mb-6">Daily Macro Breakdown</h4>
-                  
-                  <div className="grid grid-cols-3 gap-6">
-                    <div className="text-center">
-                      <ProgressRing
-                        percentage={68}
-                        color="#0891b2"
-                        size={100}
-                        strokeWidth={8}
-                        label="Protein"
-                      />
-                      <p className="text-sm text-neutral-600 mt-2">68g / 100g</p>
-                    </div>
-                    
-                    <div className="text-center">
-                      <ProgressRing
-                        percentage={45}
-                        color="#10b981"
-                        size={100}
-                        strokeWidth={8}
-                        label="Carbs"
-                      />
-                      <p className="text-sm text-neutral-600 mt-2">135g / 300g</p>
-                    </div>
-                    
-                    <div className="text-center">
-                      <ProgressRing
-                        percentage={82}
-                        color="#f59e0b"
-                        size={100}
-                        strokeWidth={8}
-                        label="Fats"
-                      />
-                      <p className="text-sm text-neutral-600 mt-2">41g / 50g</p>
-                    </div>
+                <motion.div
+                  variants={itemVariants}
+                  className="order-1 lg:order-2 space-y-6"
+                >
+                  <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Smart Analytics
                   </div>
-                </div>
-
-                {/* Nutritional Insights */}
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-[0_8px_32px_rgba(0,123,255,0.12)]">
-                  <h4 className="text-lg font-semibold mb-4">AI Nutritional Insights</h4>
                   
-                  <div className="space-y-4">
+                  <h3 className="text-3xl font-bold text-gray-900">
+                    Visualize Your Nutrition Journey
+                  </h3>
+                  
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    Get comprehensive insights into your nutrition patterns with AI-generated reports. 
+                    Track progress, identify trends, and receive personalized recommendations based on your data.
+                  </p>
+                  
+                  <ul className="space-y-3">
                     {[
-                      { 
-                        icon: "💡", 
-                        title: "Optimize Vitamin D", 
-                        description: "Consider adding fatty fish or fortified foods",
-                        priority: "high"
-                      },
-                      { 
-                        icon: "⚡", 
-                        title: "Great Protein Balance", 
-                        description: "You're meeting your daily protein goals well",
-                        priority: "success"
-                      },
-                      { 
-                        icon: "🥬", 
-                        title: "Add More Fiber", 
-                        description: "Include more vegetables for digestive health",
-                        priority: "medium"
-                      }
-                    ].map((insight, index) => (
-                      <motion.div
-                        key={insight.title}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.2 }}
-                        className={cn(
-                          "flex items-start space-x-3 p-3 rounded-lg",
-                          insight.priority === 'high' && "bg-warning-50 border-l-4 border-warning-400",
-                          insight.priority === 'success' && "bg-success-50 border-l-4 border-success-400",
-                          insight.priority === 'medium' && "bg-primary-50 border-l-4 border-primary-400"
-                        )}
-                      >
-                        <span className="text-xl">{insight.icon}</span>
-                        <div>
-                          <h5 className="font-medium text-sm">{insight.title}</h5>
-                          <p className="text-xs text-neutral-600">{insight.description}</p>
-                        </div>
-                      </motion.div>
+                      "Real-time nutrition tracking",
+                      "Macro and micronutrient analysis",
+                      "Health goal progress monitoring",
+                      "Personalized improvement suggestions"
+                    ].map((feature, index) => (
+                      <li key={index} className="flex items-center text-gray-700">
+                        <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </div>
+
+              {/* Family Planning Feature */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+                <motion.div
+                  variants={itemVariants}
+                  className="space-y-6"
+                >
+                  <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                    <Users className="w-4 h-4 mr-2" />
+                    Family Planning
+                  </div>
+                  
+                  <h3 className="text-3xl font-bold text-gray-900">
+                    Simplify Family Meal Planning
+                  </h3>
+                  
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    Plan nutritious meals that work for everyone in your family. 
+                    Our AI considers dietary restrictions, preferences, and nutritional needs for each family member.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      { icon: Calendar, text: "Weekly meal planning", color: "text-blue-500" },
+                      { icon: ShoppingCart, text: "Smart shopping lists", color: "text-green-500" },
+                      { icon: Clock, text: "Prep time optimization", color: "text-orange-500" },
+                      { icon: Heart, text: "Dietary accommodations", color: "text-red-500" }
+                    ].map((item, index) => (
+                      <div key={index} className="flex items-center space-x-3">
+                        <item.icon className={`w-5 h-5 ${item.color}`} />
+                        <span className="text-gray-700">{item.text}</span>
+                      </div>
                     ))}
                   </div>
-                </div>
+                </motion.div>
+                
+                <motion.div
+                  variants={itemVariants}
+                  className="relative"
+                >
+                  <FeatureAIImage
+                    imageKey="familyMealPlanning"
+                    className="rounded-2xl shadow-2xl"
+                  />
+                  
+                  {/* Overlay badges */}
+                  <motion.div
+                    className="absolute -top-4 -right-4 bg-white rounded-full p-3 shadow-lg"
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    <Sparkles className="w-6 h-6 text-yellow-500" />
+                  </motion.div>
+                </motion.div>
               </div>
 
-              {/* Feature Benefits */}
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <h4 className="text-2xl font-bold text-neutral-800">
-                    Real-time Health Tracking
-                  </h4>
-                  <p className="text-neutral-600">
-                    Monitor your nutritional intake with precision. Our AI analyzes your meals and provides personalized recommendations to optimize your health goals.
+              {/* Trust and Credibility Section */}
+              <motion.div
+                variants={itemVariants}
+                className="text-center space-y-12"
+              >
+                <div className="max-w-3xl mx-auto">
+                  <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                    Trusted by Healthcare Professionals
+                  </h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    Our platform is developed in collaboration with registered dietitians, 
+                    nutritionists, and healthcare providers to ensure evidence-based recommendations.
                   </p>
                 </div>
-
-                <div className="grid gap-4">
-                  {[
-                    {
-                      icon: "📊",
-                      title: "Advanced Analytics",
-                      description: "Detailed breakdowns of vitamins, minerals, and macro-nutrients"
-                    },
-                    {
-                      icon: "🎯",
-                      title: "Goal Tracking", 
-                      description: "Set and monitor progress towards your health objectives"
-                    },
-                    {
-                      icon: "🔮",
-                      title: "Predictive Insights",
-                      description: "AI predicts nutritional needs based on your activity and health data"
-                    },
-                    {
-                      icon: "📱",
-                      title: "Seamless Integration",
-                      description: "Connect with fitness trackers and health apps for complete picture"
-                    }
-                  ].map((feature, index) => (
-                    <motion.div
-                      key={feature.title}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      whileHover={{ scale: 1.02 }}
-                      className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20 cursor-pointer transition-all duration-300 hover:shadow-lg"
-                    >
-                      <div className="flex items-start space-x-3">
-                        <span className="text-2xl">{feature.icon}</span>
-                        <div>
-                          <h5 className="font-semibold text-neutral-800">{feature.title}</h5>
-                          <p className="text-sm text-neutral-600">{feature.description}</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
+                
+                <TrustAIImage
+                  imageKey="healthcareProfessionals"
+                  className="max-w-4xl mx-auto rounded-2xl shadow-2xl"
+                />
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

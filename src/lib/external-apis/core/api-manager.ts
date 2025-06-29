@@ -1,14 +1,14 @@
 import { SupabaseClient } from '../clients/supabase-client';
-import { StripeClient } from '../clients/stripe-client';
-import { EdamamClient } from '../clients/edamam-client';
+import { HealthcareStripeClient } from '../clients/stripe-client';
+import { EdamamClient } from '../../edamam/api-client';
 import { GoogleAIClient } from '../clients/google-ai-client';
 import { CacheManager } from './cache-manager';
 import { RateLimiter } from './rate-limiter';
 import { CostTracker } from './cost-tracker';
 
-export class APIManager {
+class ApiManager {
   private supabaseClient: SupabaseClient;
-  private stripeClient: StripeClient;
+  private stripeClient: HealthcareStripeClient;
   private edamamClient: EdamamClient;
   private googleAIClient: GoogleAIClient;
   private cacheManager: CacheManager;
@@ -17,7 +17,8 @@ export class APIManager {
   private initialized = false;
 
   constructor() {
-    this.initializeClients();
+    // Initialize immediately but handle async properly
+    this.initializeClients().catch(console.error);
   }
 
   private async initializeClients(): Promise<void> {
@@ -34,13 +35,13 @@ export class APIManager {
       serviceKey: process.env.SUPABASE_SERVICE_KEY,
     });
 
-      this.stripeClient = new StripeClient({
+      this.stripeClient = new HealthcareStripeClient({
         secretKey: process.env.STRIPE_SECRET_KEY!,
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
         webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-        apiVersion: '2023-10-16'
+        healthcareProductId: process.env.STRIPE_HEALTHCARE_PRODUCT_ID!,
+        gracePeriodDays: parseInt(process.env.BILLING_GRACE_PERIOD_DAYS || "7"),
+        criticalAccessEnabled: process.env.BILLING_CRITICAL_ACCESS_ENABLED === "true",
       });
-
       this.edamamClient = new EdamamClient({
         appId: process.env.EDAMAM_APP_ID!,
         appKey: process.env.EDAMAM_APP_KEY!,
@@ -162,4 +163,8 @@ export class APIManager {
 
     return results;
   }
-} 
+}
+
+// Export both named and default exports for flexibility
+export { ApiManager };
+export default ApiManager;

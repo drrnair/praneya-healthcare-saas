@@ -1,167 +1,208 @@
 {
-  "name": "Praneya Healthcare",
+  "name": "Praneya Healthcare - Family Nutrition & Wellness",
   "short_name": "Praneya",
-  "description": "Your comprehensive healthcare companion for family wellness management",
-  "start_url": "/dashboard",
+  "description": "AI-powered family nutrition planning and healthcare management platform designed for modern families",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "theme_color": "#0891B2",
-  "background_color": "#F8FAFC",
-  "categories": ["health", "medical", "lifestyle"],
+  "orientation": "portrait",
+  "theme_color": "#007BFF",
+  "background_color": "#FFFFFF",
   "lang": "en-US",
   "dir": "ltr",
-  "scope": "/",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   
   "icons": [
     {
-      "src": "/icons/icon-72x72.png",
+      "src": "/images/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-96x96.png",
+      "src": "/images/icons/icon-96x96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-128x128.png",
+      "src": "/images/icons/icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-144x144.png",
+      "src": "/images/icons/icon-144x144.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-152x152.png",
+      "src": "/images/icons/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/images/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-384x384.png",
+      "src": "/images/icons/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/images/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable any"
     }
   ],
   
-  "shortcuts": [
+  "screenshots": [
     {
-      "name": "Log Medication",
-      "short_name": "Medication",
-      "description": "Quickly log your medication intake",
-      "url": "/medications/log",
-      "icons": [
-        {
-          "src": "/icons/medication-shortcut.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
+      "src": "/images/screenshots/mobile-dashboard.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "platform": "mobile",
+      "label": "Family Health Dashboard"
     },
+    {
+      "src": "/images/screenshots/mobile-meal-planning.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "platform": "mobile",
+      "label": "AI-Powered Meal Planning"
+    },
+    {
+      "src": "/images/screenshots/mobile-nutrition-analysis.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "platform": "mobile",
+      "label": "Nutrition Analysis & Insights"
+    },
+    {
+      "src": "/images/screenshots/desktop-overview.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Complete Family Health Overview"
+    }
+  ],
+  
+  "categories": [
+    "health",
+    "lifestyle",
+    "medical",
+    "food",
+    "productivity"
+  ],
+  
+  "shortcuts": [
     {
       "name": "Health Dashboard",
       "short_name": "Dashboard",
-      "description": "View your health overview",
-      "url": "/dashboard",
+      "description": "View your family's health overview",
+      "url": "/health/dashboard",
       "icons": [
         {
-          "src": "/icons/dashboard-shortcut.png",
-          "sizes": "192x192",
-          "type": "image/png"
+          "src": "/images/icons/shortcut-dashboard.png",
+          "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Family Hub",
+      "name": "Meal Planning",
+      "short_name": "Meals",
+      "description": "Plan healthy meals for your family",
+      "url": "/meals",
+      "icons": [
+        {
+          "src": "/images/icons/shortcut-meals.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Family Members",
       "short_name": "Family",
-      "description": "Check family health status",
+      "description": "Manage family health profiles",
       "url": "/family",
       "icons": [
         {
-          "src": "/icons/family-shortcut.png",
-          "sizes": "192x192",
-          "type": "image/png"
+          "src": "/images/icons/shortcut-family.png",
+          "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Emergency",
-      "short_name": "Emergency",
-      "description": "Quick access to emergency features",
-      "url": "/emergency",
+      "name": "AI Nutrition Assistant",
+      "short_name": "AI Assistant",
+      "description": "Get personalized nutrition advice",
+      "url": "/ai-assistant",
       "icons": [
         {
-          "src": "/icons/emergency-shortcut.png",
-          "sizes": "192x192",
-          "type": "image/png"
+          "src": "/images/icons/shortcut-ai.png",
+          "sizes": "96x96"
         }
       ]
     }
   ],
   
-  "edge_side_panel": {
-    "preferred_width": 400
-  },
-  
-  "screenshots": [
-    {
-      "src": "/screenshots/mobile-dashboard.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobile Dashboard View"
-    },
-    {
-      "src": "/screenshots/tablet-dashboard.png",
-      "sizes": "820x1180",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Tablet Dashboard View"
-    }
-  ],
-  
-  "prefer_related_applications": false,
   "protocol_handlers": [
     {
       "protocol": "web+praneya",
-      "url": "/?action=%s"
+      "url": "/?shared_recipe=%s"
     }
   ],
   
   "share_target": {
     "action": "/share",
     "method": "POST",
-    "enctype": "multipart/form-data",
     "params": {
       "title": "title",
       "text": "text",
-      "url": "url",
-      "files": [
-        {
-          "name": "files",
-          "accept": ["image/*", ".pdf"]
-        }
-      ]
+      "url": "url"
     }
-  }
+  },
+  
+  "file_handlers": [
+    {
+      "action": "/import",
+      "accept": {
+        "application/json": [".json"],
+        "text/csv": [".csv"],
+        "image/*": [".jpg", ".jpeg", ".png", ".webp"]
+      }
+    }
+  ],
+  
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  
+  "handle_links": "preferred",
+  
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  
+  "prefer_related_applications": false,
+  
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.praneya.healthcare",
+      "id": "com.praneya.healthcare"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/praneya-healthcare/id123456789"
+    }
+  ]
 } 
