@@ -561,7 +561,7 @@ describe('🏥 Healthcare Compliance Testing Suite', () => {
         
         // Test feature access permissions
         for (const feature of roleTest.features) {
-          const hasAccess = await testSuite.checkFeatureAccess(testUser.id, feature);
+          const hasAccess = await checkFeatureAccess(testUser.id, feature);
           expect(hasAccess).toBe(true);
         }
         
@@ -572,7 +572,7 @@ describe('🏥 Healthcare Compliance Testing Suite', () => {
         ];
         
         for (const restrictedFeature of restrictedFeatures) {
-          const hasAccess = await testSuite.checkFeatureAccess(testUser.id, restrictedFeature);
+          const hasAccess = await checkFeatureAccess(testUser.id, restrictedFeature);
           expect(hasAccess).toBe(false);
         }
         
@@ -583,24 +583,24 @@ describe('🏥 Healthcare Compliance Testing Suite', () => {
       console.log('✅ Role-based access control properly enforces tier permissions');
     });
   });
-
-  // Helper method for feature access checking
-  async checkFeatureAccess(userId: string, feature: string): Promise<boolean> {
-    const user = await testSuite.prisma.user.findUnique({
-      where: { id: userId }
-    });
-    
-    if (!user) return false;
-    
-    const featureMap = {
-      'Basic': ['recipe-search', 'basic-nutrition'],
-      'Enhanced': ['recipe-search', 'basic-nutrition', 'ai-coach', 'family-management', 'meal-planning'],
-      'Premium': ['recipe-search', 'basic-nutrition', 'ai-coach', 'family-management', 'meal-planning', 'clinical-features', 'drug-interactions', 'therapeutic-recipes']
-    };
-    
-    const allowedFeatures = featureMap[user.subscriptionTier as keyof typeof featureMap] || [];
-    return allowedFeatures.includes(feature);
-  }
 });
+
+// Helper function for feature access checking
+async function checkFeatureAccess(userId: string, feature: string): Promise<boolean> {
+  const user = await testSuite.prisma.user.findUnique({
+    where: { id: userId }
+  });
+  
+  if (!user) return false;
+  
+  const featureMap = {
+    'Basic': ['recipe-search', 'basic-nutrition'],
+    'Enhanced': ['recipe-search', 'basic-nutrition', 'ai-coach', 'family-management', 'meal-planning'],
+    'Premium': ['recipe-search', 'basic-nutrition', 'ai-coach', 'family-management', 'meal-planning', 'clinical-features', 'drug-interactions', 'therapeutic-recipes']
+  };
+  
+  const allowedFeatures = featureMap[user.subscriptionTier as keyof typeof featureMap] || [];
+  return allowedFeatures.includes(feature);
+}
 
 export { HealthcareComplianceTestSuite }; 

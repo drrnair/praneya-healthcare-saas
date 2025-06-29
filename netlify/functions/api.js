@@ -1,5 +1,5 @@
-exports.handler = async (event, context) => {
-  const { path, httpMethod, headers, body } = event;
+exports.handler = async (event, _context) => {
+  const { path, httpMethod } = event;
 
   const corsHeaders = {
     'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || '*',

@@ -1,8 +1,6 @@
-const { Handler } = require('@netlify/functions');
-
 // Healthcare API serverless function for Netlify
-exports.handler = async (event, context) => {
-  const { path, httpMethod, headers, body, queryStringParameters } = event;
+exports.handler = async (event, _context) => {
+  const { path, httpMethod, headers, body } = event;
 
   // CORS headers for healthcare compliance
   const corsHeaders = {
