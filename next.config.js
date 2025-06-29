@@ -6,27 +6,7 @@ const nextConfig = {
   // output: 'export',
   // trailingSlash: true,
   images: {
-    unoptimized: true
-  },
-  
-  // Disable TypeScript checking for faster build
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  experimental: {
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
-  },
-  images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -48,9 +28,28 @@ const nextConfig = {
       },
     ],
   },
+
+  // Disable TypeScript checking for faster build
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  experimental: {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
+  },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    NEXT_PUBLIC_APP_URL:
+      process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   },
   // PWA Configuration will be added by withPWA
   // Add security headers
@@ -89,7 +88,7 @@ const nextConfig = {
     ];
   },
   // Webpack configuration for better optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config, { _buildId, dev, isServer, _defaultLoaders, _webpack }) => {
     // Add custom webpack rules here if needed
     config.module.rules.push({
       test: /\.svg$/,
@@ -141,7 +140,7 @@ const nextConfig = {
       // Proxy API requests to Express server in development
       {
         source: '/api/v1/:path*',
-        destination: 
+        destination:
           process.env.NODE_ENV === 'development'
             ? 'http://localhost:3001/api/v1/:path*'
             : '/api/v1/:path*',
