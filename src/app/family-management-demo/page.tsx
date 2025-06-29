@@ -267,7 +267,7 @@ export default function FamilyManagementDemoPage() {
                       <h3 className="font-semibold text-gray-900">{member.name}</h3>
                       <p className="text-sm text-gray-600">{member.relationship}</p>
                       <div className="flex items-center space-x-2 mt-1">
-                        <Badge size="sm" className="capitalize">{member.role}</Badge>
+                        <Badge className="capitalize text-xs px-2 py-1">{member.role}</Badge>
                         {member.privacyLevel === 'private' || member.privacyLevel === 'guardians_only' ? (
                           <EyeOff className="h-3 w-3 text-gray-400" />
                         ) : (
@@ -363,7 +363,7 @@ export default function FamilyManagementDemoPage() {
                     <div>
                       <h3 className="font-semibold text-sm">{member.name}</h3>
                         <p className="text-xs text-gray-500">{member.relationship}</p>
-                        <Badge size="sm" className="capitalize mt-1">{member.role}</Badge>
+                        <Badge className="capitalize text-xs px-2 py-1 mt-1">{member.role}</Badge>
                       </div>
                     </div>
                     <div className="mt-3 flex justify-between text-xs">
@@ -685,7 +685,7 @@ export default function FamilyManagementDemoPage() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>Dr. Smith (Primary Care)</span>
-                    <Badge size="sm" className="bg-green-100 text-green-800">Full Access</Badge>
+                                            <Badge className="bg-green-100 text-green-800 text-xs px-2 py-1">Full Access</Badge>
                   </div>
                   <div className="flex justify-between">
                     <span>Grandma Johnson</span>
