@@ -502,13 +502,13 @@ class ComprehensiveTestRunner {
   private extractPassedCount(output: string): number {
     const match = output.match(/(\d+)\s+passed/i) ||
                   output.match(/✅[^0-9]*(\d+)/g);
-    return match ? parseInt(match[1]) : 0;
+    return match && match[1] ? parseInt(match[1]) : 0;
   }
 
   private extractFailedCount(output: string): number {
     const match = output.match(/(\d+)\s+failed/i) ||
                   output.match(/❌[^0-9]*(\d+)/g);
-    return match ? parseInt(match[1]) : 0;
+    return match && match[1] ? parseInt(match[1]) : 0;
   }
 
   private extractCriticalFailures(output: string): number {

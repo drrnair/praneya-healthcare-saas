@@ -744,15 +744,15 @@ export default function FamilyManagementDemo() {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between items-center p-2 border rounded">
                         <span>Dr. Smith (Primary Care)</span>
-                        <Badge size="sm" className="bg-green-100 text-green-800">Full Access</Badge>
+                        <Badge className="text-xs px-2 py-1 bg-green-100 text-green-800">Full Access</Badge>
                       </div>
                       <div className="flex justify-between items-center p-2 border rounded">
                         <span>Grandma Johnson</span>
-                        <Badge size="sm" className="bg-yellow-100 text-yellow-800">Basic Info</Badge>
+                        <Badge className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800">Basic Info</Badge>
                       </div>
                       <div className="flex justify-between items-center p-2 border rounded">
                         <span>Uncle Mark</span>
-                        <Badge size="sm" className="bg-blue-100 text-blue-800">Contact Only</Badge>
+                        <Badge className="text-xs px-2 py-1 bg-blue-100 text-blue-800">Contact Only</Badge>
                       </div>
                     </div>
                   </div>

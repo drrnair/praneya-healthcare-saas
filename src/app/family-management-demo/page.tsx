@@ -615,7 +615,7 @@ export default function FamilyManagementDemoPage() {
                     </Avatar>
                     <h3 className="font-semibold">{member.name}</h3>
                   </div>
-                  <Badge variant="outline">{member.privacyLevel}</Badge>
+                  <Badge className="capitalize text-xs px-2 py-1">{member.privacyLevel}</Badge>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -685,15 +685,15 @@ export default function FamilyManagementDemoPage() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>Dr. Smith (Primary Care)</span>
-                                            <Badge className="bg-green-100 text-green-800 text-xs px-2 py-1">Full Access</Badge>
+                    <Badge className="text-xs px-2 py-1 bg-green-100 text-green-800">Full Access</Badge>
                   </div>
                   <div className="flex justify-between">
                     <span>Grandma Johnson</span>
-                    <Badge size="sm" className="bg-yellow-100 text-yellow-800">Basic Info</Badge>
+                    <Badge className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800">Basic Info</Badge>
                   </div>
                   <div className="flex justify-between">
                     <span>Uncle Mark</span>
-                    <Badge size="sm" className="bg-blue-100 text-blue-800">Contact Only</Badge>
+                    <Badge className="text-xs px-2 py-1 bg-blue-100 text-blue-800">Contact Only</Badge>
                   </div>
                 </div>
               </div>
