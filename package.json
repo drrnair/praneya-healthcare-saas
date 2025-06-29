@@ -10,7 +10,9 @@
     "dev:server": "tsx watch src/server/index.ts",
     "dev:healthcare-mode": "cross-env NODE_ENV=development HEALTHCARE_MODE=true npm run dev",
     "build": "npm run build:next && npm run build:server",
+    "build:netlify": "next build",
     "build:next": "next build",
+    "build:netlify": "NEXT_CONFIG_FILE=next.config.netlify.js next build",
     "build:server": "tsc -p tsconfig.server.json",
     "start": "node dist/server/index.js",
     "lint": "next lint && eslint \"src/server/**/*.ts\"",
@@ -189,6 +191,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.8.0",
+    "@netlify/plugin-nextjs": "^5.11.4",
     "@playwright/test": "^1.40.1",
     "@types/bcrypt": "^5.0.2",
     "@types/bull": "^4.10.0",
