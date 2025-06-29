@@ -19,7 +19,7 @@ type Response = {
 type NextFunction = () => void;
 
 // Mock verify function until jsonwebtoken is installed
-const verify = (token: string, secret: string): any => {
+const verify = (_token: string, _secret: string): any => {
   // Placeholder implementation
   return { id: 'mock', tenantId: 'mock', healthcareRole: 'end_user' };
 };

@@ -181,15 +181,16 @@ export async function POST(request: NextRequest) {
     const { demo_type, ...params } = body;
 
     switch (demo_type) {
-      case 'recipe':
+      case 'recipe': {
         const recipeResponse = await googleAI.generateRecipeRecommendation(params);
         return NextResponse.json({
           demo_type: 'recipe',
           success: true,
           result: recipeResponse
         });
+      }
 
-      case 'nutrition':
+      case 'nutrition': {
         const nutritionResponse = await googleAI.analyzeNutritionData(
           params.nutritionData,
           params.healthContext
@@ -199,14 +200,16 @@ export async function POST(request: NextRequest) {
           success: true,
           result: nutritionResponse
         });
+      }
 
-      case 'chat':
+      case 'chat': {
         const chatResponse = await googleAI.generateHealthcareContent(params);
         return NextResponse.json({
           demo_type: 'chat',
           success: true,
           result: chatResponse
         });
+      }
 
       case 'analyze-nutrition': {
         const nutritionAnalysis = await googleAI.analyzeNutritionData(

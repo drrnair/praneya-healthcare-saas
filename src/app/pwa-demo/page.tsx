@@ -83,7 +83,7 @@ const mockHealthGoals: HealthGoal[] = [
 
 function PWADemoContent() {
   const { layout } = useLayout();
-  const { isMobile, isTablet, isDesktop } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
   const [achievements] = useState<Achievement[]>([
     { 
       id: '1', 

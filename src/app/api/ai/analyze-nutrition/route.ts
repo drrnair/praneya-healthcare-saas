@@ -19,8 +19,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { 
       nutritionData, 
-      healthContext,
-      userId = "anonymous" 
+      healthContext
     } = body;
 
     // Validate required fields

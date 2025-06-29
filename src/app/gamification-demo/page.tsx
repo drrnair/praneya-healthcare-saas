@@ -109,12 +109,9 @@ export default function GamificationDemo() {
   const [healthScore, setHealthScore] = useState<HealthScore>(demoHealthScore);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [toasts, setToasts] = useState<ToastData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   // Demo functions
   const handleGoalUpdate = async (goalId: string, newValue: number) => {
-    setIsLoading(true);
-    
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
@@ -149,13 +146,10 @@ export default function GamificationDemo() {
         celebrationLevel: 'enthusiastic'
       });
     }
-
-    setIsLoading(false);
   };
 
   const handleStreakUpdate = async (streakType: string) => {
-    setIsLoading(true);
-    
+    // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
     setStreaks(prev => prev.map(streak => 
@@ -199,13 +193,10 @@ export default function GamificationDemo() {
         });
       }
     }
-
-    setIsLoading(false);
   };
 
   const handleScoreUpdate = async () => {
-    setIsLoading(true);
-    
+    // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const improvement = Math.floor(Math.random() * 5) + 1;
@@ -245,8 +236,6 @@ export default function GamificationDemo() {
         celebrationLevel: 'moderate'
       });
     }
-
-    setIsLoading(false);
   };
 
   const showToast = (toastData: ToastData) => {
@@ -263,8 +252,6 @@ export default function GamificationDemo() {
   };
 
   const handleDemoAction = async () => {
-    setIsLoading(true);
-    
     // Simulate multiple updates for demo effect
     await handleGoalUpdate('1', Math.min(goals[0].currentValue + 1, goals[0].targetValue));
     
@@ -275,8 +262,6 @@ export default function GamificationDemo() {
     setTimeout(async () => {
       await handleScoreUpdate();
     }, 2000);
-
-    setIsLoading(false);
   };
 
   // Auto-dismiss toasts

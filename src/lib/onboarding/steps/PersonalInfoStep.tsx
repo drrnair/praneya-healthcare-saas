@@ -57,8 +57,13 @@ export function PersonalInfoStep() {
       case 'dateOfBirth':
         const age = new Date().getFullYear() - new Date(value).getFullYear();
         return age >= 0 && age <= 120 ? '' : 'Please enter a valid date';
-      case 'phone':
-        return /^\+?[\d\s\-\(\)]{10,}$/.test(value) ? '' : 'Please enter a valid phone number';
+              case 'phone': {
+          return /^\+?[\d\s\-()]{10,}$/.test(value) ? '' : 'Please enter a valid phone number';
+        }
+      case 'email': {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(value) ? '' : 'Please enter a valid email address';
+      }
       default:
         return '';
     }

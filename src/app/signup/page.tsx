@@ -9,7 +9,6 @@ export default function SignupPage() {
   const searchParams = useSearchParams();
   const [source, setSource] = useState('');
   const [audience, setAudience] = useState('');
-  const [selectedPlan, setSelectedPlan] = useState('enhanced');
 
   useEffect(() => {
     setSource(searchParams.get('source') || '');
