@@ -35,13 +35,36 @@ interface RecipeGenerationTest {
   healthContext?: any;
 }
 
+interface AIResponse {
+  [key: string]: any;
+}
+
+interface AllergenResult {
+  detectedAllergens: Array<{ name: string; severity: string }>;
+  safetyLevel: string;
+  warnings: string[];
+}
+
+interface RecipeResult {
+  recipe: {
+    title: string;
+    ingredients: string[];
+    instructions: string[];
+    nutritionalInfo: any;
+  };
+  confidence?: number;
+  aiCoaching?: any;
+  clinicalModifications?: any;
+  drugInteractionWarnings?: any;
+}
+
 class AIFunctionalityTestSuite {
   private browser: Browser;
   private page: Page;
-  private testResults: AITestResult[] = [];
-  private readonly API_BASE_URL = 'http://localhost:3001';
-  private readonly CONFIDENCE_THRESHOLD = 0.95;
-  private readonly MAX_RESPONSE_TIME = 5000; // 5 seconds for AI processing
+  public testResults: AITestResult[] = [];
+  public readonly API_BASE_URL = 'http://localhost:3001';
+  public readonly CONFIDENCE_THRESHOLD = 0.95;
+  public readonly MAX_RESPONSE_TIME = 5000; // 5 seconds for AI processing
 
   async setup() {
     this.browser = await chromium.launch({ headless: true });
@@ -119,13 +142,13 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
           // Simulate image upload and analysis
           const imageBuffer = fs.readFileSync(path.join(process.cwd(), 'tests', 'fixtures', testImage.path));
           
-          const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/analyze-ingredient`, {
+          const response = await axios.post(`${this.API_BASE_URL}/api/ai/analyze-ingredient`, {
             image: imageBuffer.toString('base64'),
             format: 'jpeg'
           });
 
           const responseTime = Date.now() - startTime;
-          const aiResult = response.data;
+          const aiResult = response.data as AIResponse;
 
           // Validate AI response structure
           expect(aiResult).toHaveProperty('ingredients');
@@ -133,10 +156,10 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
           expect(aiResult).toHaveProperty('nutritionalInfo');
 
           // Validate confidence threshold
-          expect(aiResult.confidence).toBeGreaterThan(testSuite.CONFIDENCE_THRESHOLD);
+          expect(aiResult.confidence).toBeGreaterThan(this.CONFIDENCE_THRESHOLD);
 
           // Validate response time
-          expect(responseTime).toBeLessThan(testSuite.MAX_RESPONSE_TIME);
+          expect(responseTime).toBeLessThan(this.MAX_RESPONSE_TIME);
 
           // Validate ingredient detection accuracy
           if (Array.isArray(testImage.expected)) {
@@ -149,7 +172,11 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
             expect(aiResult.ingredients[0].name.toLowerCase()).toContain(testImage.expected.toLowerCase());
           }
 
-          testSuite.testResults.push({
+          // Validate AI response quality
+          expect(aiResult.analysis).toHaveProperty('macronutrients');
+          expect(aiResult.analysis).toHaveProperty('micronutrients');
+
+          this.testResults.push({
             testName: `visual-recognition-${testImage.expected}`,
             passed: true,
             confidence: aiResult.confidence,
@@ -157,10 +184,13 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
             aiResponse: aiResult
           });
 
+          expect(aiResult.insights).toHaveProperty('healthScore');
+          expect(aiResult.insights).toHaveProperty('recommendations');
+
           console.log(`✅ ${testImage.expected} detected with ${(aiResult.confidence * 100).toFixed(1)}% confidence`);
 
         } catch (error) {
-          testSuite.testResults.push({
+          this.testResults.push({
             testName: `visual-recognition-${testImage.expected}`,
             passed: false,
             confidence: 0,
@@ -181,7 +211,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
 
       const imageBuffer = fs.readFileSync(path.join(process.cwd(), 'tests', 'fixtures', complexMealImage));
       
-      const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/analyze-nutrition`, {
+      const response = await axios.post(`${this.API_BASE_URL}/api/ai/analyze-nutrition`, {
         image: imageBuffer.toString('base64'),
         analysisType: 'complete-meal'
       });
@@ -223,12 +253,12 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
       for (const testCase of allergenTestCases) {
         const imageBuffer = fs.readFileSync(path.join(process.cwd(), 'tests', 'fixtures', testCase.image));
         
-        const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/detect-allergens`, {
+        const response = await axios.post(`${this.API_BASE_URL}/api/ai/detect-allergens`, {
           image: imageBuffer.toString('base64'),
           userAllergens: testCase.expectedAllergens
         });
 
-        const allergenResult = response.data;
+        const allergenResult = response.data as AllergenResult;
 
         // Validate allergen detection structure
         expect(allergenResult).toHaveProperty('detectedAllergens');
@@ -297,10 +327,10 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
         healthContext: testCase.healthContext
       };
 
-      const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/generate-recipe`, requestPayload);
+      const response = await axios.post(`${this.API_BASE_URL}/api/ai/generate-recipe`, requestPayload);
       
       const responseTime = Date.now() - startTime;
-      const recipeResult = response.data;
+      const recipeResult = response.data as RecipeResult;
 
       // Validate basic recipe structure
       expect(recipeResult).toHaveProperty('recipe');
@@ -349,7 +379,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
       }
 
       // Validate response time meets performance requirements
-      expect(responseTime).toBeLessThan(testSuite.MAX_RESPONSE_TIME);
+      expect(responseTime).toBeLessThan(this.MAX_RESPONSE_TIME);
 
       // For Premium tier, validate health context integration
       if (testCase.tier === 'Premium' && testCase.healthContext) {
@@ -358,7 +388,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
         expect(recipeResult.recipe.nutritionalInfo.sodium).toBeLessThan(1500); // Low sodium requirement
       }
 
-      testSuite.testResults.push({
+      this.testResults.push({
         testName: `recipe-generation-${testCase.tier.toLowerCase()}`,
         passed: true,
         confidence: recipeResult.confidence || 0.95,
@@ -383,7 +413,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
       ];
 
       for (const modification of modifications) {
-        const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/modify-recipe`, {
+        const response = await axios.post(`${this.API_BASE_URL}/api/ai/modify-recipe`, {
           originalRecipe: baseRecipe,
           modificationType: modification.type,
           modificationRequest: modification.request
@@ -445,7 +475,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
       let conversationContext = { sessionId: 'test-session-' + Date.now() };
 
       for (const turn of conversationFlow) {
-        const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/conversational-onboarding`, {
+        const response = await axios.post(`${this.API_BASE_URL}/api/ai/conversational-onboarding`, {
           message: turn.userMessage,
           context: conversationContext,
           stage: turn.stage
@@ -500,7 +530,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
       ];
 
       for (const query of dangerousQueries) {
-        const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/conversational-onboarding`, {
+        const response = await axios.post(`${this.API_BASE_URL}/api/ai/conversational-onboarding`, {
           message: query,
           context: { sessionId: 'safety-test' },
           stage: 'safety-testing'
@@ -553,7 +583,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
       ];
 
       for (const scenario of cookingScenarios) {
-        const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/culinary-coach`, {
+        const response = await axios.post(`${this.API_BASE_URL}/api/ai/culinary-coach`, {
           query: scenario.request,
           context: {
             currentRecipe: 'Quinoa Chicken Bowl',
@@ -594,7 +624,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
       ];
 
       for (const query of techniqueQueries) {
-        const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/culinary-coach`, {
+        const response = await axios.post(`${this.API_BASE_URL}/api/ai/culinary-coach`, {
           query,
           context: { requestType: 'technique-education' }
         });
@@ -655,7 +685,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
       ];
 
       for (const test of interactionTests) {
-        const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/screen-drug-interactions`, {
+        const response = await axios.post(`${this.API_BASE_URL}/api/ai/screen-drug-interactions`, {
           medications: [test.medication],
           foodItems: [test.food],
           subscriptionTier: 'Premium' // Required for clinical features
@@ -696,7 +726,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
 
       for (const tier of restrictedTiers) {
         try {
-          await axios.post(`${testSuite.API_BASE_URL}/api/ai/screen-drug-interactions`, {
+          await axios.post(`${this.API_BASE_URL}/api/ai/screen-drug-interactions`, {
             medications: ['warfarin'],
             foodItems: ['spinach'],
             subscriptionTier: tier
@@ -725,7 +755,7 @@ describe('🤖 AI-Powered Features Testing Suite', () => {
         }
       };
 
-      const response = await axios.post(`${testSuite.API_BASE_URL}/api/ai/screen-drug-interactions`, {
+      const response = await axios.post(`${this.API_BASE_URL}/api/ai/screen-drug-interactions`, {
         ...clinicalTestCase,
         subscriptionTier: 'Premium',
         requestClinicalOversight: true
